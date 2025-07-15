@@ -1,0 +1,33 @@
+# Compiled class files
+*.class
+target/
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.eclipse/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Database credentials and sensitive config
+application-local.properties
+application-dev.properties
+application-prod.properties
+
+# Environment files
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.temp

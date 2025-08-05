@@ -6,10 +6,8 @@ import com.nic.master.param.StatusParam;
 import com.nic.master.repository.ZoneRepository;
 import com.nic.master.request.zonerequest.ZoneAddRequest;
 import com.nic.master.request.zonerequest.ZoneUpdateRequest;
-import com.nic.master.response.zoneresponse.ZoneAddResponse;
-import com.nic.master.response.zoneresponse.ZoneUpdateResponse;
 import com.nic.master.service.ZoneService;
-import lombok.RequiredArgsConstructor;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,12 +16,18 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class ZoneServiceImpl implements ZoneService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ZoneServiceImpl.class);
     private final ZoneRepository zoneRepository;
 
-    private static  final Logger logger = LoggerFactory.getLogger(ZoneServiceImpl.class);
+    private final HttpServletRequest httpServletRequest;
+
+
+    public ZoneServiceImpl(ZoneRepository zoneRepository, HttpServletRequest httpServletRequest) {
+        this.zoneRepository = zoneRepository;
+        this.httpServletRequest = httpServletRequest;
+    }
 
 
     @Override
@@ -37,32 +41,28 @@ public class ZoneServiceImpl implements ZoneService {
     @Override
     public SelectOptionParam fetchZoneMasterByCode(String zoneCode) {
         return zoneRepository.findByZoneCode(zoneCode)
-                .map(zone-> new SelectOptionParam(
+                .map(zone -> new SelectOptionParam(
                         zone.getZoneGuid(),
                         zone.getZoneCode(),
                         zone.getZoneNameEn()
                 ))
-                .orElseThrow(()->new RuntimeException("Zone Not found with:"+zoneCode));
+                .orElseThrow(() -> new RuntimeException("Zone Not found with:" + zoneCode));
     }
 
-
-    //Add Zone
     @Override
-    public ZoneAddResponse addZone(ZoneAddRequest zoneAddRequest) {
-
-
-        logger.info("Adding New  Zone: {}",zoneAddRequest);
-
+    public StatusParam addZone(ZoneAddRequest zoneAddRequest) {
+        logger.info("Adding New Zone: {}", zoneAddRequest);
         try {
-
             if (zoneRepository.existsByZoneCodeIgnoreCase(zoneAddRequest.getZoneCode())) {
-                logger.warn("Duplicate document  Code : {}", zoneAddRequest.getZoneCode());
-                ZoneAddResponse response = new ZoneAddResponse();
-                response.setStatus(new StatusParam(false, "Zone already exists: " + zoneAddRequest.getZoneCode()));
-                return response;
+                logger.warn("Duplicate zone Code: {}", zoneAddRequest.getZoneCode());
+                return new StatusParam(false, "Zone already exists: " + zoneAddRequest.getZoneCode());
             }
-            Zone zone = new Zone();
+            String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
+            if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+                clientIp = httpServletRequest.getRemoteAddr();
+            }
 
+            Zone zone = new Zone();
             zone.setZoneGuid(UUID.randomUUID().toString());
             zone.setZoneCode(zoneAddRequest.getZoneCode());
             zone.setZoneNameEn(zoneAddRequest.getZoneNameEn());
@@ -73,47 +73,25 @@ public class ZoneServiceImpl implements ZoneService {
 
             zone.setCreatedBy(zoneAddRequest.getCreatedBy());
             zone.setCreatedDate(LocalDate.now());
-            zone.setCreatedIpAddr(zoneAddRequest.getCreatedIpAddr());
+            zone.setCreatedIpAddr(clientIp);
             zone.setCreatedMacAddr(zoneAddRequest.getCreatedMacAddr());
             zone.setCreatedRemarks(zoneAddRequest.getCreatedRemarks());
             zone.setCreatedUri(zoneAddRequest.getCreatedUri());
+
             zoneRepository.save(zone);
             logger.info("Added Zone: {}", zoneAddRequest);
 
-            ZoneAddResponse response = toAddResponse(zone);
-            response.setStatus(new StatusParam(true, "Record Added"));
-            return response;
-        }catch(Exception ex){
-            logger.error("Error while adding zone: {}", ex.getMessage(),ex);
-            throw  new RuntimeException("Error while adding document");
+            return new StatusParam(true, "Saved Successfully");
+        } catch (Exception ex) {
+            logger.error("Error while adding zone: {}", ex.getMessage(), ex);
+            throw new RuntimeException("Error while adding document");
         }
-    }
-
-    private ZoneAddResponse toAddResponse(Zone zone) {
-
-        ZoneAddResponse zoneAddResponse = new ZoneAddResponse();
-
-        zoneAddResponse.setZoneGuid(zone.getZoneGuid());
-        zoneAddResponse.setZoneCode(zone.getZoneCode());
-        zoneAddResponse.setZoneNameEn(zone.getZoneNameEn());
-        zoneAddResponse.setZoneNameHi(zone.getZoneNameHi());
-        zoneAddResponse.setZoneNameRl(zone.getZoneNameRl());
-        zoneAddResponse.setZoneDescription(zone.getZoneDescription());
-        zoneAddResponse.setWrapperCode(zone.getWrapperCode());
-
-        zoneAddResponse.setCreatedBy(zone.getCreatedBy());
-        zoneAddResponse.setCreatedIpAddr(zone.getCreatedIpAddr());
-        zoneAddResponse.setCreatedMacAddr(zone.getCreatedMacAddr());
-        zoneAddResponse.setCreatedRemarks(zone.getCreatedRemarks());
-        zoneAddResponse.setCreatedUri(zone.getCreatedUri());
-        zoneAddResponse.setIsActive(true);
-        return zoneAddResponse;
     }
 
     //Get Zone By Guid
     @Override
     public Zone getZoneByGuid(String zoneGuid) {
-        logger.info("Fetching ward By Guid:{}",zoneGuid);
+        logger.info("Fetching ward By Guid:{}", zoneGuid);
         return zoneRepository.findById(zoneGuid)
                 .orElseThrow(() -> new RuntimeException("Zone not found with guid: " + zoneGuid));
     }
@@ -124,71 +102,84 @@ public class ZoneServiceImpl implements ZoneService {
         return zoneRepository.findAll();
     }
 
-    //Update Zone By Guid
     @Override
-    public ZoneUpdateResponse updateZoneByGuid(String guid, ZoneUpdateRequest zoneUpdateRequest) {
-        logger.info("Updating Zone with  guid:{}",guid);
-    	ZoneUpdateResponse zoneUpdateResponse = new ZoneUpdateResponse();
+    public StatusParam updateZoneByGuid(String guid, ZoneUpdateRequest zoneUpdateRequest) {
+        logger.info("Updating Zone with GUID: {}", guid);
+        try {
 
-        Zone zone = zoneRepository.findById(guid).orElse(null);
-        if(zone == null){
-            zoneUpdateResponse.setStatus(new StatusParam(false, "Zone not found with guid: " + guid));
-            return  zoneUpdateResponse;
+            StatusParam status = new StatusParam();
+
+            Zone zone = zoneRepository.findById(guid).orElse(null);
+            if (zone == null) {
+                status.setStatus(false);
+                status.setMessage("Zone not found with GUID: " + guid);
+                return status;
+            }
+            String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
+            if (clientIp == null || clientIp.isEmpty() || "Unknown".equalsIgnoreCase(clientIp)) {
+                clientIp = httpServletRequest.getRemoteAddr();
+            }
+
+            if (zoneUpdateRequest.getZoneCode() != null
+                    && !zoneUpdateRequest.getZoneCode().equalsIgnoreCase(zone.getZoneCode())
+                    && zoneRepository.existsByZoneCodeIgnoreCase(zoneUpdateRequest.getZoneCode())) {
+                status.setStatus(false);
+                status.setMessage("Zone code already exists: " + zoneUpdateRequest.getZoneCode());
+                return status;
+            }
+            // Only update fields if non-null (to prevent overwriting existing values)
+            if (zoneUpdateRequest.getZoneCode() != null) {
+                zone.setZoneCode(zoneUpdateRequest.getZoneCode());
+            }
+
+            if (zoneUpdateRequest.getZoneNameEn() != null) {
+                zone.setZoneNameEn(zoneUpdateRequest.getZoneNameEn());
+            }
+
+            if (zoneUpdateRequest.getZoneNameHi() != null) {
+                zone.setZoneNameHi(zoneUpdateRequest.getZoneNameHi());
+            }
+            if (zoneUpdateRequest.getZoneNameRl() != null) {
+                zone.setZoneNameRl(zoneUpdateRequest.getZoneNameRl());
+            }
+            if (zoneUpdateRequest.getZoneDescription() != null) {
+                zone.setZoneDescription(zoneUpdateRequest.getZoneDescription());
+            }
+            if (zoneUpdateRequest.getWrapperCode() != null) {
+                zone.setWrapperCode(zoneUpdateRequest.getWrapperCode());
+            }
+            if (zoneUpdateRequest.getModifiedBy() != null) {
+                zone.setModifiedBy(zoneUpdateRequest.getModifiedBy());
+            }
+
+            //Setting Modified Ip address
+            zone.setModifiedIpAddr(clientIp);
+
+            //Setting Modified Mac address
+            zone.setModifiedMacAddr(clientIp);
+
+            if (zoneUpdateRequest.getModifiedRemarks() != null) {
+                zone.setModifiedRemarks(zoneUpdateRequest.getModifiedRemarks());
+            }
+
+            if (zoneUpdateRequest.getModifiedUri() != null) {
+                zone.setModifiedUri(zoneUpdateRequest.getModifiedUri());
+            }
+
+            zone.setModifiedDate(LocalDate.now());
+
+            zoneRepository.save(zone);
+
+            logger.info("Zone updated successfully for GUID: {}", guid);
+            status.setStatus(true);
+            status.setMessage("Record Updated Successfully");
+            return status;
+        } catch (Exception ex) {
+            logger.error("Error while Updating zone: {}", ex.getMessage(), ex);
+            throw new RuntimeException("Error while Updating zone");
         }
 
-        if(zoneUpdateRequest.getZoneCode() != null && !zoneUpdateRequest.getZoneCode().equalsIgnoreCase(zone.getZoneCode()) && zoneRepository.existsByZoneCodeIgnoreCase(zoneUpdateRequest.getZoneCode())){
-            zoneUpdateResponse.setStatus(new StatusParam(false, "Zone already exists: " + zoneUpdateRequest.getZoneCode()));
-            return zoneUpdateResponse;
-        }
-
-        zone.setZoneCode(zoneUpdateRequest.getZoneCode());	
-        zone.setZoneNameEn(zoneUpdateRequest.getZoneNameEn());
-        zone.setZoneNameHi(zoneUpdateRequest.getZoneNameHi());
-        zone.setZoneNameRl(zoneUpdateRequest.getZoneNameRl());
-        zone.setZoneDescription(zoneUpdateRequest.getZoneDescription());
-        zone.setWrapperCode(zoneUpdateRequest.getWrapperCode());
-
-
-
-        zone.setModifiedBy(zoneUpdateRequest.getModifiedBy());
-        zone.setModifiedDate(LocalDate.now());
-        zone.setModifiedIpAddr(zoneUpdateRequest.getModifiedIpAddr());
-        zone.setModifiedMacAddr(zoneUpdateRequest.getModifiedMacAddr());
-        zone.setModifiedRemarks(zoneUpdateRequest.getModifiedRemarks());
-        zone.setModifiedUri(zoneUpdateRequest.getModifiedUri());
-
-
-        zoneRepository.save(zone);
-        return toUpdateResponse(zone);
     }
-
-    private ZoneUpdateResponse toUpdateResponse(Zone zone) {
-        ZoneUpdateResponse zoneUpdateResponse = new ZoneUpdateResponse();
-        zoneUpdateResponse.setZoneId(zone.getZoneId());
-        zoneUpdateResponse.setZoneGuid(zone.getZoneGuid());
-        zoneUpdateResponse.setZoneCode(zone.getZoneCode());
-        zoneUpdateResponse.setZoneNameEn(zone.getZoneNameEn());
-        zoneUpdateResponse.setZoneNameHi(zone.getZoneNameHi());
-        zoneUpdateResponse.setZoneNameRl(zone.getZoneNameRl());
-        zoneUpdateResponse.setZoneDescription(zone.getZoneDescription());
-        zoneUpdateResponse.setWrapperCode(zone.getWrapperCode());
-
-        zoneUpdateResponse.setCreatedBy(zone.getCreatedBy());
-        zoneUpdateResponse.setCreatedIpAddr(zone.getCreatedIpAddr());
-        zoneUpdateResponse.setCreatedMacAddr(zone.getCreatedMacAddr());
-        zoneUpdateResponse.setCreatedRemarks(zone.getCreatedRemarks());
-        zoneUpdateResponse.setCreatedUri(zone.getCreatedUri());
-
-        zoneUpdateResponse.setModifiedBy(zone.getModifiedBy());
-        zoneUpdateResponse.setModifiedIpAddr(zone.getModifiedIpAddr());
-        zoneUpdateResponse.setModifiedMacAddr(zone.getModifiedMacAddr());
-        zoneUpdateResponse.setModifiedRemarks(zone.getModifiedRemarks());
-        zoneUpdateResponse.setModifiedUri(zone.getModifiedUri());
-
-        zoneUpdateResponse.setStatus(new StatusParam(true, "Record Updated"));
-        return zoneUpdateResponse;
-    }
-
 }
 
 

@@ -4,6 +4,7 @@ package com.nic.master.entity;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+
 @Entity
 @Table(name = "zone", schema = "mst")
 public class Zone {

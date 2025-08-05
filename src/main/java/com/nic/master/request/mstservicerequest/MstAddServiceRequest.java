@@ -1,30 +1,44 @@
 package com.nic.master.request.mstservicerequest;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class MstAddServiceRequest {
 
-    @NotBlank(message = "Service Code cannot be blank")
+    @NotNull(message = "Service code cannot be null")
+    @NotEmpty(message = "Service code is required")
+    @Size(min = 2, max = 20, message = "Service code must be between 2-20 characters")
+    @Pattern(regexp = "^[A-Z\\d_-]+$", message = "Service code: only uppercase letters, numbers, hyphens(-) and underscore(_) allowed")
     private String serviceCode;
 
-    @NotBlank(message = "Service name cannot be blank")
+    @NotNull(message = "Service name cannot be null")
+    @NotEmpty(message = "Service name is required")
+    @Size(min = 2, max = 100, message = "Service name must be between 2-100 characters")
     private String serviceName;
 
-    @NotBlank(message = "CreatedBy cannot be blank")
+    @NotNull(message = "Created by cannot be null")
+    @NotEmpty(message = "Created by is required")
+    @Size(min = 2, max = 50, message = "Created by must be between 2-50 characters")
     private String createdBy;
 
-     @NotNull(message = "Date cannot be blank")
-     private String  createdDate;
+    @NotNull(message = "Created date is required")
+    private String createdDate;
 
-    @NotBlank(message = "IpAddress cannot be blank")
+    @NotNull(message = "IP address cannot be null")
+    @NotEmpty(message = "IP address is required")
+    @Pattern(regexp = "^(?:\\d{1,3}\\.){3}\\d{1,3}$", message = "Invalid IP address format")
     private String createdIpAddr;
 
+    @Size(max = 500, message = "Remarks cannot exceed 500 characters")
     private String createdRemarks;
 
-
-    @NotBlank(message = "Process code is required")
+    @NotNull(message = "Process code cannot be null")
+    @NotEmpty(message = "Process code is required")
+    @Size(min = 2, max = 20, message = "Process code must be between 2-20 characters")
+    @Pattern(regexp = "^[A-Z\\d_-]+$", message = "Process code: only uppercase letters, numbers, hyphens(-) and underscore(_) allowed")
     private String processCode;
 
     public String getServiceCode() {

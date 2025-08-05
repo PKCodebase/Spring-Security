@@ -1,17 +1,21 @@
 package com.nic.master.request.wardrequest;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class WardUpdateRequest {
 
-    @NotBlank(message = "Ward code is required")
+    @NotNull(message = "Ward code cannot be null")
+    @NotEmpty(message = "Ward code is required")
     @Size(min = 2, max = 20, message = "Ward code must be between 2-20 characters")
     @Pattern(regexp = "^[A-Z\\d_]+$", message = "Ward code: only uppercase letters, numbers and underscore allowed")
     private String wardCode;
 
-    @NotBlank(message = "Ward name (English) is required")
+    @NotNull(message = "Ward name cannot be null")
+    @NotEmpty(message = "Ward name (English) is required")
     @Size(min = 2, max = 100, message = "Ward name must be between 2-100 characters")
     private String wardNameEn;
 
@@ -27,15 +31,17 @@ public class WardUpdateRequest {
     @Size(max = 50, message = "Organization unit code cannot exceed 50 characters")
     private String orgUnitCode;
 
-    @NotBlank(message = "Modified by is required")
+    @NotNull(message = "Modified by cannot be null")
+    @NotEmpty(message = "Modified by is required")
     @Size(min = 2, max = 50, message = "Modified by must be between 2-50 characters")
     private String modifiedBy;
 
-    @NotBlank(message = "Modified IP address is required")
-    @Pattern(regexp = "^(?:\\d{1,3}\\.){3}\\d{1,3}$", message = "Invalid IP address format")
+//    @NotNull(message = "Modified IP address cannot be null")
+//    @NotEmpty(message = "Modified IP address is required")
+//    @Pattern(regexp = "^(?:\\d{1,3}\\.){3}\\d{1,3}$", message = "Invalid IP address format")
     private String modifiedIpAddr;
 
-    @Size(max = 100, message = "MAC address cannot exceed 100 characters")
+//    @Size(max = 100, message = "MAC address cannot exceed 100 characters")
     private String modifiedMacAddr;
 
     @Size(max = 500, message = "Remarks cannot exceed 500 characters")

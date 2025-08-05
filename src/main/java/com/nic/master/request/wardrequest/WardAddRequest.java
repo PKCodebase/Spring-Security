@@ -1,17 +1,21 @@
 package com.nic.master.request.wardrequest;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class WardAddRequest {
 
-    @NotBlank(message = "Ward code is required")
+    @NotNull(message = "Ward code cannot be null")
+    @NotEmpty(message = "Ward code is required")
     @Size(min = 2, max = 20, message = "Ward code must be between 2-20 characters")
     @Pattern(regexp = "^[A-Z\\d_]+$", message = "Ward code: only uppercase letters, numbers and underscore allowed")
     private String wardCode;
 
-    @NotBlank(message = "Ward name (English) is required")
+    @NotNull(message = "Ward name cannot be null")
+    @NotEmpty(message = "Ward name (English) is required")
     @Size(min = 2, max = 100, message = "Ward name must be between 2-100 characters")
     private String wardNameEn;
 
@@ -27,12 +31,14 @@ public class WardAddRequest {
     @Size(max = 50, message = "Organization unit code cannot exceed 50 characters")
     private String orgUnitCode;
 
-    @NotBlank(message = "Created by is required")
+    @NotNull(message = "Created by cannot be null")
+    @NotEmpty(message = "Created by is required")
     @Size(min = 2, max = 50, message = "Created by must be between 2-50 characters")
     private String createdBy;
 
-    @NotBlank(message = "IP address is required")
-    @Pattern(regexp = "^(?:\\d{1,3}\\.){3}\\d{1,3}$", message = "Invalid IP address format")
+//    @NotNull(message = "IP address cannot be null")
+//    @NotEmpty(message = "IP address is required")
+//    @Pattern(regexp = "^(?:\\d{1,3}\\.){3}\\d{1,3}$", message = "Invalid IP address format")
     private String createdIpAddr;
 
     @Size(max = 100, message = "MAC address cannot exceed 100 characters")

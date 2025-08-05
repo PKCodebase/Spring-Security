@@ -1,3 +1,4 @@
+
 package com.nic.master.service.impl;
 
 import com.nic.master.entity.DocumentType;
@@ -9,8 +10,8 @@ import com.nic.master.request.documentrequest.DocumentUpdateRequest;
 import com.nic.master.response.documentresponse.DocumentAddResponse;
 import com.nic.master.response.documentresponse.DocumentUpdateResponse;
 import com.nic.master.service.DocumentService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,16 +20,19 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class DocumentServiceImpl implements DocumentService {
-
-
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentServiceImpl.class);
 
     private final DocumentRepository documentRepository;
+    private  final HttpServletRequest httpServletRequest;
 
+
+    public DocumentServiceImpl(DocumentRepository documentRepository, HttpServletRequest httpServletRequest) {
+        this.documentRepository = documentRepository;
+        this.httpServletRequest = httpServletRequest;
+    }
 
 
     @Override
@@ -80,6 +84,10 @@ public class DocumentServiceImpl implements DocumentService {
                 response.setStatus(new StatusParam(false, "Document code already exists: " + request.getDocumentCode()));
                 return response;
             }
+            String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
+            if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+                clientIp = httpServletRequest.getRemoteAddr();
+            }
 
             DocumentType document = new DocumentType();
 
@@ -89,7 +97,7 @@ public class DocumentServiceImpl implements DocumentService {
             document.setCreatedBy(request.getCreatedBy());
 
             document.setCreatedDate(LocalDate.now());
-            document.setCreatedIpAddr(request.getCreatedIpAddr());
+            document.setCreatedIpAddr(clientIp);
             document.setCreatedRemarks(request.getCreatedRemarks());
             document.setIsActive(true);
 
@@ -130,25 +138,48 @@ public class DocumentServiceImpl implements DocumentService {
             documentUpdateResponse.setStatus(new StatusParam(false, "Document not found with GUID: " + guid));
             return documentUpdateResponse;
         }
+        String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
+        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+            clientIp = httpServletRequest.getRemoteAddr();
+        }
 
-        if (documentUpdateRequest.getDocumentCode() != null && !documentUpdateRequest.getDocumentCode().equalsIgnoreCase(document.getDocumentCode()) && documentRepository.existsByDocumentCodeIgnoreCase(documentUpdateRequest.getDocumentCode())) {
+        // Check for duplicate document code if changed
+        if (documentUpdateRequest.getDocumentCode() != null
+                && !documentUpdateRequest.getDocumentCode().equalsIgnoreCase(document.getDocumentCode())
+                && documentRepository.existsByDocumentCodeIgnoreCase(documentUpdateRequest.getDocumentCode())) {
             documentUpdateResponse.setStatus(new StatusParam(false, "Document code already exists: " + documentUpdateRequest.getDocumentCode()));
             return documentUpdateResponse;
         }
 
-        document.setDocumentCode(documentUpdateRequest.getDocumentCode());
-        document.setDocumentName(documentUpdateRequest.getDocumentName());
+        // Only update fields if non-null (to prevent overwriting existing values)
+        if (documentUpdateRequest.getDocumentCode() != null) {
+            document.setDocumentCode(documentUpdateRequest.getDocumentCode());
+        }
 
-        document.setModifiedBy(documentUpdateRequest.getModifiedBy());
-        document.setModifiedIpAddr(documentUpdateRequest.getModifiedIpAddr());
-        document.setModifiedDate(LocalDate.now());
-        document.setModifiedRemarks(documentUpdateRequest.getModifiedRemarks());
+        if (documentUpdateRequest.getDocumentName() != null) {
+            document.setDocumentName(documentUpdateRequest.getDocumentName());
+        }
+
+        if (documentUpdateRequest.getModifiedBy() != null) {
+            document.setModifiedBy(documentUpdateRequest.getModifiedBy());
+        }
+
+        if (documentUpdateRequest.getModifiedIpAddr() != null) {
+            document.setModifiedIpAddr(clientIp);
+        }
+
+        if (documentUpdateRequest.getModifiedRemarks() != null) {
+            document.setModifiedRemarks(documentUpdateRequest.getModifiedRemarks());
+        }
+
+        document.setModifiedDate(LocalDate.now()); // Always update modified date
 
         documentRepository.save(document);
 
         logger.info("Document updated successfully for GUID: {}", guid);
         return toUpdateResponse(document);
     }
+
 
     private DocumentUpdateResponse toUpdateResponse(DocumentType documentType) {
         DocumentUpdateResponse documentUpdatedResponse = new DocumentUpdateResponse();

@@ -5,7 +5,6 @@ import java.util.List;
 import com.nic.master.enums.Status;
 import com.nic.master.param.*;
 import com.nic.master.service.*;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -13,29 +12,25 @@ import org.springframework.stereotype.Service;
 import com.nic.master.repository.MstServiceRepository;
 
 @Service
-@RequiredArgsConstructor
+
 public class CommonMasterServiceImpl implements CommonMasterService {
 
-	static Logger logger = LoggerFactory.getLogger(CommonMasterServiceImpl.class);
-
-
+	private static final Logger logger = LoggerFactory.getLogger(CommonMasterServiceImpl.class);
 	private final MstServiceRepository mstServiceRepository;
-
-
 	private final DocumentService documentService;
-
-
 	private final ZoneService zoneService;
-
 	private final WardService wardService;
-
-
 	private final ColonyService colonyService;
 
+    public CommonMasterServiceImpl(MstServiceRepository mstServiceRepository, DocumentService documentService, ZoneService zoneService, WardService wardService, ColonyService colonyService) {
+        this.mstServiceRepository = mstServiceRepository;
+        this.documentService = documentService;
+        this.zoneService = zoneService;
+        this.wardService = wardService;
+        this.colonyService = colonyService;
+    }
 
-
-
-	@Override
+    @Override
 	public List<SelectOptionParam> fetchCommonMaster(String tableCode) {
 		List<SelectOptionParam> lst = new ArrayList<>();
 

@@ -12,8 +12,8 @@ import com.nic.master.response.wardresponse.WardAddResponse;
 import com.nic.master.response.wardresponse.WardResponse;
 import com.nic.master.response.wardresponse.WardUpdateResponse;
 import com.nic.master.service.WardService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class WardServiceImpl implements WardService {
 
@@ -31,6 +30,14 @@ public class WardServiceImpl implements WardService {
 
     private final WardRepository wardRepository;
     private final ZoneRepository zoneRepository;
+    private  final HttpServletRequest httpServletRequest;
+
+    public WardServiceImpl(WardRepository wardRepository, ZoneRepository zoneRepository, HttpServletRequest httpServletRequest) {
+        this.wardRepository = wardRepository;
+        this.zoneRepository = zoneRepository;
+        this.httpServletRequest = httpServletRequest;
+    }
+
 
     @Override
     public List<SelectOptionParam> fetchWardMaster() {
@@ -67,6 +74,10 @@ public class WardServiceImpl implements WardService {
             wardAddResponse.setStatus(new StatusParam(false, "Ward Code already exists: " + wardAddRequest.getWardCode()));
             return wardAddResponse;
         }
+        String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
+        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+            clientIp = httpServletRequest.getRemoteAddr();
+        }
 
         Ward ward = new Ward();
 
@@ -80,7 +91,7 @@ public class WardServiceImpl implements WardService {
 
         ward.setCreatedBy(wardAddRequest.getCreatedBy());
         ward.setCreatedDate(LocalDate.now());
-        ward.setCreatedIpAddr(wardAddRequest.getCreatedIpAddr());
+        ward.setCreatedIpAddr(clientIp);
         ward.setCreatedMacAddr(wardAddRequest.getCreatedMacAddr());
         ward.setCreatedRemarks(wardAddRequest.getCreatedRemarks());
         ward.setCreatedUri(wardAddRequest.getCreatedUri());
@@ -186,38 +197,70 @@ public class WardServiceImpl implements WardService {
             wardUpdateResponse.setStatus(new StatusParam(false, "Ward not found with id: " + wardGuid));
             return wardUpdateResponse;
         }
-        if(wardUpdateRequest.getWardCode() != null && !wardUpdateRequest.getWardCode().equalsIgnoreCase(ward.getWardCode()) && wardRepository.existsByWardCodeIgnoreCase(wardUpdateRequest.getWardCode())){
+
+        if (wardUpdateRequest.getWardCode() != null &&
+                !wardUpdateRequest.getWardCode().isBlank() &&
+                !wardUpdateRequest.getWardCode().equalsIgnoreCase(ward.getWardCode()) &&
+                wardRepository.existsByWardCodeIgnoreCase(wardUpdateRequest.getWardCode())) {
+
             wardUpdateResponse.setStatus(new StatusParam(false, "Ward code already exists: " + wardUpdateRequest.getWardCode()));
-                return wardUpdateResponse;
-            }
+            return wardUpdateResponse;
+        }
+        String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
+        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+            clientIp = httpServletRequest.getRemoteAddr();
+        }
 
 
+        //  Update only non-null and non-blank fields
+        if (wardUpdateRequest.getWardCode() != null && !wardUpdateRequest.getWardCode().isBlank()) {
+            ward.setWardCode(wardUpdateRequest.getWardCode());
+        }
+        if (wardUpdateRequest.getWardNameEn() != null && !wardUpdateRequest.getWardNameEn().isBlank()) {
+            ward.setWardNameEn(wardUpdateRequest.getWardNameEn());
+        }
+        if (wardUpdateRequest.getWardNameHi() != null && !wardUpdateRequest.getWardNameHi().isBlank()) {
+            ward.setWardNameHi(wardUpdateRequest.getWardNameHi());
+        }
+        if (wardUpdateRequest.getWardNameRl() != null && !wardUpdateRequest.getWardNameRl().isBlank()) {
+            ward.setWardNameRl(wardUpdateRequest.getWardNameRl());
+        }
+        if (wardUpdateRequest.getWardDescription() != null && !wardUpdateRequest.getWardDescription().isBlank()) {
+            ward.setWardDescription(wardUpdateRequest.getWardDescription());
+        }
+        if (wardUpdateRequest.getOrgUnitCode() != null && !wardUpdateRequest.getOrgUnitCode().isBlank()) {
+            ward.setOrgUnitCode(wardUpdateRequest.getOrgUnitCode());
+        }
 
+        // Metadata fields (no need to check blank)
+        if (wardUpdateRequest.getModifiedBy() != null) {
+            ward.setModifiedBy(wardUpdateRequest.getModifiedBy());
+       }
+//        if (wardUpdateRequest.getModifiedIpAddr() != null) {
+//            ward.setModifiedIpAddr(wardUpdateRequest.getModifiedIpAddr());
+//        }
+//        if (wardUpdateRequest.getModifiedMacAddr() != null) {
+//            ward.setModifiedMacAddr(wardUpdateRequest.getModifiedMacAddr());
+//        }
+        ward.setModifiedIpAddr(clientIp);
+        ward.setModifiedMacAddr(clientIp);
 
-        // update entity
-        ward.setWardCode(wardUpdateRequest.getWardCode());
-        ward.setWardNameEn(wardUpdateRequest.getWardNameEn());
-        ward.setWardNameHi(wardUpdateRequest.getWardNameHi());
-        ward.setWardNameRl(wardUpdateRequest.getWardNameRl());
-        ward.setWardDescription(wardUpdateRequest.getWardDescription());
-        ward.setOrgUnitCode(wardUpdateRequest.getOrgUnitCode());
+        if (wardUpdateRequest.getModifiedRemarks() != null) {
+            ward.setModifiedRemarks(wardUpdateRequest.getModifiedRemarks());
+        }
+        if (wardUpdateRequest.getModifiedUri() != null) {
+            ward.setModifiedUri(wardUpdateRequest.getModifiedUri());
+        }
 
-        ward.setModifiedBy(wardUpdateRequest.getModifiedBy());
         ward.setModifiedDate(LocalDate.now());
-        ward.setModifiedIpAddr(wardUpdateRequest.getModifiedIpAddr());
-        ward.setModifiedMacAddr(wardUpdateRequest.getModifiedMacAddr());
-        ward.setModifiedRemarks(wardUpdateRequest.getModifiedRemarks());
-        ward.setModifiedUri(wardUpdateRequest.getModifiedUri());
         ward.setZone(zone);
 
         wardRepository.save(ward);
 
-        // map to response
         wardUpdateResponse = toUpdateResponse(ward);
         wardUpdateResponse.setStatus(new StatusParam(true, "Record updated successfully"));
         return wardUpdateResponse;
     }
-
 
 
     private WardUpdateResponse toUpdateResponse(Ward ward) {

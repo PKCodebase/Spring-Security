@@ -1,35 +1,57 @@
 package com.nic.master.request.mstservicerequest;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.util.Date;
-
 
 public class MstUpdateServiceRequest {
 
-    @NotBlank(message = "Service code is required")
+    @NotNull(message = "Service code cannot be null")
+    @NotEmpty(message = "Service code is required")
+    @Size(min = 2, max = 20, message = "Service code must be between 2-20 characters")
+    @Pattern(regexp = "^[A-Z\\d_-]+$", message = "Service code: only uppercase letters, numbers, hyphens(-) and underscore(_) allowed")
     private String serviceCode;
 
-    @NotBlank(message = "Service name is required")
+    @NotNull(message = "Service name cannot be null")
+    @NotEmpty(message = "Service name is required")
+    @Size(min = 2, max = 100, message = "Service name must be between 2-100 characters")
     private String serviceName;
 
-    @NotBlank(message = "Created By is required")
+    @NotNull(message = "Created by cannot be null")
+    @NotEmpty(message = "Created by is required")
+    @Size(min = 2, max = 50, message = "Created by must be between 2-50 characters")
     private String createdBy;
 
-
-    @NotBlank(message = "Created Ip Address is required")
+    @NotNull(message = "Created IP address cannot be null")
+    @NotEmpty(message = "Created IP address is required")
+    @Pattern(regexp = "^(?:\\d{1,3}\\.){3}\\d{1,3}$", message = "Invalid IP address format")
     private String createdIpAddr;
 
+    @Size(max = 500, message = "Created remarks cannot exceed 500 characters")
     private String createdRemarks;
 
-    @NotBlank(message = "Modified By is required")
+    @NotNull(message = "Modified by cannot be null")
+    @NotEmpty(message = "Modified by is required")
+    @Size(min = 2, max = 50, message = "Modified by must be between 2-50 characters")
     private String modifiedBy;
 
-
     private Date modifiedDate;
+    
+    @NotNull(message = "Modified IP address cannot be null")
+    @NotEmpty(message = "Modified IP address is required")
+    @Pattern(regexp = "^(?:\\d{1,3}\\.){3}\\d{1,3}$", message = "Invalid IP address format")
     private String modifiedIpAddr;
+    
+    @Size(max = 500, message = "Modified remarks cannot exceed 500 characters")
     private String modifiedRemarks;
 
-    @NotBlank(message = "ProcessCode is required")
+    @NotNull(message = "Process code cannot be null")
+    @NotEmpty(message = "Process code is required")
+    @Size(min = 2, max = 20, message = "Process code must be between 2-20 characters")
+    @Pattern(regexp = "^[A-Z\\d_-]+$", message = "Process code: only uppercase letters, numbers, hyphens(-) and underscore(_) allowed")
     private String processCode;
 
     public String getServiceCode() {

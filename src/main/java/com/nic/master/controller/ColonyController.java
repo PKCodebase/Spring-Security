@@ -17,53 +17,64 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/colony")
-@RequiredArgsConstructor
+
 public class ColonyController {
 
     private final ColonyService colonyService;
 
+    public ColonyController(ColonyService colonyService) {
+        this.colonyService = colonyService;
+    }
 
-    //Fetch Colony By Colony Code
+
     @GetMapping("/fetchColonyByCode")
-    public ResponseEntity<Object> getDocumentByCode(@RequestParam String colonyCode,HttpServletRequest httpServletRequest){
+    public ResponseEntity<Object> fetchColonyByCode(@RequestParam String colonyCode, HttpServletRequest httpServletRequest) {
         try {
             SelectOptionParam selectOptionParam = colonyService.fetchColonyMasterByCode(colonyCode);
             return ResponseEntity.ok(selectOptionParam);
-        } catch (Exception e) {
-           return ResponseBuilder.buildError(HttpStatus.NOT_FOUND, httpServletRequest.getRequestURI(), e.getMessage());
+        } catch (Exception ex) {
+            return ResponseBuilder.buildError(HttpStatus.NOT_FOUND, httpServletRequest.getRequestURI(), ex.getMessage());
         }
     }
 
 
 
-    //Add Colony
     @PostMapping("/add")
     public ResponseEntity<Object> addColony(@RequestParam String wardGuid, @RequestBody @Valid ColonyAddRequest colonyAddRequest, HttpServletRequest httpServletRequest) {
-        ColonyAddResponse colonyAddResponse = colonyService.addColony(wardGuid, colonyAddRequest);
-        return ResponseBuilder.buildCreated(colonyAddResponse.getStatus(), colonyAddResponse,httpServletRequest);
+        try {
+            ColonyAddResponse colonyAddResponse = colonyService.addColony(wardGuid, colonyAddRequest);
+            return ResponseBuilder.buildCreated(colonyAddResponse.getStatus(), colonyAddResponse, httpServletRequest);
+        } catch (Exception ex) {
+            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST, httpServletRequest.getRequestURI(), ex.getMessage());
+        }
     }
 
-    //Update Colony By colonyGuid
     @PutMapping("/update/{wardGuid}/{colonyGuid}")
-    public ResponseEntity<Object> updateColony(@PathVariable String wardGuid,@PathVariable String colonyGuid,@RequestBody @Valid ColonyUpdateRequest colonyUpdateRequest,HttpServletRequest httpServletRequest) {
-        ColonyUpdateResponse colonyUpdateResponse = colonyService.updateColonyByGuid(wardGuid, colonyGuid, colonyUpdateRequest);
-        return ResponseBuilder.buildOk(colonyUpdateResponse.getStatus(), colonyUpdateResponse,httpServletRequest);
+    public ResponseEntity<Object> updateColony(@PathVariable String wardGuid, @PathVariable String colonyGuid, @RequestBody @Valid ColonyUpdateRequest colonyUpdateRequest, HttpServletRequest httpServletRequest) {
+        try {
+            ColonyUpdateResponse colonyUpdateResponse = colonyService.updateColonyByGuid(wardGuid, colonyGuid, colonyUpdateRequest);
+            return ResponseBuilder.buildOk(colonyUpdateResponse.getStatus(), colonyUpdateResponse, httpServletRequest);
+        } catch (Exception ex) {
+            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST, httpServletRequest.getRequestURI(), ex.getMessage());
+        }
     }
 
-    //Fetch All
     @GetMapping("/all")
     public ResponseEntity<Object> getAllColonies(HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok(colonyService.getAllColonies());
+        try {
+            return ResponseEntity.ok(colonyService.getAllColonies());
+        } catch (Exception ex) {
+            return ResponseBuilder.buildError(HttpStatus.INTERNAL_SERVER_ERROR, httpServletRequest.getRequestURI(), ex.getMessage());
+        }
     }
 
-    //Fetch Colony By ColonyGuid
     @GetMapping("/colonyGuid/{colonyGuid}")
-    public ResponseEntity<Object> getByGuid(@PathVariable String colonyGuid,HttpServletRequest httpServletRequest) {
-        try{
+    public ResponseEntity<Object> getByGuid(@PathVariable String colonyGuid, HttpServletRequest httpServletRequest) {
+        try {
             ColonyResponse colonyResponse = colonyService.getColonyByGuid(colonyGuid);
             return ResponseEntity.ok(colonyResponse);
-        }catch (Exception ex){
-            return ResponseBuilder.buildError(HttpStatus.NOT_FOUND,httpServletRequest.getRequestURI(),ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseBuilder.buildError(HttpStatus.NOT_FOUND, httpServletRequest.getRequestURI(), ex.getMessage());
         }
     }
 }

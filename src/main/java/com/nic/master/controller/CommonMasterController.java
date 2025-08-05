@@ -18,65 +18,40 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/common")
-@RequiredArgsConstructor
 @Tag(name = "Common Master API", description = "APIs for managing common master data")
 public class CommonMasterController {
 
+    private final CommonMasterService commonMasterService;
 
-	private final CommonMasterService commonMasterService;
+    public CommonMasterController(CommonMasterService commonMasterService) {
+        this.commonMasterService = commonMasterService;
+    }
 
-
-	// API to fetch common master data based on table code
-	@GetMapping("/get")
-	public ResponseEntity<Object> getObpsMasters(@RequestParam("tcode") String tableCode,
-			  HttpServletRequest httpServletRequest)
-	{
-		
-		try {
-				List<SelectOptionParam> masters = commonMasterService.fetchCommonMaster(tableCode);
-				return ResponseEntity.ok(masters);
-				
-		} catch (Exception e) {
-			e.printStackTrace();
-			HttpStatus httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
-			return ResponseEntity.status(httpStatus).body(new ApiError(new Date(), 
-						String.valueOf(httpStatus.value()), httpStatus.getReasonPhrase(), 
-						httpServletRequest.getRequestURI(), "", "" ));
-		}
-	}
+    @GetMapping("/get")
+    public ResponseEntity<Object> getCommonMasters(@RequestParam("tcode") String tableCode, HttpServletRequest httpServletRequest) {
+        try {
+            List<SelectOptionParam> masters = commonMasterService.fetchCommonMaster(tableCode);
+            return ResponseEntity.ok(masters);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                    .body(new ApiError(new Date(), String.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value()),
+                            HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase(), httpServletRequest.getRequestURI(), "", ""));
+        }
+    }
 
 
-	// API to fetch common master data based on table code and code value
-	@GetMapping("/getByCode")
-	public ResponseEntity<Object> getObpsMasters(@RequestParam("tcode") String tableCode,
-			@RequestParam("codeVal") String codeVal,
-			  HttpServletRequest httpServletRequest)
-	{
-		
-		try {
-				SelectOptionParam master = commonMasterService.fetchCommonMasterByCode(tableCode, codeVal);
-				return ResponseEntity.ok(master);
-				
-		} catch (Exception e) {
-			e.printStackTrace();
-			HttpStatus httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
-			return ResponseEntity.status(httpStatus).body(new ApiError(new Date(), 
-						String.valueOf(httpStatus.value()), httpStatus.getReasonPhrase(), 
-						httpServletRequest.getRequestURI(), "", "" ));
-		}
-																																																																							}
-    // API to add a new service
+    @GetMapping("/getByCode")
+    public ResponseEntity<Object> getCommonMasterByCode(@RequestParam("tcode") String tableCode,
+                                                        @RequestParam("codeVal") String codeVal,
+                                                        HttpServletRequest httpServletRequest) {
+        try {
+            SelectOptionParam master = commonMasterService.fetchCommonMasterByCode(tableCode, codeVal);
+            return ResponseEntity.ok(master);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                    .body(new ApiError(new Date(), String.valueOf(HttpStatus.UNPROCESSABLE_ENTITY.value()),
+                            HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase(), httpServletRequest.getRequestURI(), "", ""));
+        }
+    }
 
-
-
-
-
-
-	// LIST ALL ACTIVE RECORDS 
-	
-	//POST SAVE METHOD
-	
-	//UPDATE //
-	
-	// API to make record inactive. Table row's isActive flag will be inactive/false
 }

@@ -30,7 +30,7 @@ public class StatusParam {
 
 	
 
-	public boolean isStatus() {
+	public boolean getStatus() {
 		return status;
 	}
 

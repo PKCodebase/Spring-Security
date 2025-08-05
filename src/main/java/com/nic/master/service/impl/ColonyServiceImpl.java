@@ -12,6 +12,7 @@ import com.nic.master.response.colonyresponse.ColonyAddResponse;
 import com.nic.master.response.colonyresponse.ColonyResponse;
 import com.nic.master.response.colonyresponse.ColonyUpdateResponse;
 import com.nic.master.service.ColonyService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -23,13 +24,19 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class ColonyServiceImpl implements ColonyService {
 
-    private static  final Logger logger = LoggerFactory.getLogger(ColonyServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ColonyServiceImpl.class);
 
     private final ColonyRepository colonyRepository;
     private final WardRepository wardRepository;
+    private final HttpServletRequest httpServletRequest;
+
+    public ColonyServiceImpl(ColonyRepository colonyRepository, WardRepository wardRepository, HttpServletRequest httpServletRequest) {
+        this.colonyRepository = colonyRepository;
+        this.wardRepository = wardRepository;
+        this.httpServletRequest = httpServletRequest;
+    }
 
     @Override
     public List<SelectOptionParam> fetchColonyMaster() {
@@ -66,6 +73,10 @@ public class ColonyServiceImpl implements ColonyService {
             colonyAddResponse.setStatus(new StatusParam(false, "Colony code already exists: " + request.getColonyCode()));
             return colonyAddResponse;
         }
+        String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
+        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+            clientIp = httpServletRequest.getRemoteAddr();
+        }
 
         Colony colony = new Colony();
         colony.setColonyGuid(UUID.randomUUID().toString());
@@ -76,9 +87,10 @@ public class ColonyServiceImpl implements ColonyService {
         colony.setColonyDescription(request.getColonyDescription());
         colony.setCreatedBy(request.getCreatedBy());
         colony.setCreatedDate(LocalDate.now());
-        colony.setCreatedIpAddr(request.getCreatedIpAddr());
+        colony.setCreatedIpAddr(clientIp);
         colony.setCreatedMacAddr(request.getCreatedMacAddr());
         colony.setCreatedRemarks(request.getCreatedRemarks());
+
         colony.setCreatedUri(request.getCreatedUri());
         colony.setWard(ward);
 
@@ -143,10 +155,10 @@ public class ColonyServiceImpl implements ColonyService {
         colonyResponse.setCreatedIpAddr(colony.getCreatedIpAddr());
         colonyResponse.setCreatedMacAddr(colony.getCreatedMacAddr());
         colonyResponse.setCreatedRemarks(colony.getCreatedRemarks());
-        colonyResponse.setModifiedBy(colonyResponse.getModifiedBy());
-        colonyResponse.setModifiedIpAddr(colonyResponse.getModifiedIpAddr());
-        colonyResponse.setModifiedMacAddr(colonyResponse.getModifiedMacAddr());
-        colonyResponse.setModifiedRemarks(colonyResponse.getModifiedRemarks());
+        colonyResponse.setModifiedBy(colony.getModifiedBy());
+        colonyResponse.setModifiedIpAddr(colony.getModifiedIpAddr());
+        colonyResponse.setModifiedMacAddr(colony.getModifiedMacAddr());
+        colonyResponse.setModifiedRemarks(colony.getModifiedRemarks());
         colonyResponse.setModifiedUri(colony.getModifiedUri());
         colony.setIsActive(true);
 
@@ -164,37 +176,79 @@ public class ColonyServiceImpl implements ColonyService {
 
         ColonyUpdateResponse colonyUpdatedResponse = new ColonyUpdateResponse();
 
+        // Validate ward
         Ward ward = wardRepository.findByWardGuid(wardGuid).orElse(null);
         if (ward == null) {
             colonyUpdatedResponse.setStatus(new StatusParam(false, "Ward not found with guid: " + wardGuid));
             return colonyUpdatedResponse;
         }
 
+        // Validate colony
         Colony colony = colonyRepository.findById(colonyGuid).orElse(null);
         if (colony == null) {
             colonyUpdatedResponse.setStatus(new StatusParam(false, "Colony not found with guid: " + colonyGuid));
             return colonyUpdatedResponse;
         }
 
-        if (colonyUpdateRequest.getColonyCode() != null && !colonyUpdateRequest.getColonyCode().equals(colony.getColonyCode()) && colonyRepository.existsByColonyCodeIgnoreCase(colonyUpdateRequest.getColonyCode())) {
+        // Check for duplicate colony code if it's being changed
+        if (colonyUpdateRequest.getColonyCode() != null &&
+                !colonyUpdateRequest.getColonyCode().equalsIgnoreCase(colony.getColonyCode()) &&
+                colonyRepository.existsByColonyCodeIgnoreCase(colonyUpdateRequest.getColonyCode())) {
+
             colonyUpdatedResponse.setStatus(new StatusParam(false, "Colony code already exists: " + colonyUpdateRequest.getColonyCode()));
             return colonyUpdatedResponse;
         }
+        String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
+        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+            clientIp = httpServletRequest.getRemoteAddr();
+        }
 
-        colony.setColonyCode(colonyUpdateRequest.getColonyCode());
-        colony.setColonyNameHi(colonyUpdateRequest.getColonyNameHi());
-        colony.setColonyNameRl(colonyUpdateRequest.getColonyNameRl());
-        colony.setColonyNameEn(colonyUpdateRequest.getColonyNameEn());
-        colony.setColonyDescription(colonyUpdateRequest.getColonyDescription());
+        // Update only non-null fields
+        if (colonyUpdateRequest.getColonyCode() != null) {
+            colony.setColonyCode(colonyUpdateRequest.getColonyCode());
+        }
 
-        colony.setModifiedBy(colonyUpdateRequest.getModifiedBy());
-        colony.setModifiedDate(LocalDate.now());
-        colony.setModifiedIpAddr(colonyUpdateRequest.getModifiedIpAddr());
-        colony.setModifiedMacAddr(colonyUpdateRequest.getModifiedMacAddr());
-        colony.setModifiedRemarks(colonyUpdateRequest.getModifiedRemarks());
-        colony.setModifiedUri(colonyUpdateRequest.getModifiedUri());
+        if (colonyUpdateRequest.getColonyNameHi() != null) {
+            colony.setColonyNameHi(colonyUpdateRequest.getColonyNameHi());
+        }
 
-        colony.setWard(ward);
+        if (colonyUpdateRequest.getColonyNameRl() != null) {
+            colony.setColonyNameRl(colonyUpdateRequest.getColonyNameRl());
+        }
+
+        if (colonyUpdateRequest.getColonyNameEn() != null) {
+            colony.setColonyNameEn(colonyUpdateRequest.getColonyNameEn());
+        }
+
+        if (colonyUpdateRequest.getColonyDescription() != null) {
+            colony.setColonyDescription(colonyUpdateRequest.getColonyDescription());
+        }
+
+        // Update modified fields only
+        if (colonyUpdateRequest.getModifiedBy() != null) {
+            colony.setModifiedBy(colonyUpdateRequest.getModifiedBy());
+        }
+
+//        if (colonyUpdateRequest.getModifiedIpAddr() != null) {
+//            colony.setModifiedIpAddr(colonyUpdateRequest.getModifiedIpAddr());
+//        }
+
+        colony.setModifiedIpAddr(clientIp);
+
+        if (colonyUpdateRequest.getModifiedMacAddr() != null) {
+            colony.setModifiedMacAddr(colonyUpdateRequest.getModifiedMacAddr());
+        }
+
+        if (colonyUpdateRequest.getModifiedRemarks() != null) {
+            colony.setModifiedRemarks(colonyUpdateRequest.getModifiedRemarks());
+        }
+
+        if (colonyUpdateRequest.getModifiedUri() != null) {
+            colony.setModifiedUri(colonyUpdateRequest.getModifiedUri());
+        }
+
+        colony.setModifiedDate(LocalDate.now()); // Always update modified date
+        colony.setWard(ward); // Always reassign ward in case of association change
 
         colonyRepository.save(colony);
 

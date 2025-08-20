@@ -2,6 +2,7 @@ package com.security.service.impl;
 
 import com.security.dto.LoginRequestDto;
 import com.security.dto.LoginResponseDto;
+import com.security.dto.SignupRequestDto;
 import com.security.dto.SignupResponseDto;
 import com.security.repository.UserRepository;
 import com.security.service.AuthService;
@@ -12,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +24,9 @@ public class AuthServiceImpl implements AuthService {
     private final AuthUtil authUtil;
     private final UserRepository userRepository;
     private  final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+
+
 
     @Override
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
@@ -35,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public SignupResponseDto signup(LoginRequestDto signupRequestDto) {
+    public SignupResponseDto signup(SignupRequestDto signupRequestDto) {
         User user = userRepository.findByUsername(signupRequestDto.getUsername())
                 .orElse(null);
 
@@ -43,9 +48,10 @@ public class AuthServiceImpl implements AuthService {
 
         user = userRepository.save(User.builder()
                         .username(signupRequestDto.getUsername())
-                        .password(signupRequestDto.getPassword())
+                        .password(passwordEncoder.encode(signupRequestDto.getPassword()))
                 .build()
         );
+
 
         return  modelMapper.map(user, SignupResponseDto.class);
 

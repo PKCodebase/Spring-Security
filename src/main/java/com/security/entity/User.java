@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(name = "users",schema = "security")
 public class User implements UserDetails {
 
     @Id

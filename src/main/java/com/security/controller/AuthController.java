@@ -2,6 +2,7 @@ package com.security.controller;
 
 import com.security.dto.LoginRequestDto;
 import com.security.dto.LoginResponseDto;
+import com.security.dto.SignupRequestDto;
 import com.security.dto.SignupResponseDto;
 import com.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponseDto> signup(@RequestBody LoginRequestDto signupRequestDto){
+    public ResponseEntity<SignupResponseDto> signup(@RequestBody SignupRequestDto signupRequestDto){
         return  ResponseEntity.ok(authService.signup(signupRequestDto));
     }
 }

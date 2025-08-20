@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponseDto {
+public class SignupRequestDto {
 
-     private String jwt;
-
-     private  Long userId;
-
+    private String username;
+    private String password;
 }

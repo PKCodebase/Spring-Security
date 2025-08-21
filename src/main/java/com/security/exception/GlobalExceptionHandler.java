@@ -14,7 +14,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleUsernameNotFoundException(UsernameNotFoundException ex){
         ApiError apiError = new ApiError("Username not found with username : " + ex.getMessage(), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(apiError, apiError.getStatusCode());
-
     }
 
 }

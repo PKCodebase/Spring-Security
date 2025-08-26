@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface ColonyRepository extends JpaRepository<Colony,String> {
 
-    Optional<Colony> findByColonyCode(String colonyCode);
+    Optional<Colony> findByColonyCodeIgnoreCase(String colonyCode);
 
     List<Colony> findByIsActive(Boolean isActive);
 

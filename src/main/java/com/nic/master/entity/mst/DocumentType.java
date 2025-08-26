@@ -2,6 +2,7 @@ package com.nic.master.entity.mst;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "document_type", schema = "mst")
@@ -26,7 +27,7 @@ public class DocumentType {
     private String createdBy;
 
     @Column(name = "created_date", nullable = false)
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
 
     @Column(name = "created_ip_addr")
     private String createdIpAddr;
@@ -38,7 +39,7 @@ public class DocumentType {
     private String modifiedBy;
 
     @Column(name = "modified_date")
-    private LocalDate modifiedDate;
+    private LocalDateTime modifiedDate;
 
     @Column(name = "modified_ip_addr")
     private String modifiedIpAddr;
@@ -89,14 +90,6 @@ public class DocumentType {
         this.createdBy = createdBy;
     }
 
-    public LocalDate getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDate createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public String getCreatedIpAddr() {
         return createdIpAddr;
     }
@@ -121,14 +114,6 @@ public class DocumentType {
         this.modifiedBy = modifiedBy;
     }
 
-    public LocalDate getModifiedDate() {
-        return modifiedDate;
-    }
-
-    public void setModifiedDate(LocalDate modifiedDate) {
-        this.modifiedDate = modifiedDate;
-    }
-
     public String getModifiedIpAddr() {
         return modifiedIpAddr;
     }
@@ -151,5 +136,21 @@ public class DocumentType {
 
     public void setIsActive(Boolean active) {
         isActive = active;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public LocalDateTime getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(LocalDateTime modifiedDate) {
+        this.modifiedDate = modifiedDate;
     }
 }

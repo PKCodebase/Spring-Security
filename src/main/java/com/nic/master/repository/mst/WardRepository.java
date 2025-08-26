@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface WardRepository extends JpaRepository<Ward,String> {
 
-    Optional<Ward> findByWardCode(String wardCode);
+    Optional<Ward> findByWardCodeIgnoreCase(String wardCode);
 
 
     Optional<Ward> findByWardGuid(String wardGuid);

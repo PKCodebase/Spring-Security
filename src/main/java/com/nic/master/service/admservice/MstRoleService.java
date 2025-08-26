@@ -14,9 +14,9 @@ public interface MstRoleService {
 
     List<MstRole> getAllRoles();
 
-    MstRole getRoleByCode(String roleCode);
+    SelectOptionParam getRoleByCode(String roleCode);
 
-    SelectOptionParam getRoleByGuid(String roleGuid);
+    MstRole getRoleByGuid(String roleGuid);
 
     StatusParam updateRoleByGuid(String roleGuid , RoleUpdateRequest roleUpdateRequest);
 }

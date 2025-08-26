@@ -9,7 +9,7 @@ public interface MstRoleRepository extends JpaRepository<MstRole,String> {
 
     boolean existsByRoleCodeIgnoreCase(String roleCode);
 
-    Optional<MstRole> findByRoleCode(String roleCode);
+    Optional<MstRole> findByRoleCodeIgnoreCase(String roleCode);
 
     Optional<MstRole> findByRoleGuid(String roleGuid);
 }

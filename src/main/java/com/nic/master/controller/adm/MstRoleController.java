@@ -114,7 +114,7 @@ public class MstRoleController {
                 @RequestBody RoleRequestWrapper requestWrapper,
                 HttpServletRequest httpServletRequest){
 
-            switch (requestWrapper.getOperation().toUpperCase()) {
+            switch (requestWrapper.getOperation().toUpperCase().trim()) {
                 case "ADD":
                     StatusParam addResponse = mstRoleService.addRole(requestWrapper.getRoleAddRequest());
                     return ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);

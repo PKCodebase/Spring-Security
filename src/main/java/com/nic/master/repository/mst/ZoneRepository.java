@@ -11,7 +11,7 @@ public interface ZoneRepository extends JpaRepository<Zone,String> {
 
     List<Zone> findByIsActive(Boolean isActive);
 
-    Optional<Zone> findByZoneCode(String zoneCode);
+    Optional<Zone> findByZoneCodeIgnoreCase(String zoneCode);
 
     boolean existsByZoneCodeIgnoreCase(String zoneCode);
 }

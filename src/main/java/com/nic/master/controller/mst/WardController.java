@@ -50,7 +50,7 @@ public class WardController {
             StatusParam  statusResponse = wardService.updateWardByGuid(zoneGuid, wardGuid, wardUpdateRequest);
             return ResponseBuilder.buildOk(statusResponse, statusResponse, httpServletRequest);
         } catch (Exception ex) {
-            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST, httpServletRequest.getRequestURI(), ex.getMessage());
+            return ResponseBuilder.buildError(HttpStatus.NOT_FOUND, httpServletRequest.getRequestURI(), ex.getMessage());
         }
     }
 

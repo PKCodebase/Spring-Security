@@ -12,10 +12,9 @@ import com.nic.master.response.colonyresponse.ColonyResponse;
 import com.nic.master.service.mstservice.ColonyService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
-
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
-import  org.slf4j.LoggerFactory;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -32,7 +31,8 @@ public class ColonyServiceImpl implements ColonyService {
     private final HttpServletRequest httpServletRequest;
     private final ModelMapper modelMapper;
 
-    public ColonyServiceImpl(ColonyRepository colonyRepository, WardRepository wardRepository, HttpServletRequest httpServletRequest, ModelMapper modelMapper) {
+    public ColonyServiceImpl(ColonyRepository colonyRepository, WardRepository wardRepository,
+                             HttpServletRequest httpServletRequest, ModelMapper modelMapper) {
         this.colonyRepository = colonyRepository;
         this.wardRepository = wardRepository;
         this.httpServletRequest = httpServletRequest;
@@ -41,133 +41,133 @@ public class ColonyServiceImpl implements ColonyService {
 
     @Override
     public List<SelectOptionParam> fetchColonyMaster() {
+        logger.info("Fetching active colonies for dropdown...");
         return colonyRepository.findByIsActive(true)
                 .stream()
-                .map(colony -> modelMapper.map(colony,SelectOptionParam.class))
+                .map(colony -> modelMapper.map(colony, SelectOptionParam.class))
                 .toList();
     }
-    
-	@Override
-	public SelectOptionParam fetchColonyMasterByCode(String colonyCode) {
-		return colonyRepository.findByColonyCode(colonyCode)
-				.map(colony-> new SelectOptionParam(
-				 colony.getColonyGuid(),
-				 colony.getColonyCode(),
-				 colony.getColonyNameEn()
-				 ))
-				.orElseThrow(()-> new RuntimeException("Colony not found with guid:"+colonyCode));
-	}
+
+    @Override
+    public SelectOptionParam fetchColonyMasterByCode(String colonyCode) {
+        logger.info("Fetching colony by code: {}", colonyCode);
+        return colonyRepository.findByColonyCodeIgnoreCase(colonyCode.trim())
+                .map(colony -> new SelectOptionParam(
+                        colony.getColonyGuid(),
+                        colony.getColonyCode(),
+                        colony.getColonyNameEn()
+                ))
+                .orElseThrow(() -> {
+                    logger.warn("Colony not found with code: {}", colonyCode);
+                    return new RuntimeException("Colony not found with guid:" + colonyCode);
+                });
+    }
 
     @Override
     @Transactional
     public StatusParam addColony(String wardGuid, ColonyAddRequest colonyAddRequest) {
-        logger.info("Adding Colony for wardGuid: {}", wardGuid);
+        logger.info("Adding colony under ward GUID: {}", wardGuid);
 
         try {
-            // Initialize status response
-            StatusParam  status = new StatusParam();
-
-            //Check if ward exists
-            Ward ward = wardRepository.findById(wardGuid).orElse(null);
+            Ward ward = wardRepository.findById(wardGuid.trim()).orElse(null);
             if (ward == null) {
+                logger.warn("Ward not found with GUID: {}", wardGuid);
                 return new StatusParam(false, "Ward not found with GUID: " + wardGuid);
             }
 
-            // Check if colony code already exists
-            if (colonyRepository.existsByColonyCodeIgnoreCase(colonyAddRequest.getColonyCode())) {
+            if (colonyRepository.existsByColonyCodeIgnoreCase(colonyAddRequest.getColonyCode().trim())) {
+                logger.warn("Duplicate colony code found: {}", colonyAddRequest.getColonyCode());
                 return new StatusParam(false, "Colony code already exists: " + colonyAddRequest.getColonyCode());
             }
 
-            // Map request to entity
             Colony colony = modelMapper.map(colonyAddRequest, Colony.class);
-
             colony.setColonyGuid(UUID.randomUUID().toString());
             colony.setCreatedDate(LocalDate.now());
             colony.setCreatedIpAddr(getClientIp());
             colony.setWard(ward);
             colony.setCreatedBy("SYSTEM");
 
-            //Save colony to database
             colonyRepository.save(colony);
             logger.info("Colony added successfully with GUID: {}", colony.getColonyGuid());
-           return new StatusParam(true, "Colony added successfully with GUID: " + colony.getColonyGuid());
-        } catch (Exception e) {
-            logger.error("Error while adding colony: {}", e.getMessage(), e);
-            throw new RuntimeException("Error while adding colony : ");
+            return new StatusParam(true, "Colony added successfully with GUID: " + colony.getColonyGuid());
+        }catch (IllegalArgumentException ex){
+            logger.error("Validation error while adding colony. WardGuid={}, Request={}", wardGuid, colonyAddRequest, ex);
+            throw new RuntimeException("Error while adding colony: " + ex.getMessage(), ex);
         }
-
+        catch (Exception e) {
+            logger.error("Error while adding colony. WardGuid={}, Request={}", wardGuid, colonyAddRequest, e);
+            throw new RuntimeException("Error while adding colony : " + e.getMessage(), e);
+        }
     }
 
-    //Fetching Colony By Guid
     @Override
     public ColonyResponse getColonyByGuid(String colonyGuid) {
-        logger.info("Fetching Colony By Guid:{}",colonyGuid);
-       return colonyRepository.findById(colonyGuid)
-               .map(colony -> modelMapper.map(colony, ColonyResponse.class))
-                .orElseThrow(() -> new RuntimeException("Colony not found with GUID: " + colonyGuid));
-
+        logger.info("Fetching colony by GUID: {}", colonyGuid);
+        return colonyRepository.findById(colonyGuid.trim())
+                .map(colony -> modelMapper.map(colony, ColonyResponse.class))
+                .orElseThrow(() -> {
+                    logger.warn("Colony not found with GUID: {}", colonyGuid);
+                    return new RuntimeException("Colony not found with GUID: " + colonyGuid);
+                });
     }
 
-    //Fetching All colonies
     @Override
     public List<ColonyResponse> getAllColonies() {
-        logger.info("Fetching All Colonies...");
+        logger.info("Fetching all colonies...");
         return colonyRepository.findAll()
                 .stream()
-                .map(colony ->  modelMapper.map(colony, ColonyResponse.class))
+                .map(colony -> modelMapper.map(colony, ColonyResponse.class))
                 .toList();
     }
 
-    //Update Colony
     @Override
     public StatusParam updateColonyByGuid(String wardGuid, String colonyGuid, ColonyUpdateRequest colonyUpdateRequest) {
-        logger.info("Updating colony with GUID: {}", colonyGuid);
-
+        logger.info("Updating colony with GUID: {} under ward GUID: {}", colonyGuid, wardGuid);
 
         try {
-
-            //Check if ward exists
-            Ward ward = wardRepository.findByWardGuid(wardGuid).orElse(null);
+            Ward ward = wardRepository.findByWardGuid(wardGuid.trim()).orElse(null);
             if (ward == null) {
+                logger.warn("Ward not found with GUID: {}", wardGuid);
                 return new StatusParam(false, "Ward not found with GUID: " + wardGuid);
             }
 
-            //Check if colony exists
-            Colony colony = colonyRepository.findById(colonyGuid).orElse(null);
+            Colony colony = colonyRepository.findById(colonyGuid.trim()).orElse(null);
             if (colony == null) {
-               return new StatusParam(false, "Colony not found with GUID: " + colonyGuid);
+                logger.warn("Colony not found with GUID: {}", colonyGuid);
+                return new StatusParam(false, "Colony not found with GUID: " + colonyGuid);
             }
 
-            // Check for duplicate colony code if it's being changed
             if (colonyUpdateRequest.getColonyCode() != null &&
                     !colonyUpdateRequest.getColonyCode().equalsIgnoreCase(colony.getColonyCode()) &&
                     colonyRepository.existsByColonyCodeIgnoreCase(colonyUpdateRequest.getColonyCode())) {
+                logger.warn("Duplicate colony code attempted in update: {}", colonyUpdateRequest.getColonyCode());
                 return new StatusParam(false, "Colony code already exists: " + colonyUpdateRequest.getColonyCode());
             }
 
-            modelMapper.map( colonyUpdateRequest,colony); // Map request to existing entity
+            modelMapper.map(colonyUpdateRequest, colony);
             colony.setModifiedIpAddr(getClientIp());
-
-            colony.setModifiedDate(LocalDate.now()); // Always update modified date
-            colony.setWard(ward); // Always reassign ward in case of association change
+            colony.setModifiedDate(LocalDate.now());
+            colony.setWard(ward);
             colony.setModifiedBy("SYSTEM");
 
-            // Save the updated colony
             colonyRepository.save(colony);
+            logger.info("Colony updated successfully with GUID: {}", colony.getColonyGuid());
             return new StatusParam(true, "Colony updated successfully with GUID: " + colony.getColonyGuid());
-        } catch (Exception e) {
-            logger.error("Error while updating colony: {}", e.getMessage(), e);
-            throw new RuntimeException("Error while updating colony : " );
+        }catch (IllegalArgumentException ex){
+            logger.error("Validation error while updating colony. WardGuid={}, ColonyGuid={}, Request={}", wardGuid, colonyGuid, colonyUpdateRequest, ex);
+            throw new RuntimeException("Error while updating colony: " + ex.getMessage(), ex);
         }
-
+        catch (Exception e) {
+            logger.error("Error while updating colony. WardGuid={}, ColonyGuid={}, Request={}", wardGuid, colonyGuid, colonyUpdateRequest, e);
+            throw new RuntimeException("Error while updating colony");
+        }
     }
 
-    private String getClientIp(){
+    private String getClientIp() {
         String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
         if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
             clientIp = httpServletRequest.getRemoteAddr();
         }
         return clientIp;
     }
-
 }

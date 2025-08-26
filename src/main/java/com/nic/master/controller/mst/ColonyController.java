@@ -53,7 +53,7 @@ public class ColonyController {
             StatusParam statusResponse = colonyService.updateColonyByGuid(wardGuid, colonyGuid, colonyUpdateRequest);
             return ResponseBuilder.buildOk(statusResponse, statusResponse, httpServletRequest);
         } catch (Exception ex) {
-            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST, httpServletRequest.getRequestURI(), ex.getMessage());
+            return ResponseBuilder.buildError(HttpStatus.NOT_FOUND, httpServletRequest.getRequestURI(), ex.getMessage());
         }
     }
 

@@ -51,7 +51,7 @@ public class DocumentController {
             StatusParam response = documentService.updateDocumentByGuid(documentGuid, documentUpdateRequest);
             return ResponseBuilder.buildOk(response, response, httpServletRequest);
         } catch (Exception ex) {
-            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST, httpServletRequest.getRequestURI(), ex.getMessage());
+            return ResponseBuilder.buildError(HttpStatus.NOT_FOUND, httpServletRequest.getRequestURI(), ex.getMessage());
         }
     }
 

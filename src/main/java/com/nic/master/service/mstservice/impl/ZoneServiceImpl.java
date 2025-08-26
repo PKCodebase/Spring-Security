@@ -1,6 +1,8 @@
 package com.nic.master.service.mstservice.impl;
 
 import com.nic.master.entity.mst.Zone;
+import com.nic.master.exception.IllegalArgumentException;
+import com.nic.master.exception.ResourceNotFoundException;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
 import com.nic.master.repository.mst.ZoneRepository;
@@ -12,7 +14,9 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,9 +26,7 @@ public class ZoneServiceImpl implements ZoneService {
     private static final Logger logger = LoggerFactory.getLogger(ZoneServiceImpl.class);
     private final ZoneRepository zoneRepository;
     private final ModelMapper modelMapper;
-
     private final HttpServletRequest httpServletRequest;
-
 
     public ZoneServiceImpl(ZoneRepository zoneRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest) {
         this.zoneRepository = zoneRepository;
@@ -32,91 +34,122 @@ public class ZoneServiceImpl implements ZoneService {
         this.httpServletRequest = httpServletRequest;
     }
 
-
     @Override
-    public List<SelectOptionParam> fetchZoneMaster(){
-        return zoneRepository.findByIsActive(true)
+    public List<SelectOptionParam> fetchZoneMaster() {
+        logger.info("Fetching all active zones...");
+        List<SelectOptionParam> zones = zoneRepository.findByIsActive(true)
                 .stream()
                 .map(zone -> modelMapper.map(zone, SelectOptionParam.class))
                 .toList();
+        logger.debug("Fetched {} active zones", zones.size());
+        return zones;
     }
 
     @Override
     public SelectOptionParam fetchZoneMasterByCode(String zoneCode) {
-        return zoneRepository.findByZoneCode(zoneCode)
-                .map(zone -> new SelectOptionParam(
-                        zone.getZoneGuid(),
-                        zone.getZoneCode(),
-                        zone.getZoneNameEn()
-                ))
-                .orElseThrow(() -> new RuntimeException("Zone Not found with:" + zoneCode));
+        logger.info("Fetching zone by code: {}", zoneCode);
+        return zoneRepository.findByZoneCodeIgnoreCase(zoneCode.trim())
+                .map(zone -> {
+                    logger.debug("Zone found for code {}: {}", zoneCode, zone.getZoneNameEn());
+                    return new SelectOptionParam(
+                            zone.getZoneGuid(),
+                            zone.getZoneCode(),
+                            zone.getZoneNameEn()
+                    );
+                })
+                .orElseThrow(() -> {
+                    logger.error("Zone not found with code: {}", zoneCode);
+                    return new ResourceNotFoundException("Zone Not found with: " + zoneCode);
+                });
     }
+
     @Override
     public StatusParam addZone(ZoneAddRequest zoneAddRequest) {
-        logger.info("Adding New Zone: {}", zoneAddRequest);
+        logger.info("Adding new zone with code: {}", zoneAddRequest.getZoneCode());
         try {
-            if (zoneRepository.existsByZoneCodeIgnoreCase(zoneAddRequest.getZoneCode())) {
-                logger.warn("Duplicate zone Code: {}", zoneAddRequest.getZoneCode());
+            if (zoneRepository.existsByZoneCodeIgnoreCase(zoneAddRequest.getZoneCode().trim())) {
+                logger.warn("Duplicate zone code detected: {}", zoneAddRequest.getZoneCode());
                 return new StatusParam(false, "Zone already exists with code : " + zoneAddRequest.getZoneCode());
             }
             Zone zone = modelMapper.map(zoneAddRequest, Zone.class);
             zone.setZoneGuid(UUID.randomUUID().toString());
-            zone.setCreatedDate(LocalDate.now());
+            zone.setCreatedDate(LocalDateTime.now());
             zone.setCreatedIpAddr(getClientIp());
             zone.setIsActive(true);
             zone.setCreatedBy("SYSTEM");
 
             zoneRepository.save(zone);
-            logger.info("Added Zone: {}", zoneAddRequest);
+            logger.info("Zone saved successfully with GUID: {}", zone.getZoneGuid());
             return new StatusParam(true, "Saved Successfully");
-        } catch (Exception ex) {
+        }catch (IllegalArgumentException ex) {
+            logger.error("Validation error while adding zone: {}", ex.getMessage(), ex);
+            throw new RuntimeException("Error while adding document : " + ex.getMessage(), ex);
+        }
+        catch (Exception ex) {
             logger.error("Error while adding zone: {}", ex.getMessage(), ex);
-            throw new RuntimeException("Error while adding document");
+            throw new RuntimeException("Error while adding document : ", ex);
         }
     }
 
-    //Get Zone By Guid
     @Override
     public Zone getZoneByGuid(String zoneGuid) {
-        logger.info("Fetching ward By Guid:{}", zoneGuid);
-        return zoneRepository.findById(zoneGuid)
-                .orElseThrow(() -> new RuntimeException("Zone not found with guid: " + zoneGuid));
+        logger.info("Fetching zone by GUID: {}", zoneGuid.trim());
+        return zoneRepository.findById(zoneGuid.trim())
+                .map(zone -> {
+                    logger.debug("Zone found: {} - {}", zone.getZoneGuid(), zone.getZoneNameEn());
+                    return zone;
+                })
+                .orElseThrow(() -> {
+                    logger.error("Zone not found with GUID: {}", zoneGuid);
+                    return new ResourceNotFoundException("Zone not found with guid: " + zoneGuid);
+                });
     }
 
     @Override
     public List<Zone> getAllZones() {
-        logger.info("Fetching All Zones....");
-        return zoneRepository.findAll();
+        logger.info("Fetching all zones...");
+        List<Zone> zones = zoneRepository.findAll();
+        logger.debug("Total zones fetched: {}", zones.size());
+        return zones;
     }
 
     @Override
     public StatusParam updateZoneByGuid(String guid, ZoneUpdateRequest zoneUpdateRequest) {
-        logger.info("Updating Zone with GUID: {}", guid);
+        logger.info("Updating zone with GUID: {}", guid);
         try {
-            // Fetch the existing zone by GUID
-            Zone zone = zoneRepository.findById(guid)
-                    .orElseThrow(() -> new RuntimeException("Zone not found with GUID: " + guid));
+            Zone zone = zoneRepository.findById(guid.trim())
+                    .orElseThrow(() -> {
+                        logger.error("Zone not found for update, GUID: {}", guid);
+                        return new ResourceNotFoundException("Zone not found with GUID: " + guid);
+                    });
 
-            // Check if the zone code is being updated and if it already exists
+            logger.debug("Current zone data before update: {}", zone);
+
             if (zoneUpdateRequest.getZoneCode() != null
                     && !zoneUpdateRequest.getZoneCode().equalsIgnoreCase(zone.getZoneCode())
                     && zoneRepository.existsByZoneCodeIgnoreCase(zoneUpdateRequest.getZoneCode())) {
+                logger.warn("Attempt to update zone code to duplicate value: {}", zoneUpdateRequest.getZoneCode());
                 return new StatusParam(false, "Zone code already exists: " + zoneUpdateRequest.getZoneCode());
             }
 
-            // Map only non-null fields from request to entity
             modelMapper.map(zoneUpdateRequest, zone);
-            zone.setModifiedDate(LocalDate.now());
+            zone.setModifiedDate(LocalDateTime.now());
             zone.setModifiedIpAddr(getClientIp());
             zone.setModifiedMacAddr(getClientIp());
             zone.setModifiedBy("SYSTEM");
 
             zoneRepository.save(zone);
             logger.info("Zone updated successfully for GUID: {}", guid);
+            logger.debug("Updated zone data: {}", zone);
+
             return new StatusParam(true, "Zone Updated Successfully");
-        } catch (Exception ex) {
-            logger.error("Error while Updating zone: {}", ex.getMessage(), ex);
-            throw new RuntimeException("Error while Updating zone");
+        }catch (IllegalArgumentException ex){
+            logger.error("Validation error while updating zone. GUID={}, Request={}", guid, zoneUpdateRequest, ex);
+            throw new RuntimeException("Error while updating zone: " + ex.getMessage(), ex);
+        }
+        catch (Exception ex) {
+            logger.error("Error while updating zone: {}", ex.getMessage(), ex);
+            throw new RuntimeException("Error while updating zone", ex);
         }
     }
 
@@ -126,12 +159,7 @@ public class ZoneServiceImpl implements ZoneService {
         if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
             clientIp = httpServletRequest.getRemoteAddr();
         }
+        logger.debug("Resolved client IP: {}", clientIp);
         return clientIp;
     }
-
 }
-
-
-
-
-

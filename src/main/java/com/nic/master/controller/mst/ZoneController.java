@@ -55,7 +55,7 @@ public class ZoneController {
             StatusParam response = zoneService.updateZoneByGuid(zoneGuid, zoneUpdateRequest);
             return ResponseBuilder.buildOk(response, response, httpServletRequest);
         } catch (Exception ex) {
-            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST, httpServletRequest.getRequestURI(), ex.getMessage());
+            return ResponseBuilder.buildError(HttpStatus.NOT_FOUND, httpServletRequest.getRequestURI(), ex.getMessage());
         }
     }
 

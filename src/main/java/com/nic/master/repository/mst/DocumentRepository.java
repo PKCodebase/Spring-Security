@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface DocumentRepository extends JpaRepository<DocumentType, String> {
 
-    Optional<DocumentType> findByDocumentCode(String documentCode);
+    Optional<DocumentType> findByDocumentCodeIgnoreCase(String documentCode);
 
     List<DocumentType> findByIsActive(Boolean isActive);
 

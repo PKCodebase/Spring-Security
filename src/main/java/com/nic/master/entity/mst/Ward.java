@@ -1,40 +1,95 @@
-package com.nic.master.response.wardresponse;
+package com.nic.master.entity.mst;
 
-public class WardResponse {
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.List;
 
-    private Long wardId;
+
+@Entity
+@Table(name = "ward", schema = "mst")
+public class Ward {
+
+    @Id
+    @Column(name = "ward_guid", length = 36, nullable = false)
     private String wardGuid;
+
+
+    @Column(name = "ward_id", nullable = false, unique = true,insertable = false,updatable = false)
+    private Long wardId;
+
+    @Column(name = "ward_code", length = 100, nullable = false, unique = true)
     private String wardCode;
+
+    @Column(name = "ward_name_en", nullable = false)
     private String wardNameEn;
+
+    @Column(name = "ward_name_hi")
     private String wardNameHi;
+
+    @Column(name = "ward_name_rl")
     private String wardNameRl;
+
+    @Column(name = "ward_description")
     private String wardDescription;
 
+    @Column(name = "org_unit_code", length = 36)
     private String orgUnitCode;
+
+    @Column(name = "created_by")
+//        @Column(name = "created_by", nullable = false)
     private String createdBy;
+
+    @Column(name = "created_date", nullable = false)
+    private LocalDate createdDate ;
+
+
+    @Column(name = "created_ip_addr")
     private String createdIpAddr;
+
+    @Column(name = "created_mac_addr")
     private String createdMacAddr;
+
+    @Column(name = "created_remarks")
     private String createdRemarks;
+
+    @Column(name = "created_uri")
     private String createdUri;
 
-    private  String modifiedBy;
-    private String   modifiedIpAddr;
-    private String  modifiedMacAddr;
-    private  String modifiedRemarks;
+    @Column(name = "modified_by")
+    private String modifiedBy;
+
+
+    @Column(name = "modified_date")
+    private LocalDate modifiedDate;
+
+    @Column(name = "modified_ip_addr")
+    private String modifiedIpAddr;
+
+    @Column(name = "modified_mac_addr")
+    private String modifiedMacAddr;
+
+    @Column(name = "modified_remarks")
+    private String modifiedRemarks;
+
+    @Column(name = "modified_uri")
     private String modifiedUri;
 
-    private Boolean isActive=true;
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
 
-    private String zoneGuid;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "zone_guid", nullable = false)
+    private Zone zone;
 
-    private String zoneNameEn;
+    @OneToMany(mappedBy = "ward", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<Colony> colonies;
 
-    public String getZoneNameEn() {
-        return zoneNameEn;
+    public String getWardGuid() {
+        return wardGuid;
     }
 
-    public void setZoneNameEn(String zoneNameEn) {
-        this.zoneNameEn = zoneNameEn;
+    public void setWardGuid(String wardGuid) {
+        this.wardGuid = wardGuid;
     }
 
     public Long getWardId() {
@@ -43,14 +98,6 @@ public class WardResponse {
 
     public void setWardId(Long wardId) {
         this.wardId = wardId;
-    }
-
-    public String getWardGuid() {
-        return wardGuid;
-    }
-
-    public void setWardGuid(String wardGuid) {
-        this.wardGuid = wardGuid;
     }
 
     public String getWardCode() {
@@ -109,6 +156,14 @@ public class WardResponse {
         this.createdBy = createdBy;
     }
 
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public String getCreatedIpAddr() {
         return createdIpAddr;
     }
@@ -141,28 +196,20 @@ public class WardResponse {
         this.createdUri = createdUri;
     }
 
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean active) {
-        isActive = active;
-    }
-
-    public String getZoneGuid() {
-        return zoneGuid;
-    }
-
-    public void setZoneGuid(String zoneGuid) {
-        this.zoneGuid = zoneGuid;
-    }
-
     public String getModifiedBy() {
         return modifiedBy;
     }
 
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy;
+    }
+
+    public LocalDate getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(LocalDate modifiedDate) {
+        this.modifiedDate = modifiedDate;
     }
 
     public String getModifiedIpAddr() {
@@ -195,5 +242,29 @@ public class WardResponse {
 
     public void setModifiedUri(String modifiedUri) {
         this.modifiedUri = modifiedUri;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean active) {
+        isActive = active;
+    }
+
+    public List<Colony> getColonies() {
+        return colonies;
+    }
+
+    public void setColonies(List<Colony> colonies) {
+        this.colonies = colonies;
+    }
+
+    public Zone getZone() {
+        return zone;
+    }
+
+    public void setZone(Zone zone) {
+        this.zone = zone;
     }
 }

@@ -38,7 +38,11 @@ public class ApiError {
 		this.errorMessage = errorMessage;
 	}
 
-	public Date getDatetime() {
+    public ApiError() {
+
+    }
+
+    public Date getDatetime() {
 		return datetime;
 	}
 

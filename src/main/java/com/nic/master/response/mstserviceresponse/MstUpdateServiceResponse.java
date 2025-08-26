@@ -15,7 +15,6 @@ public class MstUpdateServiceResponse {
     @NotBlank
     private String createdBy;
 
-
     @NotBlank
     private String createdIpAddr;
 

@@ -39,7 +39,7 @@ public class ZoneUpdateRequest {
 
 //    @NotNull(message = "Modified by cannot be null")
 //    @NotEmpty(message = "Modified by is required")
-    @Size(min = 2, max = 50, message = "Modified by must be between 2-50 characters")
+//    @Size(min = 2, max = 50, message = "Modified by must be between 2-50 characters")
     private String modifiedBy;
 
 //    @NotNull(message = "Modified IP address cannot be null")

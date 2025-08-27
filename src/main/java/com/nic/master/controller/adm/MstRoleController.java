@@ -111,7 +111,7 @@ public class MstRoleController {
 //    }
         @PostMapping("/action")
         public ResponseEntity<Object> handleRoleActions (
-                @RequestBody RoleRequestWrapper requestWrapper,
+                 @Valid @RequestBody RoleRequestWrapper requestWrapper,
                 HttpServletRequest httpServletRequest){
 
             switch (requestWrapper.getOperation().toUpperCase().trim()) {

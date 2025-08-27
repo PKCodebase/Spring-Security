@@ -1,5 +1,6 @@
 package com.nic.master.request.adm.rolerequest;
 
+import jakarta.validation.Valid;
 import lombok.Data;
 
 @Data
@@ -8,7 +9,11 @@ public class RoleRequestWrapper {
     private String operation;   // ADD, UPDATE, GETALL, GETBYCODE, GETBYGUID
     private String roleGuid;    // For getByGuid / update
     private String roleCode;    // For getByCode
+
+    @Valid
     private RoleAddRequest roleAddRequest;
+
+    @Valid
     private RoleUpdateRequest roleUpdateRequest;
 
 

@@ -70,7 +70,7 @@ public class MstModuleController {
 
 
     @PostMapping("/action")
-    public ResponseEntity<Object> handleModuleActions(@RequestBody ModuleRequestMapper moduleRequestMapper , HttpServletRequest httpServletRequest){
+    public ResponseEntity<Object> handleModuleActions(@Valid @RequestBody  ModuleRequestMapper moduleRequestMapper , HttpServletRequest httpServletRequest){
         switch (moduleRequestMapper.getOperation().toUpperCase().trim()){
             case "ADD" :
                 StatusParam addResponse = mstModuleService.addModule(moduleRequestMapper.getModuleAddRequest());

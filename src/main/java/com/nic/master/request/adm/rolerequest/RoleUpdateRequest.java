@@ -41,21 +41,21 @@ public class RoleUpdateRequest {
         this.roleCode = roleCode;
     }
 
-    public String getModifiedBy() {
-        return modifiedBy;
-    }
-
-    public void setModifiedBy(String modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
-
-    public String getModifiedIpAddr() {
-        return modifiedIpAddr;
-    }
-
-    public void setModifiedIpAddr(String modifiedIpAddr) {
-        this.modifiedIpAddr = modifiedIpAddr;
-    }
+//    public String getModifiedBy() {
+//        return modifiedBy;
+//    }
+//
+//    public void setModifiedBy(String modifiedBy) {
+//        this.modifiedBy = modifiedBy;
+//    }
+//
+//    public String getModifiedIpAddr() {
+//        return modifiedIpAddr;
+//    }
+//
+//    public void setModifiedIpAddr(String modifiedIpAddr) {
+//        this.modifiedIpAddr = modifiedIpAddr;
+//    }
 
     public String getModifiedRemarks() {
         return modifiedRemarks;

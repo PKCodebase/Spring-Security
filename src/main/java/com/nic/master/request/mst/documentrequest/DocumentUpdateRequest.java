@@ -29,7 +29,7 @@ public class DocumentUpdateRequest {
 //    @Size(min = 2, max = 50, message = "Modified by must be between 2-50 characters")
     private String modifiedBy;
 
-    @Pattern(regexp = "^(?:\\d{1,3}\\.){3}\\d{1,3}$", message = "Invalid IP address format")
+//    @Pattern(regexp = "^(?:\\d{1,3}\\.){3}\\d{1,3}$", message = "Invalid IP address format")
     private String modifiedIpAddr;
 
     @Size(max = 500, message = "Remarks cannot exceed 500 characters")

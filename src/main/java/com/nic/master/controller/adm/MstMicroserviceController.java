@@ -1,0 +1,99 @@
+package com.nic.master.controller.adm;
+
+import com.nic.master.param.StatusParam;
+import com.nic.master.request.adm.mstmicroservicerequest.MicroserviceAddRequest;
+import com.nic.master.request.adm.mstmicroservicerequest.MicroserviceRequestMapper;
+import com.nic.master.request.adm.mstmicroservicerequest.MicroserviceUpdateRequest;
+import com.nic.master.service.admservice.MstMicroserviceService;
+import com.nic.master.util.ResponseBuilder;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/microservice")
+public class MstMicroserviceController {
+
+    private final MstMicroserviceService mstMicroserviceService;
+
+
+    public MstMicroserviceController(MstMicroserviceService mstMicroserviceService) {
+        this.mstMicroserviceService = mstMicroserviceService;
+    }
+
+//    @PostMapping("/add")
+//    public ResponseEntity<Object> addMicroservice(@Valid @RequestBody MicroserviceAddRequest microserviceAddRequest, HttpServletRequest httpServletRequest){
+//        try{
+//            StatusParam response = mstMicroserviceService.addMicroservice(microserviceAddRequest);
+//            return ResponseBuilder.buildOk(response,response,httpServletRequest);
+//        }catch (Exception ex){
+//            return  ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(),ex.getMessage());
+//        }
+//    }
+//
+//    @GetMapping("/getAll")
+//    public ResponseEntity<Object> getAllMicroservices(HttpServletRequest httpServletRequest){
+//        try{
+//            return ResponseEntity.ok(mstMicroserviceService.getAllMicroservices());
+//        }catch (Exception ex){
+//            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(), ex.getMessage());
+//        }
+//    }
+//
+//        @GetMapping("/getByGuid/{microserviceGuid}")
+//    public ResponseEntity<Object> getMicroserviceByGuid(@PathVariable String microserviceGuid,HttpServletRequest httpServletRequest){
+//        try{
+//            return ResponseEntity.ok(mstMicroserviceService.getMicroserviceByGuid(microserviceGuid));
+//        }catch (Exception ex){
+//            return  ResponseBuilder.buildError(HttpStatus.NOT_FOUND,httpServletRequest.getRequestURI(), ex.getMessage());
+//        }
+//    }
+//
+//    @GetMapping("/getByCode/{microserviceCode}")
+//    public ResponseEntity<Object> getMicroserviceByCode(@PathVariable String microserviceCode,HttpServletRequest httpServletRequest){
+//        try{
+//            return ResponseEntity.ok(mstMicroserviceService.getMicroserviceByCode(microserviceCode));
+//        }catch (Exception ex){
+//            return  ResponseBuilder.buildError(HttpStatus.NOT_FOUND,httpServletRequest.getRequestURI(), ex.getMessage());
+//        }
+//    }
+//
+//    @PutMapping("/update/{microserviceGuid}")
+//    public ResponseEntity<Object> updateMicroservice(@Valid @PathVariable String microserviceGuid, @RequestBody MicroserviceUpdateRequest microserviceUpdateRequest,HttpServletRequest httpServletRequest){
+//        try {
+//            StatusParam response = mstMicroserviceService.updateMicroServiceByGuid(microserviceGuid,microserviceUpdateRequest);
+//            return ResponseBuilder.buildOk(response,response,httpServletRequest);
+//        }catch (Exception ex){
+//            return  ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(),ex.getMessage());
+//        }
+//    }
+
+
+    @PostMapping("/action")
+    public ResponseEntity<Object> handleMicroserviceAction(@Valid @RequestBody MicroserviceRequestMapper microserviceRequestMapper,HttpServletRequest httpServletRequest){
+        switch (microserviceRequestMapper.getOperation().toUpperCase().trim()){
+            case "ADD" :
+                StatusParam addResponse = mstMicroserviceService.addMicroservice(microserviceRequestMapper.getMicroserviceAddRequest());
+                return ResponseBuilder.buildOk(addResponse,addResponse,httpServletRequest);
+            case "GETALL" :
+                return ResponseEntity.ok(mstMicroserviceService.getAllMicroservices());
+            case "GETBYGUID" :
+                return  ResponseEntity.ok(mstMicroserviceService.getMicroserviceByGuid(microserviceRequestMapper.getMicroserviceGuid()));
+            case "GETBYCODE" :
+                return ResponseEntity.ok(mstMicroserviceService.getMicroserviceByCode(microserviceRequestMapper.getMicroserviceCode()));
+
+            case "UPDATE" :
+                StatusParam updateResponse = mstMicroserviceService.updateMicroServiceByGuid(microserviceRequestMapper.getMicroserviceGuid(), microserviceRequestMapper.getMicroserviceUpdateRequest());
+                return ResponseBuilder.buildOk(updateResponse,updateResponse,httpServletRequest);
+
+            default:
+                return ResponseBuilder.buildError(
+                        HttpStatus.BAD_REQUEST,
+                        httpServletRequest.getRequestURI(),
+                        "Invalid Operation : " + microserviceRequestMapper.getOperation()
+                );
+        }
+    }
+}

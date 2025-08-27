@@ -101,13 +101,22 @@ public class MstMicroserviceImpl implements MstMicroserviceService {
                         return new ResourceNotFoundException("Microservice not found with GUID : " + microserviceGuid);
                     });
 
-            if(microserviceUpdateRequest.getMicroserviceCode() != null
-            &&  !microserviceUpdateRequest.getMicroserviceCode().equalsIgnoreCase(mstMicroservice.getMicroserviceCode())){
-                mstMicroserviceRepository.existsByMicroserviceCodeIgnoreCase(mstMicroservice.getMicroserviceCode());
-                logger.warn("Microservice code already exist : " + microserviceUpdateRequest.getMicroserviceCode());
-                return new StatusParam(false,"Module code already exists : " +microserviceUpdateRequest.getMicroserviceCode());
+//            if(microserviceUpdateRequest.getMicroserviceCode() != null
+//            &&  !microserviceUpdateRequest.getMicroserviceCode().equalsIgnoreCase(mstMicroservice.getMicroserviceCode())){
+//                mstMicroserviceRepository.existsByMicroserviceCodeIgnoreCase(mstMicroservice.getMicroserviceCode());
+//                logger.warn("Microservice code already exist : " + microserviceUpdateRequest.getMicroserviceCode());
+//                return new StatusParam(false,"Microservice code already exists : " +microserviceUpdateRequest.getMicroserviceCode());
+//
+//            }
 
+            if (microserviceUpdateRequest.getMicroserviceCode() != null
+                    && !microserviceUpdateRequest.getMicroserviceCode().equalsIgnoreCase(mstMicroservice.getMicroserviceCode())
+                    && mstMicroserviceRepository.existsByMicroserviceCodeIgnoreCase(microserviceUpdateRequest.getMicroserviceCode())) {
+
+                logger.warn("Microservice code already exists : {}", microserviceUpdateRequest.getMicroserviceCode());
+                return new StatusParam(false, "Microservice code already exists : " + microserviceUpdateRequest.getMicroserviceCode());
             }
+
 
             modelMapper.map(microserviceUpdateRequest, mstMicroservice);
             mstMicroservice.setModifiedDate(LocalDateTime.now());

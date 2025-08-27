@@ -11,7 +11,7 @@ public class MstModuleUpdateRequest {
     private String moduleName;
 
     @Size(min = 4, max = 20, message = "Module code must be between 2-20 characters")
-    @Pattern(regexp = "^[A-Z\\d_-]+$", message = "Zone code: only uppercase letters, numbers, hyphens(-) and underscore(_) allowed")
+    @Pattern(regexp = "^[A-Z\\d_-]+$", message = "Module code: only uppercase letters, numbers, hyphens(-) and underscore(_) allowed")
     private String moduleCode;
 
     private String modifiedBy;

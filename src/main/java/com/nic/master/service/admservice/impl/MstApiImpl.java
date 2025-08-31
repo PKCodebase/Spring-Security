@@ -4,11 +4,13 @@ import com.nic.master.entity.adm.MstApi;
 import com.nic.master.entity.adm.MstMicroservice;
 import com.nic.master.entity.adm.MstUrlType;
 import com.nic.master.exception.ResourceNotFoundException;
+import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
 import com.nic.master.repository.adm.MstApiRepository;
 import com.nic.master.repository.adm.MstMicroserviceRepository;
 import com.nic.master.repository.adm.MstUrlRepository;
 import com.nic.master.request.adm.apiRequest.AddMstApiRequest;
+import com.nic.master.request.adm.apiRequest.UpdateMstApiRequest;
 import com.nic.master.response.mstapiresponse.MstApiResponse;
 import com.nic.master.service.admservice.MstApiService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -118,6 +120,62 @@ public class MstApiImpl implements MstApiService {
                     return response;
                 })
                 .toList();
+    }
+
+    @Override
+    public MstApiResponse getMstApiByGuid(String apiGuid) {
+        MstApi mstApi = mstApiRepository.findByApiGuid(apiGuid.trim())
+                .orElseThrow(() -> new ResourceNotFoundException("Api Guid not found : " + apiGuid));
+
+        // Convert Entity -> DTO
+        return modelMapper.map(mstApi, MstApiResponse.class);
+    }
+
+    @Override
+    public SelectOptionParam getMstApiByCode(String apiCode) {
+        return mstApiRepository.findByApiCodeIgnoreCase(apiCode.trim())
+                .map(mstApi ->{
+                    return new SelectOptionParam(
+                            mstApi.getApiGuid(),
+                            mstApi.getApiCode(),
+                            mstApi.getUrl()
+                    );
+                })
+                .orElseThrow(()->{
+                     return  new ResourceNotFoundException("Api Code not found with Code : " + apiCode);
+                });
+    }
+
+    @Override
+    public StatusParam updateMstApiByGuid(String apiGuid, UpdateMstApiRequest updateMstApiRequest) {
+        try {
+            MstApi mstApi = mstApiRepository.findByApiGuid(apiGuid)
+                    .orElseThrow(()-> {
+                        return new ResourceNotFoundException("Api Guid not found : " +apiGuid);
+                    });
+
+            if(updateMstApiRequest.getApiCode() != null
+            && !updateMstApiRequest.getApiCode().equalsIgnoreCase(mstApi.getApiCode())
+            && mstApiRepository.existsByApiCodeIgnoreCase(updateMstApiRequest.getApiCode())){
+                return new StatusParam(false,"Api Code already exists : " + updateMstApiRequest.getApiCode());
+            }
+            modelMapper.map(updateMstApiRequest,mstApi);
+            mstApi.setModifiedDate(LocalDateTime.now());
+            mstApi.setModifiedIpAddr(getClientIp());
+            mstApi.setModifiedBy("SYSTEM");
+
+            mstApiRepository.save(mstApi);
+            return new StatusParam(true,"Api updated Successfully :");
+        }  catch (ResourceNotFoundException e) {
+            // Known business exceptions → return failure response
+            logger.error("Business Exception while updating API: {}", e.getMessage());
+            return new StatusParam(false, e.getMessage());
+
+        } catch (Exception e) {
+            // Unknown/unexpected errors → log and rethrow OR return generic message
+            logger.error("Unexpected error while updating API with guid {}: {}", apiGuid, e.getMessage(), e);
+            throw new RuntimeException("Unable to update API due to internal error.");
+        }
     }
 
 

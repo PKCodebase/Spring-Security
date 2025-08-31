@@ -1,13 +1,18 @@
 package com.nic.master.repository.adm;
 
 import com.nic.master.entity.adm.MstApi;
+import com.nic.master.entity.adm.MstApiService;
 import com.nic.master.entity.adm.MstMicroservice;
 import com.nic.master.entity.adm.MstUrlType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface MstApiRepository extends JpaRepository<MstApi,String> {
 
     boolean existsByApiCodeIgnoreCase(String apiCode);
+
+    Optional<MstApi> findByApiCodeIgnoreCase(String apiCode);
 
     boolean existsByMicroserviceAndUrlType(MstMicroservice microservice, MstUrlType urlType);
 
@@ -15,4 +20,6 @@ public interface MstApiRepository extends JpaRepository<MstApi,String> {
     boolean existsByMicroservice(MstMicroservice mstMicroservice);
 
     boolean existsByUrlType(MstUrlType mstUrlType);
+
+    Optional<MstApi> findByApiGuid(String apiGuid);
 }

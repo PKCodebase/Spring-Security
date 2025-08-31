@@ -129,9 +129,9 @@ public class MstApiServicesImpl implements MstApiServices {
             logger.info("ApiService updated successfully, GUID={}", apiServiceGuid);
 
             return new StatusParam(true, "ApiService Updated successfully");
-        } catch (IllegalArgumentException ex) {
-            logger.error("Validation error while updating Api Service. GUID={}, Request={}", apiServiceGuid, updateApiServiceRequest, ex);
-            throw new RuntimeException("Error while updating Api Service: " + ex.getMessage(), ex);
+        } catch (ResourceNotFoundException e) {
+            logger.error("Validation error while updating Api Service. GUID={}, Request={}", apiServiceGuid, updateApiServiceRequest, e);
+            return  new StatusParam(false,e.getMessage());
         } catch (Exception ex) {
             logger.error("Unexpected error while updating Api Service. GUID={}, Request={}", apiServiceGuid, updateApiServiceRequest, ex);
             throw new RuntimeException("Error while updating Api Service: " + ex.getMessage(), ex);

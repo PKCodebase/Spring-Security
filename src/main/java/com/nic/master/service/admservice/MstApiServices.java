@@ -3,9 +3,8 @@ package com.nic.master.service.admservice;
 import com.nic.master.entity.adm.MstApiService;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.adm.apiservice.AddApiServiceRequest;
-import com.nic.master.request.adm.apiservice.UpdateApiServiceRequest;
-import jakarta.validation.Valid;
+import com.nic.master.request.adm.apiservicerequest.AddApiServiceRequest;
+import com.nic.master.request.adm.apiservicerequest.UpdateApiServiceRequest;
 
 import java.util.List;
 

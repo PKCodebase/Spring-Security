@@ -1,0 +1,15 @@
+package com.nic.master.service.admservice;
+
+import com.nic.master.entity.adm.MstUrlType;
+import com.nic.master.param.StatusParam;
+import com.nic.master.request.adm.msturlrequest.AddMstUrlRequest;
+import com.nic.master.response.msturlresponse.MstUrlResponse;
+
+import java.util.List;
+
+public interface MstUrlService {
+
+    StatusParam addMstUrl(AddMstUrlRequest addMstUrlRequest);
+
+    List<MstUrlResponse> getAllUrl();
+}

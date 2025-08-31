@@ -1,4 +1,4 @@
-package com.nic.master.request.adm.apiservice;
+package com.nic.master.request.adm.apiservicerequest;
 
 import jakarta.validation.constraints.Size;
 import lombok.Data;

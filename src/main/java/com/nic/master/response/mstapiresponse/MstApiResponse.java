@@ -1,80 +1,63 @@
-package com.nic.master.entity.adm;
+package com.nic.master.response.mstapiresponse;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.nic.master.entity.adm.MstMicroservice;
+import com.nic.master.entity.adm.MstUrlType;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-@Entity
-@Table(name = "mst_api", schema = "adm",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "mst_api_api_code_uk", columnNames = "api_code"),
-                @UniqueConstraint(name = "mst_api_api_id_uk", columnNames = "api_id"),
-                @UniqueConstraint(name = "mst_api_api_uk", columnNames = {"microservice_guid", "url_type_guid"})
-        })
-public class MstApi {
+@Data
+public class MstApiResponse {
 
-    @Id
-    @Column(name = "api_guid", nullable = false, length = 36)
     private String apiGuid;
 
-    @Column(name = "api_id", nullable = false,insertable = false,updatable = false)
     private Long apiId;
 
-    @Column(name = "api_code", nullable = false)
     private String apiCode;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "microservice_guid", referencedColumnName = "microservice_guid",
-            foreignKey = @ForeignKey(name = "mst_api_microservice_guid_fk"))
-//    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private MstMicroservice microservice;
+//    private MstMicroservice microservice;
+//
+//    private MstUrlType urlType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "url_type_guid", referencedColumnName = "url_type_guid",
-            foreignKey = @ForeignKey(name = "mst_api_url_type_guid_fk"))
-//    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private MstUrlType urlType;
-
-//    @Column(name = "url_type_guid")
-//     private MstUrlType urlType;
-
-    @Column(name = "url", nullable = false)
     private String url;
 
-    @Type(JsonType.class)
-    @Column(name = "sub_url_json", columnDefinition = "json")
     private Map<String, Object> subUrlJson;
 
-    @Column(name = "created_by", nullable = false)
+
     private String createdBy;
 
-    @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
 
-    @Column(name = "created_ip_addr", nullable = false)
+
     private String createdIpAddr;
 
-    @Column(name = "created_remarks")
+
     private String createdRemarks;
 
-    @Column(name = "modified_by")
+
     private String modifiedBy;
 
-    @Column(name = "modified_date")
+
     private LocalDateTime modifiedDate;
 
-    @Column(name = "modified_ip_addr")
     private String modifiedIpAddr;
 
-    @Column(name = "modified_remarks")
     private String modifiedRemarks;
 
-    @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
+
+    private String microserviceGuid;
+
+    private String microserviceName;
+
+    private String urlTypeGuid;
+
+    private String urlTypeName;
+
 
     public String getApiGuid() {
         return apiGuid;
@@ -98,22 +81,6 @@ public class MstApi {
 
     public void setApiCode(String apiCode) {
         this.apiCode = apiCode;
-    }
-
-    public MstMicroservice getMicroservice() {
-        return microservice;
-    }
-
-    public void setMicroservice(MstMicroservice microservice) {
-        this.microservice = microservice;
-    }
-
-    public MstUrlType getUrlType() {
-        return urlType;
-    }
-
-    public void setUrlType(MstUrlType urlType) {
-        this.urlType = urlType;
     }
 
     public String getUrl() {
@@ -202,5 +169,37 @@ public class MstApi {
 
     public void setActive(Boolean active) {
         isActive = active;
+    }
+
+    public String getMicroserviceGuid() {
+        return microserviceGuid;
+    }
+
+    public void setMicroserviceGuid(String microserviceGuid) {
+        this.microserviceGuid = microserviceGuid;
+    }
+
+    public String getMicroserviceName() {
+        return microserviceName;
+    }
+
+    public void setMicroserviceName(String microserviceName) {
+        this.microserviceName = microserviceName;
+    }
+
+    public String getUrlTypeGuid() {
+        return urlTypeGuid;
+    }
+
+    public void setUrlTypeGuid(String urlTypeGuid) {
+        this.urlTypeGuid = urlTypeGuid;
+    }
+
+    public String getUrlTypeName() {
+        return urlTypeName;
+    }
+
+    public void setUrlTypeName(String urlTypeName) {
+        this.urlTypeName = urlTypeName;
     }
 }

@@ -1,10 +1,7 @@
 package com.nic.master.controller.adm;
 
-import com.nic.master.entity.adm.MstApiService;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.adm.apiservice.AddApiServiceRequest;
-import com.nic.master.request.adm.apiservice.ApiServiceRequestMapper;
-import com.nic.master.request.adm.apiservice.UpdateApiServiceRequest;
+import com.nic.master.request.adm.apiservicerequest.ApiServiceRequestMapper;
 import com.nic.master.service.admservice.MstApiServices;
 import com.nic.master.util.ResponseBuilder;
 import org.springframework.web.bind.annotation.*;

@@ -5,9 +5,8 @@ import com.nic.master.exception.ResourceNotFoundException;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
 import com.nic.master.repository.adm.MstApiServiceRepository;
-import com.nic.master.repository.adm.MstMicroserviceRepository;
-import com.nic.master.request.adm.apiservice.AddApiServiceRequest;
-import com.nic.master.request.adm.apiservice.UpdateApiServiceRequest;
+import com.nic.master.request.adm.apiservicerequest.AddApiServiceRequest;
+import com.nic.master.request.adm.apiservicerequest.UpdateApiServiceRequest;
 import com.nic.master.service.admservice.MstApiServices;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
@@ -53,21 +52,21 @@ public class MstApiServicesImpl implements MstApiServices {
             mstApiService.setIsActive(true);
 
             mstApiServiceRepository.save(mstApiService);
-            logger.info("✅ ApiService Added successfully, GUID={}", mstApiService.getApiServiceGuid());
+            logger.info("ApiService Added successfully, GUID={}", mstApiService.getApiServiceGuid());
 
             return new StatusParam(true, "ApiService Added Successfully");
         } catch (IllegalArgumentException ex) {
-            logger.error("⚠️ Validation error while adding ApiService. Request={}", addApiServiceRequest, ex);
+            logger.error("Validation error while adding ApiService. Request={}", addApiServiceRequest, ex);
             throw new RuntimeException("Error while adding ApiService : " + ex.getMessage(), ex);
         } catch (Exception ex) {
-            logger.error("🔥 Unexpected error while adding ApiService. Request={}", addApiServiceRequest, ex);
+            logger.error("Unexpected error while adding ApiService. Request={}", addApiServiceRequest, ex);
             throw new RuntimeException("Error while adding ApiService : " + ex.getMessage(), ex);
         }
     }
 
     @Override
     public List<MstApiService> getAllApiServices() {
-        logger.info("➡️ Entering getAllApiServices()");
+        logger.info("Entering getAllApiServices()");
         List<MstApiService> services = mstApiServiceRepository.findAll();
         logger.info("Fetched {} ApiServices", services.size());
         return services;

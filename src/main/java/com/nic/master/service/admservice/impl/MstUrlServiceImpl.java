@@ -1,10 +1,12 @@
 package com.nic.master.service.admservice.impl;
 
 import com.nic.master.entity.adm.MstUrlType;
+import com.nic.master.exception.ResourceNotFoundException;
+import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
 import com.nic.master.repository.adm.MstUrlRepository;
 import com.nic.master.request.adm.msturlrequest.AddMstUrlRequest;
-import com.nic.master.response.mstapiresponse.MstApiResponse;
+import com.nic.master.request.adm.msturlrequest.UpdateMstUrlRequest;
 import com.nic.master.response.msturlresponse.MstUrlResponse;
 import com.nic.master.service.admservice.MstUrlService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class MstUrlServiceImpl implements MstUrlService {
@@ -41,7 +44,6 @@ public class MstUrlServiceImpl implements MstUrlService {
             mstUrlType.setCreatedDate(LocalDateTime.now());
             mstUrlType.setCreatedIpAddr(getClientIp());
             mstUrlType.setCreatedBy("SYSTEM");
-            mstUrlType.setIsActive(true);
             mstUrlRepository.save(mstUrlType);
             return new StatusParam(true,"UrlType Added Successfully");
         }catch(Exception ex){
@@ -51,11 +53,68 @@ public class MstUrlServiceImpl implements MstUrlService {
 
     @Override
     public List<MstUrlResponse> getAllUrl() {
-        return mstUrlRepository.findAll()
-                .stream()
-                .map(urlType -> modelMapper.map(urlType, MstUrlResponse.class))
-                .toList();
+        List<MstUrlType> mstUrlTypes = mstUrlRepository.findAll();
+
+        return mstUrlTypes.stream()
+                .map(mstUrl -> modelMapper.map(mstUrl, MstUrlResponse.class))
+                .collect(Collectors.toList());
     }
+
+
+    @Override
+    public MstUrlResponse getApiUrlByGuid(String urlGuid){
+        MstUrlType mstUrlType = mstUrlRepository.findByUrlTypeGuid(urlGuid.trim())
+                .orElseThrow(()-> new ResourceNotFoundException("Url Guid not found : "+ urlGuid));
+        return modelMapper.map(mstUrlType, MstUrlResponse.class);
+
+    }
+
+    @Override
+    public SelectOptionParam getApiUrlByCode(String urlCode) {
+        return mstUrlRepository.findByUrlTypeCodeIgnoreCase(urlCode.trim())
+                .map(mstUrlType -> {
+                    return new SelectOptionParam(
+                            mstUrlType.getUrlTypeGuid(),
+                            mstUrlType.getUrlTypeCode(),
+                            mstUrlType.getUrlTypeName()
+                    );
+                })
+                .orElseThrow(()->{
+                    return new ResourceNotFoundException("Ap not found with guid :" + urlCode);
+                });
+    }
+    @Override
+    public StatusParam updateMstUrlByGuid(String urlGuid, UpdateMstUrlRequest updateMstUrlRequest) {
+        try {
+            MstUrlType mstUrlType = mstUrlRepository.findByUrlTypeGuid(urlGuid)
+                    .orElseThrow(() -> new ResourceNotFoundException("Url Guid not found: " + urlGuid));
+
+            // Check duplicate UrlTypeCode
+            if (updateMstUrlRequest.getUrlTypeCode() != null
+                    && !updateMstUrlRequest.getUrlTypeCode().equalsIgnoreCase(mstUrlType.getUrlTypeCode())
+                    && mstUrlRepository.existsByUrlTypeCodeIgnoreCase(updateMstUrlRequest.getUrlTypeCode())) {
+                return new StatusParam(false, "Url Code already exists: " + updateMstUrlRequest.getUrlTypeCode());
+            }
+
+            // Map updated values
+            modelMapper.map(updateMstUrlRequest, mstUrlType);
+            mstUrlType.setModifiedBy("SYSTEM");
+            mstUrlType.setModifiedDate(LocalDateTime.now());
+            mstUrlType.setModifiedIpAddr(getClientIp());
+
+            mstUrlRepository.save(mstUrlType);
+
+            return new StatusParam(true, "Url updated successfully.");
+
+        } catch (ResourceNotFoundException e) {
+            return new StatusParam(false, e.getMessage());
+        } catch (Exception e) {
+            // Log full stack trace for debugging
+            // Return real error message instead of generic one
+            return new StatusParam(false, "Failed to update Url: " + e.getMessage());
+        }
+    }
+
 
     private String getClientIp() {
         String clientIp = httpServletRequest.getHeader("X-Forwarded-For");

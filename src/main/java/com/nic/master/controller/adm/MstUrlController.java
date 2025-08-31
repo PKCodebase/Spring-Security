@@ -2,9 +2,11 @@ package com.nic.master.controller.adm;
 
 import com.nic.master.param.StatusParam;
 import com.nic.master.request.adm.msturlrequest.AddMstUrlRequest;
+import com.nic.master.request.adm.msturlrequest.UpdateMstUrlRequest;
 import com.nic.master.service.admservice.MstUrlService;
 import com.nic.master.util.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,34 @@ public class MstUrlController {
     public ResponseEntity<Object> getAllUrl(HttpServletRequest httpServletRequest){
         try{
             return ResponseEntity.ok(mstUrlService.getAllUrl());
+        }catch (Exception ex){
+            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(), ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getByGuid/{urlGuid}")
+    public ResponseEntity<Object> getUrlByGuid(@PathVariable String urlGuid,HttpServletRequest httpServletRequest){
+        try {
+            return  ResponseEntity.ok(mstUrlService.getApiUrlByGuid(urlGuid));
+        }catch (Exception ex){
+            return ResponseBuilder.buildError(HttpStatus.NOT_FOUND,httpServletRequest.getRequestURI(),ex.getMessage());
+        }
+    }
+
+    @GetMapping("/getByCode/{urlCode}")
+    public ResponseEntity<Object> getUrlByCode(@PathVariable String urlCode,HttpServletRequest httpServletRequest){
+        try{
+            return ResponseEntity.ok(mstUrlService.getApiUrlByCode(urlCode));
+        }catch (Exception ex){
+            return ResponseBuilder.buildError(HttpStatus.NOT_FOUND,httpServletRequest.getRequestURI(), ex.getMessage());
+        }
+    }
+
+    @PutMapping("/update/{urlGuid}")
+    public  ResponseEntity<Object> updateByUrlGuid(@PathVariable String urlGuid, @Valid @RequestBody UpdateMstUrlRequest updateMstUrlRequest,HttpServletRequest httpServletRequest){
+        try{
+            StatusParam updateResponse = mstUrlService.updateMstUrlByGuid(urlGuid,updateMstUrlRequest);
+            return ResponseBuilder.buildOk(updateResponse,updateResponse,httpServletRequest);
         }catch (Exception ex){
             return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(), ex.getMessage());
         }

@@ -19,6 +19,26 @@ public class AddMstApiRequest {
 
     private  String createRemarks;
 
+    private String microserviceGuid;
+
+    private  String  urlTypeGuid;
+
+    public String getMicroserviceGuid() {
+        return microserviceGuid;
+    }
+
+    public void setMicroserviceGuid(String microserviceGuid) {
+        this.microserviceGuid = microserviceGuid;
+    }
+
+    public String getUrlTypeGuid() {
+        return urlTypeGuid;
+    }
+
+    public void setUrlTypeGuid(String urlTypeGuid) {
+        this.urlTypeGuid = urlTypeGuid;
+    }
+
     public String getApiCode() {
         return apiCode;
     }

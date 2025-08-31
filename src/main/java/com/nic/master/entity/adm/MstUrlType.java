@@ -48,7 +48,7 @@ public class MstUrlType {
     private String modifiedRemarks;
 
     @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
+    private Boolean isActive = true;
 
     public String getUrlTypeGuid() {
         return urlTypeGuid;
@@ -150,7 +150,7 @@ public class MstUrlType {
         return isActive;
     }
 
-    public void setIsActive(Boolean active) {
-        isActive = active;
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 }

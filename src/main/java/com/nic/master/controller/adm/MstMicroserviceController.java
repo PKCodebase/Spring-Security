@@ -75,9 +75,20 @@ public class MstMicroserviceController {
 )
 public ResponseEntity<Object> handleMicroserviceAction(
         @Valid @RequestBody(required = false) MicroserviceRequestMapper microserviceRequestMapper,
+        @RequestParam(value = "operation",required = false) String operation,
+        @RequestParam(value = "microserviceGuid",required = false) String microserviceGuid,
+        @RequestParam(value = "microserviceCode",required = false) String microserviceCode,
         HttpServletRequest httpServletRequest) {
 
-    if (microserviceRequestMapper == null || microserviceRequestMapper.getOperation() == null) {
+        String microserviceOperation = null;
+        if(microserviceRequestMapper != null && microserviceRequestMapper.getOperation() != null){
+            microserviceOperation = microserviceRequestMapper.getOperation();
+        } else if (operation != null) {
+            microserviceOperation = operation;
+
+        }
+
+    if (microserviceOperation == null) {
         return ResponseBuilder.buildError(
                 HttpStatus.BAD_REQUEST,
                 httpServletRequest.getRequestURI(),
@@ -85,24 +96,25 @@ public ResponseEntity<Object> handleMicroserviceAction(
         );
     }
 
-    return switch (microserviceRequestMapper.getOperation().toUpperCase().trim()) {
+    return switch (microserviceOperation.toUpperCase().trim()) {
         case "ADD" -> {
-            StatusParam addResponse =
-                    mstMicroserviceService.addMicroservice(microserviceRequestMapper.getMicroserviceAddRequest());
+            StatusParam addResponse = null;
+            if(microserviceRequestMapper != null) {
+                addResponse = mstMicroserviceService.addMicroservice(microserviceRequestMapper.getMicroserviceAddRequest());
+            }
             yield ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);
         }
         case "GETALL" -> ResponseEntity.ok(mstMicroserviceService.getAllMicroservices());
-        case "GETBYGUID" -> ResponseEntity.ok(
-                mstMicroserviceService.getMicroserviceByGuid(microserviceRequestMapper.getMicroserviceGuid())
-        );
-        case "GETBYCODE" -> ResponseEntity.ok(
-                mstMicroserviceService.getMicroserviceByCode(microserviceRequestMapper.getMicroserviceCode())
-        );
+        case "GETBYGUID" -> ResponseEntity.ok(mstMicroserviceService.getMicroserviceByGuid(microserviceGuid));
+        case "GETBYCODE" -> ResponseEntity.ok(mstMicroserviceService.getMicroserviceByCode(microserviceCode));
         case "UPDATE" -> {
-            StatusParam updateResponse = mstMicroserviceService.updateMicroServiceByGuid(
-                    microserviceRequestMapper.getMicroserviceGuid(),
-                    microserviceRequestMapper.getMicroserviceUpdateRequest()
-            );
+            StatusParam updateResponse = null;
+            if(microserviceRequestMapper != null) {
+                updateResponse = mstMicroserviceService.updateMicroServiceByGuid(
+                        microserviceRequestMapper.getMicroserviceGuid(),
+                        microserviceRequestMapper.getMicroserviceUpdateRequest()
+                );
+            }
             yield ResponseBuilder.buildOk(updateResponse, updateResponse, httpServletRequest);
         }
         default -> ResponseBuilder.buildError(

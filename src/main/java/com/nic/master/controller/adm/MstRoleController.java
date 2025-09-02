@@ -109,39 +109,61 @@ public class MstRoleController {
 //                    ex.getMessage());
 //        }
 //    }
-        @PostMapping("/action")
-        public ResponseEntity<Object> handleRoleActions (
-                 @Valid @RequestBody RoleRequestWrapper requestWrapper,
-                HttpServletRequest httpServletRequest){
+@RequestMapping(
+        value = "/action",
+        method = {RequestMethod.GET, RequestMethod.POST}
+)
+public ResponseEntity<Object> handleRoleActions(
+        @Valid @RequestBody(required = false) RoleRequestWrapper requestWrapper,
+        @RequestParam(value = "operation", required = false) String operation,
+        @RequestParam(value = "roleCode", required = false) String roleCode,
+        @RequestParam(value = "roleGuid", required = false) String roleGuid,
+        HttpServletRequest httpServletRequest) {
 
-            switch (requestWrapper.getOperation().toUpperCase().trim()) {
-                case "ADD":
-                    StatusParam addResponse = mstRoleService.addRole(requestWrapper.getRoleAddRequest());
-                    return ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);
+    String roleOperation = null;
 
-                case "GETALL":
-                    return ResponseEntity.ok(mstRoleService.getAllRoles());
+    if (requestWrapper != null && requestWrapper.getOperation() != null) {
+        roleOperation = requestWrapper.getOperation();
+    } else if (operation != null) {
+        roleOperation = operation;
+    }
 
-                case "GETBYCODE":
-                    return ResponseEntity.ok(mstRoleService.getRoleByCode(requestWrapper.getRoleCode()));
+    if (roleOperation == null) {
+        return ResponseBuilder.buildError(
+                HttpStatus.BAD_REQUEST,
+                httpServletRequest.getRequestURI(),
+                "Operation is required"
+        );
+    }
 
-                case "GETBYGUID":
-                    return ResponseEntity.ok(mstRoleService.getRoleByGuid(requestWrapper.getRoleGuid()));
-
-                case "UPDATE":
-                    StatusParam updateResponse = mstRoleService.updateRoleByGuid(
-                            requestWrapper.getRoleGuid(),
-                            requestWrapper.getRoleUpdateRequest()
-                    );
-                    return ResponseBuilder.buildOk(updateResponse, updateResponse, httpServletRequest);
-
-                default:
-                    return ResponseBuilder.buildError(
-                            HttpStatus.BAD_REQUEST,
-                            httpServletRequest.getRequestURI(),
-                            "Invalid operation: " + requestWrapper.getOperation()
-                    );
+    return switch (roleOperation.toUpperCase().trim()) {
+        case "ADD" -> {
+            StatusParam addResponse = null;
+            if (requestWrapper != null) {
+                addResponse = mstRoleService.addRole(requestWrapper.getRoleAddRequest());
             }
+            yield ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);
         }
+        case "GETALL" -> ResponseEntity.ok(mstRoleService.getAllRoles());
+        case "GETBYCODE" -> ResponseEntity.ok(mstRoleService.getRoleByCode(roleCode));
+        case "GETBYGUID" -> ResponseEntity.ok(mstRoleService.getRoleByGuid(roleGuid));
+        case "UPDATE" -> {
+            StatusParam updateResponse = null;
+            if (requestWrapper != null) {
+                updateResponse = mstRoleService.updateRoleByGuid(
+                        requestWrapper.getRoleGuid(),
+                        requestWrapper.getRoleUpdateRequest()
+                );
+            }
+            yield ResponseBuilder.buildOk(updateResponse, updateResponse, httpServletRequest);
+        }
+        default -> ResponseBuilder.buildError(
+                HttpStatus.BAD_REQUEST,
+                httpServletRequest.getRequestURI(),
+                "Invalid operation: " + roleOperation
+        );
+    };
+}
+
 
 }

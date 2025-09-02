@@ -69,22 +69,43 @@ public class MstUrlController {
 //        }
 //    }
 
-    @PostMapping("/action")
-    public ResponseEntity<Object> handleMstUrlAction(@Valid @RequestBody MstUrlRequestMapper mstUrlRequestMapper,HttpServletRequest httpServletRequest){
-        switch (mstUrlRequestMapper.getOperation().toUpperCase().trim()){
-            case "ADD" :
+    @RequestMapping(
+            value = "/action",
+            method = {RequestMethod.GET, RequestMethod.POST}
+    )
+    public ResponseEntity<Object> handleMstUrlAction(
+            @Valid @RequestBody(required = false) MstUrlRequestMapper mstUrlRequestMapper,
+            HttpServletRequest httpServletRequest) {
+
+        if (mstUrlRequestMapper == null || mstUrlRequestMapper.getOperation() == null) {
+            return ResponseBuilder.buildError(
+                    HttpStatus.BAD_REQUEST,
+                    httpServletRequest.getRequestURI(),
+                    "Operation is required"
+            );
+        }
+
+        switch (mstUrlRequestMapper.getOperation().toUpperCase().trim()) {
+            case "ADD":
                 StatusParam addResponse = mstUrlService.addMstUrl(mstUrlRequestMapper.getAddMstUrlRequest());
-                return ResponseBuilder.buildOk(addResponse,addResponse,httpServletRequest);
-            case "GETALL" :
+                return ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);
+
+            case "GETALL":
                 return ResponseEntity.ok(mstUrlService.getAllUrl());
+
             case "GETBYCODE":
                 return ResponseEntity.ok(mstUrlService.getApiUrlByCode(mstUrlRequestMapper.getUrlTypeCode()));
 
             case "GETBYGUID":
                 return ResponseEntity.ok(mstUrlService.getApiUrlByGuid(mstUrlRequestMapper.getUrlTypeGuid()));
-            case "UPDATE" :
-                StatusParam updateResponse = mstUrlService.updateMstUrlByGuid(mstUrlRequestMapper.getUrlTypeGuid(),mstUrlRequestMapper.getUpdateMstUrlRequest());
-                return ResponseBuilder.buildOk(updateResponse,updateResponse,httpServletRequest);
+
+            case "UPDATE":
+                StatusParam updateResponse = mstUrlService.updateMstUrlByGuid(
+                        mstUrlRequestMapper.getUrlTypeGuid(),
+                        mstUrlRequestMapper.getUpdateMstUrlRequest()
+                );
+                return ResponseBuilder.buildOk(updateResponse, updateResponse, httpServletRequest);
+
             default:
                 return ResponseBuilder.buildError(
                         HttpStatus.BAD_REQUEST,
@@ -93,4 +114,5 @@ public class MstUrlController {
                 );
         }
     }
+
 }

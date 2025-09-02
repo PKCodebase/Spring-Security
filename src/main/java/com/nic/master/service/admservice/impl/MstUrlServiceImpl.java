@@ -48,7 +48,8 @@ public class MstUrlServiceImpl implements MstUrlService {
             mstUrlType.setCreatedBy("SYSTEM");
             mstUrlRepository.save(mstUrlType);
             return new StatusParam(true,"UrlType Added Successfully");
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             throw  new RuntimeException("Error while adding MstUrl :");
         }
     }
@@ -70,6 +71,7 @@ public class MstUrlServiceImpl implements MstUrlService {
         return modelMapper.map(mstUrlType, MstUrlResponse.class);
 
     }
+
 
     @Override
     public SelectOptionParam getApiUrlByCode(String urlCode) {

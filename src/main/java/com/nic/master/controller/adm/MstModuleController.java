@@ -69,23 +69,68 @@ public class MstModuleController {
 //    }
 
 
-    @PostMapping("/action")
-    public ResponseEntity<Object> handleModuleActions(@Valid @RequestBody  ModuleRequestMapper moduleRequestMapper , HttpServletRequest httpServletRequest){
-        switch (moduleRequestMapper.getOperation().toUpperCase().trim()){
-            case "ADD" :
-                StatusParam addResponse = mstModuleService.addModule(moduleRequestMapper.getModuleAddRequest());
-                return  ResponseBuilder.buildOk(addResponse,addResponse,httpServletRequest);
-            case "GETALL":
-                return  ResponseEntity.ok(mstModuleService.getAllModules());
-            case "GETBYCODE":
-                return ResponseEntity.ok(mstModuleService.getModuleByCode(moduleRequestMapper.getModuleCode()));
-            case "GETBYGUID":
-                return ResponseEntity.ok(mstModuleService.getModuleByGuid(moduleRequestMapper.getModuleGuid()));
-            case "UPDATE":
-                StatusParam updateResponse = mstModuleService.updateModuleByGuid(moduleRequestMapper.getModuleGuid(), moduleRequestMapper.getModuleUpdateRequest());
-                return  ResponseBuilder.buildOk(updateResponse,updateResponse,httpServletRequest);
-            default:
-                return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(),"Invalid Operation " + moduleRequestMapper.getOperation());
+    @RequestMapping(
+            value = "/action",
+            method = {RequestMethod.GET, RequestMethod.POST}
+    )
+    public ResponseEntity<Object> handleModuleActions(
+            @Valid @RequestBody(required = false) ModuleRequestMapper moduleRequestMapper,
+            @RequestParam(value = "operation",required=false) String operation,
+            @RequestParam(value = "moduleCode",required = false) String moduleCode,
+            @RequestParam(value = "moduleGuid" , required = false) String moduleGuid,
+            HttpServletRequest httpServletRequest) {
+
+        String moduleOperation = null;
+
+        if (moduleRequestMapper != null && moduleRequestMapper.getOperation() !=null) {
+           moduleOperation  = moduleRequestMapper.getOperation();
+        } else if (operation != null) {
+            moduleOperation = operation;
         }
+
+        if(moduleOperation == null){
+            return ResponseBuilder.buildError(
+                    HttpStatus.BAD_REQUEST,
+                    httpServletRequest.getRequestURI(),
+                    "Operation is required"
+            );
+        }
+
+       return  switch (moduleOperation.toUpperCase().trim()) {
+           case "ADD" ->{
+               StatusParam addResponse = null;
+
+               if (moduleRequestMapper != null) {
+                   addResponse = mstModuleService.addModule(moduleRequestMapper.getModuleAddRequest());
+               }
+               yield ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);
+       }
+
+            case "GETALL" -> ResponseEntity.ok(mstModuleService.getAllModules());
+
+            case "GETBYCODE" -> ResponseEntity.ok(mstModuleService.getModuleByCode(moduleCode));
+
+            case "GETBYGUID" -> ResponseEntity.ok(mstModuleService.getModuleByGuid(moduleGuid));
+
+
+            case "UPDATE" -> {
+                StatusParam updateResponse = null;
+                if (moduleRequestMapper != null) {
+                    updateResponse = mstModuleService.updateModuleByGuid(
+                            moduleRequestMapper.getModuleGuid(),
+                            moduleRequestMapper.getModuleUpdateRequest()
+                    );
+                }
+                yield ResponseBuilder.buildOk(updateResponse, updateResponse, httpServletRequest);
+            }
+
+            default ->
+                 ResponseBuilder.buildError(
+                        HttpStatus.BAD_REQUEST,
+                        httpServletRequest.getRequestURI(),
+                        "Invalid Operation : " + moduleOperation
+                );
+        };
     }
+
 }

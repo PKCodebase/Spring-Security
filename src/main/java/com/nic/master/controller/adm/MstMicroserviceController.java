@@ -69,31 +69,48 @@ public class MstMicroserviceController {
 //            return  ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(),ex.getMessage());
 //        }
 //    }
+@RequestMapping(
+        value = "/action",
+        method = {RequestMethod.GET, RequestMethod.POST}
+)
+public ResponseEntity<Object> handleMicroserviceAction(
+        @Valid @RequestBody(required = false) MicroserviceRequestMapper microserviceRequestMapper,
+        HttpServletRequest httpServletRequest) {
 
-
-    @PostMapping("/action")
-    public ResponseEntity<Object> handleMicroserviceAction(@Valid @RequestBody MicroserviceRequestMapper microserviceRequestMapper,HttpServletRequest httpServletRequest){
-        switch (microserviceRequestMapper.getOperation().toUpperCase().trim()){
-            case "ADD" :
-                StatusParam addResponse = mstMicroserviceService.addMicroservice(microserviceRequestMapper.getMicroserviceAddRequest());
-                return ResponseBuilder.buildOk(addResponse,addResponse,httpServletRequest);
-            case "GETALL" :
-                return ResponseEntity.ok(mstMicroserviceService.getAllMicroservices());
-            case "GETBYGUID" :
-                return  ResponseEntity.ok(mstMicroserviceService.getMicroserviceByGuid(microserviceRequestMapper.getMicroserviceGuid()));
-            case "GETBYCODE" :
-                return ResponseEntity.ok(mstMicroserviceService.getMicroserviceByCode(microserviceRequestMapper.getMicroserviceCode()));
-
-            case "UPDATE" :
-                StatusParam updateResponse = mstMicroserviceService.updateMicroServiceByGuid(microserviceRequestMapper.getMicroserviceGuid(), microserviceRequestMapper.getMicroserviceUpdateRequest());
-                return ResponseBuilder.buildOk(updateResponse,updateResponse,httpServletRequest);
-
-            default:
-                return ResponseBuilder.buildError(
-                        HttpStatus.BAD_REQUEST,
-                        httpServletRequest.getRequestURI(),
-                        "Invalid Operation : " + microserviceRequestMapper.getOperation()
-                );
-        }
+    if (microserviceRequestMapper == null || microserviceRequestMapper.getOperation() == null) {
+        return ResponseBuilder.buildError(
+                HttpStatus.BAD_REQUEST,
+                httpServletRequest.getRequestURI(),
+                "Operation is required"
+        );
     }
+
+    return switch (microserviceRequestMapper.getOperation().toUpperCase().trim()) {
+        case "ADD" -> {
+            StatusParam addResponse =
+                    mstMicroserviceService.addMicroservice(microserviceRequestMapper.getMicroserviceAddRequest());
+            yield ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);
+        }
+        case "GETALL" -> ResponseEntity.ok(mstMicroserviceService.getAllMicroservices());
+        case "GETBYGUID" -> ResponseEntity.ok(
+                mstMicroserviceService.getMicroserviceByGuid(microserviceRequestMapper.getMicroserviceGuid())
+        );
+        case "GETBYCODE" -> ResponseEntity.ok(
+                mstMicroserviceService.getMicroserviceByCode(microserviceRequestMapper.getMicroserviceCode())
+        );
+        case "UPDATE" -> {
+            StatusParam updateResponse = mstMicroserviceService.updateMicroServiceByGuid(
+                    microserviceRequestMapper.getMicroserviceGuid(),
+                    microserviceRequestMapper.getMicroserviceUpdateRequest()
+            );
+            yield ResponseBuilder.buildOk(updateResponse, updateResponse, httpServletRequest);
+        }
+        default -> ResponseBuilder.buildError(
+                HttpStatus.BAD_REQUEST,
+                httpServletRequest.getRequestURI(),
+                "Invalid Operation : " + microserviceRequestMapper.getOperation()
+        );
+    };
+}
+
 }

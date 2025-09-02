@@ -70,10 +70,21 @@ public class MstApiController {
 //    }
 
 
-    @PostMapping("/action")
+    @RequestMapping(
+            value = "/action",
+            method = {RequestMethod.GET, RequestMethod.POST}
+    )
     public ResponseEntity<Object> handleMstApiAction(
-            @Valid @RequestBody ApiRequestMapper apiRequestMapper,
+            @Valid @RequestBody(required = false) ApiRequestMapper apiRequestMapper,
             HttpServletRequest httpServletRequest) {
+
+        if (apiRequestMapper == null || apiRequestMapper.getOperation() == null) {
+            return ResponseBuilder.buildError(
+                    HttpStatus.BAD_REQUEST,
+                    httpServletRequest.getRequestURI(),
+                    "Operation is required"
+            );
+        }
 
         switch (apiRequestMapper.getOperation().toUpperCase().trim()) {
             case "ADD":

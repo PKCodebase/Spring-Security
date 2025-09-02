@@ -70,28 +70,62 @@ public class MstApiServiceController {
 //    }
 
 
-    @PostMapping("/action")
-    public ResponseEntity<Object> handleApiServiceAction(@Valid @RequestBody ApiServiceRequestMapper apiServiceRequestMapper,HttpServletRequest httpServletRequest){
-        switch (apiServiceRequestMapper.getOperation().toUpperCase().trim()){
-            case "ADD" :
-                StatusParam addResponse = mstApiServices.addApiService(apiServiceRequestMapper.getAddApiServiceRequest());
-                return ResponseBuilder.buildOk(addResponse,addResponse,httpServletRequest);
-            case "GETALL":
-                return ResponseEntity.ok(mstApiServices.getAllApiServices());
-            case "GETBYCODE":
-                return ResponseEntity.ok(mstApiServices.getApiServiceByCode(apiServiceRequestMapper.getApiServiceCode()));
-            case "GETBYGUID" :
-                return ResponseEntity.ok(mstApiServices.getApiServiceByGuid(apiServiceRequestMapper.getApiServiceGuid()));
-            case "UPDATE":
-                StatusParam updateResponse = mstApiServices.updateApiService(apiServiceRequestMapper.getApiServiceGuid(),apiServiceRequestMapper.getUpdateApiServiceRequest());
-                return ResponseBuilder.buildOk(updateResponse,updateResponse,httpServletRequest);
+    @RequestMapping(
+            value = "/action",
+            method = {RequestMethod.GET, RequestMethod.POST}
+    )
+    public ResponseEntity<Object> handleApiServiceAction(
+            @Valid @RequestBody(required = false) ApiServiceRequestMapper apiServiceRequestMapper,
+            @RequestParam (value = "operation",required = false)String operation,
+            @RequestParam (value = "apiServiceGuid",required=false)String apiServiceGuid,
+            @RequestParam (value = "apiServiceCode",required = false)String apiServiceCode,
+            HttpServletRequest httpServletRequest) {
 
-            default:
-                return ResponseBuilder.buildError(
-                        HttpStatus.BAD_REQUEST,
-                        httpServletRequest.getRequestURI(),
-                        "Invalid operation : " + apiServiceRequestMapper.getOperation()
-                );
+        String apiServiceOperation = null;
+
+        if(apiServiceRequestMapper != null && apiServiceRequestMapper.getOperation() != null){
+            apiServiceOperation = apiServiceRequestMapper.getOperation();
+        } else if (operation != null) {
+            apiServiceOperation = operation;
+
         }
+
+
+        if (apiServiceOperation == null ) {
+            return ResponseBuilder.buildError(
+                    HttpStatus.BAD_REQUEST,
+                    httpServletRequest.getRequestURI(),
+                    "Operation is required"
+            );
+        }
+
+        return switch (apiServiceOperation.toUpperCase().trim()) {
+            case "ADD" -> {
+                StatusParam addResponse = null;
+                if (apiServiceRequestMapper != null) {
+                    addResponse = mstApiServices.addApiService(apiServiceRequestMapper.getAddApiServiceRequest());
+                }
+                yield ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);
+            }
+            case "GETALL" -> ResponseEntity.ok(mstApiServices.getAllApiServices());
+            case "GETBYCODE" -> ResponseEntity.ok(mstApiServices.getApiServiceByCode(apiServiceCode));
+            case "GETBYGUID" -> ResponseEntity.ok(mstApiServices.getApiServiceByGuid(apiServiceGuid));
+            case "UPDATE" -> {
+                StatusParam updateResponse = null;
+                if (apiServiceRequestMapper != null) {
+                    updateResponse = mstApiServices.updateApiService(
+                            apiServiceRequestMapper.getApiServiceGuid(),
+                            apiServiceRequestMapper.getUpdateApiServiceRequest()
+                    );
+                }
+                yield ResponseBuilder.buildOk(updateResponse, updateResponse, httpServletRequest);
+            }
+            default -> ResponseBuilder.buildError(
+                    HttpStatus.BAD_REQUEST,
+                    httpServletRequest.getRequestURI(),
+                    "Invalid operation : " + apiServiceOperation
+            );
+        };
     }
+
 }

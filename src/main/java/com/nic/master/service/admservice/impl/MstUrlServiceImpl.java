@@ -11,6 +11,8 @@ import com.nic.master.response.msturlresponse.MstUrlResponse;
 import com.nic.master.service.admservice.MstUrlService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 public class MstUrlServiceImpl implements MstUrlService {
 
-
+    private static final Logger logger  = LoggerFactory.getLogger(MstUrlServiceImpl.class);
     private  final MstUrlRepository mstUrlRepository;
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;

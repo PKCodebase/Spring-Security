@@ -14,6 +14,7 @@ import com.nic.master.request.adm.apiRequest.UpdateMstApiRequest;
 import com.nic.master.response.mstapiresponse.MstApiResponse;
 import com.nic.master.service.admservice.MstApiService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,8 @@ public class MstApiImpl implements MstApiService {
 
     @Override
     public StatusParam addMstApi(String microserviceGuid,String urlTypeGuid,AddMstApiRequest addMstApiRequest) {
+        logger.info("Attempting to add new API. microserviceGuid={}, urlTypeGuid={}, apiCode={}",
+                microserviceGuid, urlTypeGuid, addMstApiRequest.getApiCode());
         try {
             MstMicroservice mstMicroservice = mstMicroserviceRepository.findById(microserviceGuid.trim())
                     .orElseThrow(() -> {
@@ -53,7 +56,7 @@ public class MstApiImpl implements MstApiService {
                             return new  ResourceNotFoundException("UrlType Guid not found : " + urlTypeGuid);
         });
             if(mstApiRepository.existsByApiCodeIgnoreCase(addMstApiRequest.getApiCode().trim())){
-                logger.warn("ApiCode already exist : " + addMstApiRequest.getApiCode());
+                logger.warn("Duplicate API code detected: {}", addMstApiRequest.getApiCode());
                 return new StatusParam(false,"ApiCode already exist : " + addMstApiRequest.getApiCode());
             }
 //
@@ -64,7 +67,8 @@ public class MstApiImpl implements MstApiService {
 //            }
 
             if (mstApiRepository.existsByMicroservice(mstMicroservice)) {
-                logger.warn("API already exists for this Microservice.");
+                logger.warn("API already exists for Microservice={} and UrlType={}",
+                        mstMicroservice.getMicroserviceName(), mstUrlType.getUrlTypeName());
                 return new StatusParam(false,
                         "API already exists for Microservice [" + mstMicroservice.getMicroserviceName() + "]");
             }
@@ -92,14 +96,17 @@ public class MstApiImpl implements MstApiService {
             mstApi.setMicroservice(mstMicroservice);
             mstApi.setUrlType(mstUrlType);
             mstApiRepository.save(mstApi);
+            logger.info("API created successfully. apiGuid={}", mstApi.getApiGuid());
             return new StatusParam(true,"MstApi added successfully ");
         }catch (Exception ex){
+            logger.error("Unexpected error while adding API. request={}, error={}", addMstApiRequest, ex.getMessage(), ex);
             throw new RuntimeException("Unexpected error while adding ward : " + addMstApiRequest,ex);
         }
     }
 
     @Override
     public List<MstApiResponse> getAllMstApi() {
+        logger.info("Fetching all APIs");
         List<MstApi> mstApis = mstApiRepository.findAll();
 
         return mstApis.stream()
@@ -124,6 +131,7 @@ public class MstApiImpl implements MstApiService {
 
     @Override
     public MstApiResponse getMstApiByGuid(String apiGuid) {
+        logger.info("Fetching API by guid={}", apiGuid);
         MstApi mstApi = mstApiRepository.findByApiGuid(apiGuid.trim())
                 .orElseThrow(() -> new ResourceNotFoundException("Api Guid not found : " + apiGuid));
 
@@ -133,6 +141,7 @@ public class MstApiImpl implements MstApiService {
 
     @Override
     public SelectOptionParam getMstApiByCode(String apiCode) {
+        logger.info("Fetching API by code={}", apiCode);
         return mstApiRepository.findByApiCodeIgnoreCase(apiCode.trim())
                 .map(mstApi ->{
                     return new SelectOptionParam(
@@ -147,42 +156,45 @@ public class MstApiImpl implements MstApiService {
     }
 
     @Override
+    @Transactional
     public StatusParam updateMstApiByGuid(String apiGuid, UpdateMstApiRequest updateMstApiRequest) {
+        logger.info("Attempting to update API. apiGuid={}, newApiCode={}", apiGuid, updateMstApiRequest.getApiCode());
+
         try {
             MstApi mstApi = mstApiRepository.findByApiGuid(apiGuid)
-                    .orElseThrow(()-> {
-                        return new ResourceNotFoundException("Api Guid not found : " +apiGuid);
-                    });
+                    .orElseThrow(() -> new ResourceNotFoundException("Api Guid not found: " + apiGuid));
 
-            if(updateMstApiRequest.getApiCode() != null
-            && !updateMstApiRequest.getApiCode().equalsIgnoreCase(mstApi.getApiCode())
-            && mstApiRepository.existsByApiCodeIgnoreCase(updateMstApiRequest.getApiCode())){
-                return new StatusParam(false,"Api Code already exists : " + updateMstApiRequest.getApiCode());
+            if (updateMstApiRequest.getApiCode() != null
+                    && !updateMstApiRequest.getApiCode().equalsIgnoreCase(mstApi.getApiCode())
+                    && mstApiRepository.existsByApiCodeIgnoreCase(updateMstApiRequest.getApiCode())) {
+                logger.warn("Api code conflict detected. ExistingApiCode={}, RequestedApiCode={}",
+                        mstApi.getApiCode(), updateMstApiRequest.getApiCode());
+                return new StatusParam(false, "Api Code already exists: " + updateMstApiRequest.getApiCode());
             }
-            modelMapper.map(updateMstApiRequest,mstApi);
+
+            modelMapper.map(updateMstApiRequest, mstApi);
             mstApi.setModifiedDate(LocalDateTime.now());
             mstApi.setModifiedIpAddr(getClientIp());
             mstApi.setModifiedBy("SYSTEM");
 
             mstApiRepository.save(mstApi);
-            return new StatusParam(true,"Api updated Successfully :");
-        }  catch (ResourceNotFoundException e) {
-            // Known business exceptions → return failure response
-            logger.error("Business Exception while updating API: {}", e.getMessage());
-            return new StatusParam(false, e.getMessage());
+            logger.info("API updated successfully. apiGuid={}", apiGuid);
 
+            return new StatusParam(true, "Api updated successfully");
+
+        } catch (ResourceNotFoundException e) {
+            logger.error("Business Exception while updating API. apiGuid={}, error={}", apiGuid, e.getMessage());
+            return new StatusParam(false, e.getMessage());
         } catch (Exception e) {
-            // Unknown/unexpected errors → log and rethrow OR return generic message
-            logger.error("Unexpected error while updating API with guid {}: {}", apiGuid, e.getMessage(), e);
-            throw new RuntimeException("Unable to update API due to internal error.");
+            logger.error("Unexpected error while updating API. apiGuid={}, error={}", apiGuid, e.getMessage(), e);
+            throw new RuntimeException("Unable to update API due to internal error", e);
         }
     }
 
-
-    private String getClientIp(){
+    private String getClientIp() {
         String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
-        if(clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)){
-            clientIp=httpServletRequest.getRemoteAddr();
+        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
+            clientIp = httpServletRequest.getRemoteAddr();
         }
         return clientIp;
     }

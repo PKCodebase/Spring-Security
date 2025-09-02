@@ -13,7 +13,6 @@ public interface ZoneService {
     StatusParam addZone(ZoneAddRequest zoneAddRequest);
 
     Zone getZoneByGuid(String zoneGuid);
-
     List<Zone>getAllZones();
 
     List<SelectOptionParam> fetchZoneMaster();

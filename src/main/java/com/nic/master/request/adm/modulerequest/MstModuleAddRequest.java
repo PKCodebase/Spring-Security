@@ -10,7 +10,7 @@ import java.util.Map;
 public class MstModuleAddRequest {
 
     @NotBlank(message = "Module code is mandatory")
-    @Size(max = 255, message = "Module code cannot exceed 255 characters")
+    @Size(max = 100, message = "Module code cannot exceed 255 characters")
     private String moduleCode;
 
     @NotBlank(message = "Module name is mandatory")

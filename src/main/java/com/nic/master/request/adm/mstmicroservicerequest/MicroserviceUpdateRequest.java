@@ -7,18 +7,15 @@ import lombok.Data;
 @Data
 public class MicroserviceUpdateRequest {
 
-    @Size(min = 4, max = 20, message = "Microservice code must be between 2-20 characters")
-//    @Pattern(regexp = "^[A-Z\\d_-]+$", message = "Microservice code: only uppercase letters, numbers, hyphens(-) and underscore(_) allowed")
+    @Size(max = 100, message = "Microservice code must be at most 100 characters")//    @Pattern(regexp = "^[A-Z\\d_-]+$", message = "Microservice code: only uppercase letters, numbers, hyphens(-) and underscore(_) allowed")
     private String microserviceCode;
 
     private String modifiedBy;
 
     private String modifiedIpAddr;
 
-//
-//    private String createdRemarks;
 
-    @Size(min = 2, max = 100, message = "Microservice name must be between 2-100 characters")
+    @Size(max = 100, message = "Microservice name must be at most 100 characters")
     private  String microserviceName;
 
     private String modifiedRemarks;

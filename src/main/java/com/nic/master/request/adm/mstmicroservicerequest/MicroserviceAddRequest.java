@@ -9,11 +9,10 @@ public class MicroserviceAddRequest {
 
 
     @NotBlank(message = "Microservice code is mandatory")
-    @Size(max = 255, message = "Microservice code cannot exceed 255 characters")
+    @Size(max = 100, message = "Microservice code cannot exceed 100 characters")
     private String microserviceCode;
 
     @NotBlank(message = "Microservice name is mandatory")
-    @Size(max = 255, message = "Microservice name cannot exceed 255 characters")
     private String microserviceName;
 
     private String createdRemarks;

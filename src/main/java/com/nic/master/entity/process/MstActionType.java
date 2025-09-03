@@ -16,13 +16,11 @@ import java.time.LocalDateTime;
 public class MstActionType {
 
     @Id
-    @Size(min = 36, max = 36, message = "actionTypeGuid must be 36 characters long")
     @Column(name = "action_type_guid", length = 36, nullable = false, updatable = false)
     private String actionTypeGuid;
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mst_action_type_seq")
-    @SequenceGenerator(name = "mst_action_type_seq", sequenceName = "process.mst_action_type_sequence", allocationSize = 1)
-    @Column(name = "action_type_id", nullable = false, unique = true)
+
+    @Column(name = "action_type_id", nullable = false, unique = true,updatable = false,insertable = false)
     private Long actionTypeId;
 
     @NotBlank(message = "Action type code is required")
@@ -37,19 +35,17 @@ public class MstActionType {
     @Column(name = "default_label", columnDefinition = "text", nullable = false)
     private String defaultLabel;
 
-    @NotNull
+
     @Column(name = "is_process_specific", nullable = false)
     private Boolean isProcessSpecific = true;
 
-    @NotBlank(message = "Created by is required")
     @Column(name = "created_by", nullable = false)
     private String createdBy;
 
-    @NotNull
+
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate = LocalDateTime.now();
 
-    @NotBlank(message = "Created IP address is required")
     @Column(name = "created_ip_addr", nullable = false)
     private String createdIpAddr;
 
@@ -80,11 +76,11 @@ public class MstActionType {
     @Column(name = "modified_uri")
     private String modifiedUri;
 
-    @NotNull
+
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    @NotNull
+
     @Column(name = "action_order", nullable = false)
     private Integer actionOrder = 1;
 
@@ -117,9 +113,6 @@ public class MstActionType {
         }
     }
 
-    // -------------------------
-    // ✅ Getters & Setters
-    // -------------------------
 
     public String getActionTypeGuid() {
         return actionTypeGuid;

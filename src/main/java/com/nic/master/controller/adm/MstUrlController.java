@@ -68,51 +68,61 @@ public class MstUrlController {
 //            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(), ex.getMessage());
 //        }
 //    }
+@RequestMapping(
+        value = "/action",
+        method = {RequestMethod.GET, RequestMethod.POST}
+)
+public ResponseEntity<Object> handleUrlActions(
+        @Valid @RequestBody(required = false) MstUrlRequestMapper requestWrapper,
+        @RequestParam(value = "operation", required = false) String operation,
+        @RequestParam(value = "urlTypeCode", required = false) String urlTypeCode,
+        @RequestParam(value = "urlTypeGuid", required = false) String urlTypeGuid,
+        HttpServletRequest httpServletRequest) {
 
-    @RequestMapping(
-            value = "/action",
-            method = {RequestMethod.GET, RequestMethod.POST}
-    )
-    public ResponseEntity<Object> handleMstUrlAction(
-            @Valid @RequestBody(required = false) MstUrlRequestMapper mstUrlRequestMapper,
-            HttpServletRequest httpServletRequest) {
+    String urlOperation = null;
 
-        if (mstUrlRequestMapper == null || mstUrlRequestMapper.getOperation() == null) {
-            return ResponseBuilder.buildError(
-                    HttpStatus.BAD_REQUEST,
-                    httpServletRequest.getRequestURI(),
-                    "Operation is required"
-            );
-        }
-
-        switch (mstUrlRequestMapper.getOperation().toUpperCase().trim()) {
-            case "ADD":
-                StatusParam addResponse = mstUrlService.addMstUrl(mstUrlRequestMapper.getAddMstUrlRequest());
-                return ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);
-
-            case "GETALL":
-                return ResponseEntity.ok(mstUrlService.getAllUrl());
-
-            case "GETBYCODE":
-                return ResponseEntity.ok(mstUrlService.getApiUrlByCode(mstUrlRequestMapper.getUrlTypeCode()));
-
-            case "GETBYGUID":
-                return ResponseEntity.ok(mstUrlService.getApiUrlByGuid(mstUrlRequestMapper.getUrlTypeGuid()));
-
-            case "UPDATE":
-                StatusParam updateResponse = mstUrlService.updateMstUrlByGuid(
-                        mstUrlRequestMapper.getUrlTypeGuid(),
-                        mstUrlRequestMapper.getUpdateMstUrlRequest()
-                );
-                return ResponseBuilder.buildOk(updateResponse, updateResponse, httpServletRequest);
-
-            default:
-                return ResponseBuilder.buildError(
-                        HttpStatus.BAD_REQUEST,
-                        httpServletRequest.getRequestURI(),
-                        "Invalid Operation : " + mstUrlRequestMapper.getOperation()
-                );
-        }
+    // Priority: request body > request param
+    if (requestWrapper != null && requestWrapper.getOperation() != null) {
+        urlOperation = requestWrapper.getOperation();
+    } else if (operation != null) {
+        urlOperation = operation;
     }
+
+    if (urlOperation == null) {
+        return ResponseBuilder.buildError(
+                HttpStatus.BAD_REQUEST,
+                httpServletRequest.getRequestURI(),
+                "Operation is required"
+        );
+    }
+
+    return switch (urlOperation.toUpperCase().trim()) {
+        case "ADD" -> {
+            StatusParam addResponse = null;
+            if (requestWrapper != null) {
+                addResponse = mstUrlService.addMstUrl(requestWrapper.getAddMstUrlRequest());
+            }
+            yield ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);
+        }
+        case "GETALL" -> ResponseEntity.ok(mstUrlService.getAllUrl());
+        case "GETBYCODE" -> ResponseEntity.ok(mstUrlService.getApiUrlByCode(urlTypeCode));
+        case "GETBYGUID" -> ResponseEntity.ok(mstUrlService.getApiUrlByGuid(urlTypeGuid));
+        case "UPDATE" -> {
+            StatusParam updateResponse = null;
+            if (requestWrapper != null) {
+                updateResponse = mstUrlService.updateMstUrlByGuid(
+                        requestWrapper.getUrlTypeGuid(),
+                        requestWrapper.getUpdateMstUrlRequest()
+                );
+            }
+            yield ResponseBuilder.buildOk(updateResponse, updateResponse, httpServletRequest);
+        }
+        default -> ResponseBuilder.buildError(
+                HttpStatus.BAD_REQUEST,
+                httpServletRequest.getRequestURI(),
+                "Invalid operation: " + urlOperation
+        );
+    };
+}
 
 }

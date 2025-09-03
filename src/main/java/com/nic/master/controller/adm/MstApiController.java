@@ -70,54 +70,124 @@ public class MstApiController {
 //    }
 
 
-    @RequestMapping(
-            value = "/action",
-            method = {RequestMethod.GET, RequestMethod.POST}
-    )
-    public ResponseEntity<Object> handleMstApiAction(
-            @Valid @RequestBody(required = false) ApiRequestMapper apiRequestMapper,
-            HttpServletRequest httpServletRequest) {
+//    @RequestMapping(
+//            value = "/action",
+//            method = {RequestMethod.GET, RequestMethod.POST}
+//    )
+//    public ResponseEntity<Object> handleMstApiAction(
+//            @Valid @RequestBody(required = false) ApiRequestMapper apiRequestMapper,
+//            HttpServletRequest httpServletRequest) {
+//
+//        if (apiRequestMapper == null || apiRequestMapper.getOperation() == null) {
+//            return ResponseBuilder.buildError(
+//                    HttpStatus.BAD_REQUEST,
+//                    httpServletRequest.getRequestURI(),
+//                    "Operation is required"
+//            );
+//        }
+//
+//        switch (apiRequestMapper.getOperation().toUpperCase().trim()) {
+//            case "ADD":
+//                StatusParam addResponse = mstApiService.addMstApi(
+//                        apiRequestMapper.getMicroserviceGuid(),   // ✅ microserviceGuid
+//                        apiRequestMapper.getUrlTypeGuid(),        // ✅ urlTypeGuid
+//                        apiRequestMapper.getAddMstApiRequest()    // ✅ request
+//                );
+//                return ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);
+//
+//            case "GETALL":
+//                return ResponseEntity.ok(mstApiService.getAllMstApi());
+//
+//            case "GETBYCODE":
+//                return ResponseEntity.ok(mstApiService.getMstApiByCode(apiRequestMapper.getApiCode()));
+//
+//            case "GETBYGUID":
+//                return ResponseEntity.ok(mstApiService.getMstApiByGuid(apiRequestMapper.getApiGuid()));
+//
+//            case "UPDATE":
+//                StatusParam updateResponse = mstApiService.updateMstApiByGuid(
+//                        apiRequestMapper.getApiGuid(),
+//                        apiRequestMapper.getUpdateMstApiRequest()
+//                );
+//                return ResponseBuilder.buildOk(updateResponse, updateResponse, httpServletRequest);
+//
+//            default:
+//                return ResponseBuilder.buildError(
+//                        HttpStatus.BAD_REQUEST,
+//                        httpServletRequest.getRequestURI(),
+//                        "Invalid operation : " + apiRequestMapper.getOperation()
+//                );
+//        }
+//    }
+@RequestMapping(
+        value = "/action",
+        method = {RequestMethod.GET, RequestMethod.POST}
+)
+public ResponseEntity<Object> handleMstApiAction(
+        @Valid @RequestBody(required = false) ApiRequestMapper requestWrapper,
+        @RequestParam(value = "operation", required = false) String operation,
+        @RequestParam(value = "apiCode", required = false) String apiCode,
+        @RequestParam(value = "apiGuid", required = false) String apiGuid,
+        @RequestParam(value = "microserviceGuid", required = false) String microserviceGuid,
+        @RequestParam(value = "urlTypeGuid", required = false) String urlTypeGuid,
+        HttpServletRequest httpServletRequest) {
 
-        if (apiRequestMapper == null || apiRequestMapper.getOperation() == null) {
-            return ResponseBuilder.buildError(
-                    HttpStatus.BAD_REQUEST,
-                    httpServletRequest.getRequestURI(),
-                    "Operation is required"
-            );
-        }
+    String apiOperation = null;
 
-        switch (apiRequestMapper.getOperation().toUpperCase().trim()) {
-            case "ADD":
-                StatusParam addResponse = mstApiService.addMstApi(
-                        apiRequestMapper.getMicroserviceGuid(),   // ✅ microserviceGuid
-                        apiRequestMapper.getUrlTypeGuid(),        // ✅ urlTypeGuid
-                        apiRequestMapper.getAddMstApiRequest()    // ✅ request
-                );
-                return ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);
-
-            case "GETALL":
-                return ResponseEntity.ok(mstApiService.getAllMstApi());
-
-            case "GETBYCODE":
-                return ResponseEntity.ok(mstApiService.getMstApiByCode(apiRequestMapper.getApiCode()));
-
-            case "GETBYGUID":
-                return ResponseEntity.ok(mstApiService.getMstApiByGuid(apiRequestMapper.getApiGuid()));
-
-            case "UPDATE":
-                StatusParam updateResponse = mstApiService.updateMstApiByGuid(
-                        apiRequestMapper.getApiGuid(),
-                        apiRequestMapper.getUpdateMstApiRequest()
-                );
-                return ResponseBuilder.buildOk(updateResponse, updateResponse, httpServletRequest);
-
-            default:
-                return ResponseBuilder.buildError(
-                        HttpStatus.BAD_REQUEST,
-                        httpServletRequest.getRequestURI(),
-                        "Invalid operation : " + apiRequestMapper.getOperation()
-                );
-        }
+    // Priority: request body > query param
+    if (requestWrapper != null && requestWrapper.getOperation() != null) {
+        apiOperation = requestWrapper.getOperation();
+    } else if (operation != null) {
+        apiOperation = operation;
     }
+
+    if (apiOperation == null) {
+        return ResponseBuilder.buildError(
+                HttpStatus.BAD_REQUEST,
+                httpServletRequest.getRequestURI(),
+                "Operation is required"
+        );
+    }
+
+    return switch (apiOperation.toUpperCase().trim()) {
+        case "ADD" -> {
+            StatusParam addResponse = null;
+            if (requestWrapper != null) {
+                addResponse = mstApiService.addMstApi(
+                        requestWrapper.getMicroserviceGuid() != null ? requestWrapper.getMicroserviceGuid() : microserviceGuid,
+                        requestWrapper.getUrlTypeGuid() != null ? requestWrapper.getUrlTypeGuid() : urlTypeGuid,
+                        requestWrapper.getAddMstApiRequest()
+                );
+            }
+            yield ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);
+        }
+        case "GETALL" -> ResponseEntity.ok(mstApiService.getAllMstApi());
+        case "GETBYCODE" -> ResponseEntity.ok(
+                mstApiService.getMstApiByCode(
+                        (requestWrapper != null && requestWrapper.getApiCode() != null) ? requestWrapper.getApiCode() : apiCode
+                )
+        );
+        case "GETBYGUID" -> ResponseEntity.ok(
+                mstApiService.getMstApiByGuid(
+                        (requestWrapper != null && requestWrapper.getApiGuid() != null) ? requestWrapper.getApiGuid() : apiGuid
+                )
+        );
+        case "UPDATE" -> {
+            StatusParam updateResponse = null;
+            if (requestWrapper != null) {
+                updateResponse = mstApiService.updateMstApiByGuid(
+                        requestWrapper.getApiGuid() != null ? requestWrapper.getApiGuid() : apiGuid,
+                        requestWrapper.getUpdateMstApiRequest()
+                );
+            }
+            yield ResponseBuilder.buildOk(updateResponse, updateResponse, httpServletRequest);
+        }
+        default -> ResponseBuilder.buildError(
+                HttpStatus.BAD_REQUEST,
+                httpServletRequest.getRequestURI(),
+                "Invalid operation: " + apiOperation
+        );
+    };
+}
 
 }

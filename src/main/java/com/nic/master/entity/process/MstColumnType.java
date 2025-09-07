@@ -1,45 +1,35 @@
 package com.nic.master.entity.process;
 
-
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "mst_action_type", schema = "process",
+@Table(
+        name = "mst_column_type",
+        schema = "process",
         uniqueConstraints = {
-                @UniqueConstraint(name = "mst_action_type_action_type_code_uk", columnNames = "action_type_code"),
-                @UniqueConstraint(name = "mst_action_type_action_type_id_uk", columnNames = "action_type_id")
-        })
-public class MstActionType {
+                @UniqueConstraint(name = "mst_column_type_column_type_code_uk", columnNames = "column_type_code"),
+                @UniqueConstraint(name = "mst_column_type_column_type_id_uk", columnNames = "column_type_id")
+        }
+)
+public class MstColumnType {
 
     @Id
-    @Column(name = "action_type_guid", length = 36, nullable = false, updatable = false)
-    private String actionTypeGuid;
+    @Column(name = "column_type_guid", length = 36, nullable = false, updatable = false)
+    private String columnTypeGuid;
 
+    @Column(name = "column_type_id", nullable = false, updatable = false,insertable = false)
+    private Long columnTypeId;
 
-    @Column(name = "action_type_id", nullable = false, unique = true,updatable = false,insertable = false)
-    private Long actionTypeId;
-
-    @Column(name = "action_type_code", length = 100, nullable = false, unique = true)
-    private String actionTypeCode;
-
-
-    @Column(name = "action_type_name", nullable = false)
-    private String actionTypeName;
+    @Column(name = "column_type_code", length = 100, nullable = false)
+    private String columnTypeCode;
 
     @Column(name = "default_label", columnDefinition = "text", nullable = false)
     private String defaultLabel;
 
-
-    @Column(name = "is_process_specific", nullable = false)
-    private Boolean isProcessSpecific = true;
-
     @Column(name = "created_by", nullable = false)
     private String createdBy;
-
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;
@@ -74,74 +64,33 @@ public class MstActionType {
     @Column(name = "modified_uri")
     private String modifiedUri;
 
-
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
 
-    @Column(name = "action_order", nullable = false)
-    private Integer actionOrder = 1;
-
-    @PrePersist
-    public void prePersist() {
-        if (this.createdDate == null) {
-            this.createdDate = LocalDateTime.now();
-        }
+    // Getters and Setters
+    public String getColumnTypeGuid() {
+        return columnTypeGuid;
     }
 
-    @PreUpdate
-    public void validateModificationFields() {
-        // Rule: If modifiedBy is set, then modifiedDate and modifiedIpAddr must also be set
-        if (this.modifiedBy != null) {
-            if (this.modifiedDate == null || this.modifiedIpAddr == null) {
-                throw new IllegalStateException("If modifiedBy is set, then modifiedDate and modifiedIpAddr must also be set.");
-            }
-        } else {
-            // Rule: If modifiedBy is null, both modifiedDate and modifiedIpAddr should also be null
-            if (this.modifiedDate != null || this.modifiedIpAddr != null) {
-                throw new IllegalStateException("modifiedDate and modifiedIpAddr must be null when modifiedBy is null.");
-            }
-        }
-
-        // Rule: modifiedDate >= createdDate
-        if (this.modifiedDate != null && this.createdDate != null) {
-            if (this.modifiedDate.isBefore(this.createdDate)) {
-                throw new IllegalStateException("modifiedDate cannot be earlier than createdDate.");
-            }
-        }
+    public void setColumnTypeGuid(String columnTypeGuid) {
+        this.columnTypeGuid = columnTypeGuid;
     }
 
-
-    public String getActionTypeGuid() {
-        return actionTypeGuid;
+    public Long getColumnTypeId() {
+        return columnTypeId;
     }
 
-    public void setActionTypeGuid(String actionTypeGuid) {
-        this.actionTypeGuid = actionTypeGuid;
+    public void setColumnTypeId(Long columnTypeId) {
+        this.columnTypeId = columnTypeId;
     }
 
-    public Long getActionTypeId() {
-        return actionTypeId;
+    public String getColumnTypeCode() {
+        return columnTypeCode;
     }
 
-    public void setActionTypeId(Long actionTypeId) {
-        this.actionTypeId = actionTypeId;
-    }
-
-    public String getActionTypeCode() {
-        return actionTypeCode;
-    }
-
-    public void setActionTypeCode(String actionTypeCode) {
-        this.actionTypeCode = actionTypeCode;
-    }
-
-    public String getActionTypeName() {
-        return actionTypeName;
-    }
-
-    public void setActionTypeName(String actionTypeName) {
-        this.actionTypeName = actionTypeName;
+    public void setColumnTypeCode(String columnTypeCode) {
+        this.columnTypeCode = columnTypeCode;
     }
 
     public String getDefaultLabel() {
@@ -150,14 +99,6 @@ public class MstActionType {
 
     public void setDefaultLabel(String defaultLabel) {
         this.defaultLabel = defaultLabel;
-    }
-
-    public Boolean getIsProcessSpecific() {
-        return isProcessSpecific;
-    }
-
-    public void setIsProcessSpecific(Boolean isProcessSpecific) {
-        this.isProcessSpecific = isProcessSpecific;
     }
 
     public String getCreatedBy() {
@@ -263,13 +204,4 @@ public class MstActionType {
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
     }
-
-    public Integer getActionOrder() {
-        return actionOrder;
-    }
-
-    public void setActionOrder(Integer actionOrder) {
-        this.actionOrder = actionOrder;
-    }
 }
-

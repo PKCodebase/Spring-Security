@@ -94,7 +94,7 @@ public class MstActionServiceImpl implements MstActionService {
 
     @Override
     public StatusParam updateMstAction(String actionTypeGuid, UpdateMstActionRequest updateMstActionRequest) {
-        logger.error("Updating MstAction..");
+        logger.error("Updating MstAction..with Guid : " + actionTypeGuid);
         try{
             MstActionType mstActionType =mstActionTypeRepository.findByActionTypeGuid(actionTypeGuid.trim())
                     .orElseThrow(()->{

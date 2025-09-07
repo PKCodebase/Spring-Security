@@ -32,7 +32,8 @@ public class SelectOptionParam {
 		this.value = value;
 	}
 
-	public String getGuid() {
+
+    public String getGuid() {
 		return guid;
 	}
 

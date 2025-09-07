@@ -17,5 +17,35 @@ public class UpdateMstActionRequest {
     private String modifiedUri;
 
 
+    public String getActionTypeCode() {
+        return actionTypeCode;
+    }
 
+    public void setActionTypeCode(String actionTypeCode) {
+        this.actionTypeCode = actionTypeCode;
+    }
+
+    public String getActionTypeName() {
+        return actionTypeName;
+    }
+
+    public void setActionTypeName(String actionTypeName) {
+        this.actionTypeName = actionTypeName;
+    }
+
+    public String getModifiedRemarks() {
+        return modifiedRemarks;
+    }
+
+    public void setModifiedRemarks(String modifiedRemarks) {
+        this.modifiedRemarks = modifiedRemarks;
+    }
+
+    public String getModifiedUri() {
+        return modifiedUri;
+    }
+
+    public void setModifiedUri(String modifiedUri) {
+        this.modifiedUri = modifiedUri;
+    }
 }

@@ -93,7 +93,7 @@ public class MstCodeServiceImpl implements MstCodeService {
     public StatusParam updateMstCodeImpl(String codeImplGuid, UpdateMstCodeImplRequest updateMstCodeImplRequest) {
         logger.info("Updating MstCodeImpl...");
         try{
-            MstCodeImpl mstCodeImpl = mstCodeImplRepository.findByCodeImplGuid(codeImplGuid)
+            MstCodeImpl mstCodeImpl = mstCodeImplRepository.findByCodeImplGuid(codeImplGuid.trim())
                     .orElseThrow(()->{
                         logger.error("MstCodeImpl not found with Guid : {}",codeImplGuid);
                         return new ResourceNotFoundException("MstCodeImpl not found with Guid : "+codeImplGuid);

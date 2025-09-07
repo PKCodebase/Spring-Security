@@ -44,7 +44,7 @@ public class MstActionType {
 
 
     @Column(name = "created_date", nullable = false)
-    private LocalDateTime createdDate = LocalDateTime.now();
+    private LocalDateTime createdDate;
 
     @Column(name = "created_ip_addr", nullable = false)
     private String createdIpAddr;

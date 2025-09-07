@@ -98,7 +98,7 @@ public class MstActionServiceImpl implements MstActionService {
         try{
             MstActionType mstActionType =mstActionTypeRepository.findByActionTypeGuid(actionTypeGuid.trim())
                     .orElseThrow(()->{
-                        logger.error("MstAction found for Guid. {} ",actionTypeGuid);
+                        logger.error("MstAction found with Guid. {} ",actionTypeGuid);
                         return new ResourceNotFoundException("MstAction found for Guid :"+actionTypeGuid);
                     });
             if(updateMstActionRequest.getActionTypeCode() != null

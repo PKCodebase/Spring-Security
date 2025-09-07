@@ -34,6 +34,7 @@ public class MstActionTypeController {
 
 
         String mstActionOperation = null;
+
         if(mstActionRequestMapper != null && mstActionRequestMapper.getOperation() != null){
             mstActionOperation = mstActionRequestMapper.getOperation();
         }else if(operation != null){

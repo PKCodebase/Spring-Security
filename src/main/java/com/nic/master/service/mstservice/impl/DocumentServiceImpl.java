@@ -9,6 +9,7 @@ import com.nic.master.repository.mst.DocumentRepository;
 import com.nic.master.service.mstservice.DocumentService;
 import com.nic.master.request.mst.documentrequest.DocumentAddRequest;
 import com.nic.master.request.mst.documentrequest.DocumentUpdateRequest;
+import com.nic.master.util.IdAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -30,11 +31,14 @@ public class DocumentServiceImpl implements DocumentService {
     private final DocumentRepository documentRepository;
     private final HttpServletRequest httpServletRequest;
     private final ModelMapper modelMapper;
+    private final IdAddressGenerator idAddressGenerator;
 
-    public DocumentServiceImpl(DocumentRepository documentRepository, HttpServletRequest httpServletRequest, ModelMapper modelMapper) {
+
+    public DocumentServiceImpl(DocumentRepository documentRepository, HttpServletRequest httpServletRequest, ModelMapper modelMapper, IdAddressGenerator idAddressGenerator) {
         this.documentRepository = documentRepository;
         this.httpServletRequest = httpServletRequest;
         this.modelMapper = modelMapper;
+        this.idAddressGenerator = idAddressGenerator;
     }
 
     @Override
@@ -100,8 +104,7 @@ public class DocumentServiceImpl implements DocumentService {
             DocumentType document = modelMapper.map(documentAddRequest, DocumentType.class);
             document.setDocumentGuid(UUID.randomUUID().toString());
             document.setCreatedDate(LocalDateTime.now());
-            document.setCreatedIpAddr(getClientIp());
-            document.setIsActive(true);
+            document.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
             document.setCreatedBy("SYSTEM");
 
             documentRepository.save(document);
@@ -139,7 +142,7 @@ public class DocumentServiceImpl implements DocumentService {
 
             modelMapper.map(documentUpdateRequest, existingDoc);
             existingDoc.setModifiedDate(LocalDateTime.now());
-            existingDoc.setModifiedIpAddr(getClientIp());
+            existingDoc.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
             existingDoc.setModifiedBy("SYSTEM");
 
             documentRepository.save(existingDoc);
@@ -162,12 +165,5 @@ public class DocumentServiceImpl implements DocumentService {
         return exists;
     }
 
-    private String getClientIp() {
-        String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
-        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
-            clientIp = httpServletRequest.getRemoteAddr();
-        }
-        logger.debug("Resolved client IP: {}", clientIp);
-        return clientIp;
-    }
+
 }

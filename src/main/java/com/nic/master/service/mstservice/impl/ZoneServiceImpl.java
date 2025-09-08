@@ -9,6 +9,7 @@ import com.nic.master.repository.mst.ZoneRepository;
 import com.nic.master.request.mst.zonerequest.ZoneAddRequest;
 import com.nic.master.request.mst.zonerequest.ZoneUpdateRequest;
 import com.nic.master.service.mstservice.ZoneService;
+import com.nic.master.util.IdAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -27,11 +28,14 @@ public class ZoneServiceImpl implements ZoneService {
     private final ZoneRepository zoneRepository;
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
+    private final IdAddressGenerator idAddressGenerator;
 
-    public ZoneServiceImpl(ZoneRepository zoneRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest) {
+
+    public ZoneServiceImpl(ZoneRepository zoneRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
         this.zoneRepository = zoneRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
+        this.idAddressGenerator = idAddressGenerator;
     }
 
     @Override
@@ -74,8 +78,8 @@ public class ZoneServiceImpl implements ZoneService {
             Zone zone = modelMapper.map(zoneAddRequest, Zone.class);
             zone.setZoneGuid(UUID.randomUUID().toString());
             zone.setCreatedDate(LocalDateTime.now());
-            zone.setCreatedIpAddr(getClientIp());
-            zone.setIsActive(true);
+            zone.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            zone.setCreatedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
             zone.setCreatedBy("SYSTEM");
 
             zoneRepository.save(zone);
@@ -134,8 +138,8 @@ public class ZoneServiceImpl implements ZoneService {
 
             modelMapper.map(zoneUpdateRequest, zone);
             zone.setModifiedDate(LocalDateTime.now());
-            zone.setModifiedIpAddr(getClientIp());
-            zone.setModifiedMacAddr(getClientIp());
+            zone.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            zone.setModifiedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
             zone.setModifiedBy("SYSTEM");
 
             zoneRepository.save(zone);
@@ -153,13 +157,4 @@ public class ZoneServiceImpl implements ZoneService {
         }
     }
 
-    // Helper method to get client IP address
-    private String getClientIp() {
-        String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
-        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
-            clientIp = httpServletRequest.getRemoteAddr();
-        }
-        logger.debug("Resolved client IP: {}", clientIp);
-        return clientIp;
-    }
 }

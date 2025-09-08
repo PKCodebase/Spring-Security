@@ -10,6 +10,7 @@ import com.nic.master.request.mst.colonyrequest.ColonyAddRequest;
 import com.nic.master.request.mst.colonyrequest.ColonyUpdateRequest;
 import com.nic.master.response.colonyresponse.ColonyResponse;
 import com.nic.master.service.mstservice.ColonyService;
+import com.nic.master.util.IdAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -30,13 +31,15 @@ public class ColonyServiceImpl implements ColonyService {
     private final WardRepository wardRepository;
     private final HttpServletRequest httpServletRequest;
     private final ModelMapper modelMapper;
+    private final IdAddressGenerator idAddressGenerator;
 
     public ColonyServiceImpl(ColonyRepository colonyRepository, WardRepository wardRepository,
-                             HttpServletRequest httpServletRequest, ModelMapper modelMapper) {
+                             HttpServletRequest httpServletRequest, ModelMapper modelMapper, IdAddressGenerator idAddressGenerator) {
         this.colonyRepository = colonyRepository;
         this.wardRepository = wardRepository;
         this.httpServletRequest = httpServletRequest;
         this.modelMapper = modelMapper;
+        this.idAddressGenerator = idAddressGenerator;
     }
 
     @Override
@@ -83,7 +86,8 @@ public class ColonyServiceImpl implements ColonyService {
             Colony colony = modelMapper.map(colonyAddRequest, Colony.class);
             colony.setColonyGuid(UUID.randomUUID().toString());
             colony.setCreatedDate(LocalDate.now());
-            colony.setCreatedIpAddr(getClientIp());
+            colony.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            colony.setCreatedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
             colony.setWard(ward);
             colony.setCreatedBy("SYSTEM");
 
@@ -145,7 +149,8 @@ public class ColonyServiceImpl implements ColonyService {
             }
 
             modelMapper.map(colonyUpdateRequest, colony);
-            colony.setModifiedIpAddr(getClientIp());
+            colony.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            colony.setModifiedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
             colony.setModifiedDate(LocalDate.now());
             colony.setWard(ward);
             colony.setModifiedBy("SYSTEM");
@@ -163,11 +168,4 @@ public class ColonyServiceImpl implements ColonyService {
         }
     }
 
-    private String getClientIp() {
-        String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
-        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
-            clientIp = httpServletRequest.getRemoteAddr();
-        }
-        return clientIp;
-    }
 }

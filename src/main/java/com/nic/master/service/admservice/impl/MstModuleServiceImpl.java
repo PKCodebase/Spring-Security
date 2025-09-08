@@ -9,6 +9,7 @@ import com.nic.master.repository.adm.MstModuleRepository;
 import com.nic.master.request.adm.modulerequest.MstModuleAddRequest;
 import com.nic.master.request.adm.modulerequest.MstModuleUpdateRequest;
 import com.nic.master.service.admservice.MstModuleService;
+import com.nic.master.util.IdAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -26,11 +27,14 @@ public class MstModuleServiceImpl implements MstModuleService {
     private final MstModuleRepository mstModuleRepository;
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
+    private final IdAddressGenerator idAddressGenerator;
 
-    public MstModuleServiceImpl(MstModuleRepository mstModuleRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest) {
+
+    public MstModuleServiceImpl(MstModuleRepository mstModuleRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
         this.mstModuleRepository = mstModuleRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
+        this.idAddressGenerator = idAddressGenerator;
     }
 
     @Override
@@ -45,8 +49,8 @@ public class MstModuleServiceImpl implements MstModuleService {
             MstModule mstModule = modelMapper.map(modelAddRequest, MstModule.class);
             mstModule.setModuleGuid(UUID.randomUUID().toString());
             mstModule.setCreatedDate(LocalDateTime.now());
-            mstModule.setCreatedIpAddr(getClientIp());
-            mstModule.setIsActive(true);
+            mstModule.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+//            mstModule.setIsActive(true);
             mstModule.setCreatedBy("SYSTEM");
 
             mstModuleRepository.save(mstModule);
@@ -117,7 +121,7 @@ public class MstModuleServiceImpl implements MstModuleService {
 
             modelMapper.map(mstModuleUpdateRequest, mstModule);
             mstModule.setModifiedDate(LocalDateTime.now());
-            mstModule.setModifiedIpAddr(getClientIp());
+            mstModule.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
             mstModule.setModifiedBy("SYSTEM");
 
             mstModuleRepository.save(mstModule);
@@ -132,13 +136,6 @@ public class MstModuleServiceImpl implements MstModuleService {
         }
     }
 
-    private String getClientIp() {
-        String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
-        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
-            clientIp = httpServletRequest.getRemoteAddr();
-        }
-        return clientIp;
-    }
 }
 
 

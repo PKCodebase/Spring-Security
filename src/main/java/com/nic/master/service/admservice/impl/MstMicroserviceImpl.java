@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.nic.master.util.IdAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,14 @@ public class MstMicroserviceImpl implements MstMicroserviceService {
     private final MstMicroserviceRepository mstMicroserviceRepository;
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
+    private final IdAddressGenerator idAddressGenerator;
 
-    public MstMicroserviceImpl(MstMicroserviceRepository mstMicroserviceRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest) {
+
+    public MstMicroserviceImpl(MstMicroserviceRepository mstMicroserviceRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
         this.mstMicroserviceRepository = mstMicroserviceRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
+        this.idAddressGenerator = idAddressGenerator;
     }
 
     @Override
@@ -43,7 +47,7 @@ public class MstMicroserviceImpl implements MstMicroserviceService {
             MstMicroservice mstMicroservice = modelMapper.map(microserviceAddRequest, MstMicroservice.class);
             mstMicroservice.setMicroserviceGuid(UUID.randomUUID().toString());
             mstMicroservice.setCreatedDate(LocalDateTime.now());
-            mstMicroservice.setCreatedIpAddr(getClientIp());
+            mstMicroservice.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
             mstMicroservice.setCreatedBy("SYSTEM");
             mstMicroservice.setIsActive(true);
             mstMicroserviceRepository.save(mstMicroservice);
@@ -120,7 +124,7 @@ public class MstMicroserviceImpl implements MstMicroserviceService {
 
             modelMapper.map(microserviceUpdateRequest, mstMicroservice);
             mstMicroservice.setModifiedDate(LocalDateTime.now());
-            mstMicroservice.setModifiedIpAddr(getClientIp());
+            mstMicroservice.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
             mstMicroservice.setModifiedBy("SYSTEM");
             mstMicroserviceRepository.save(mstMicroservice);
             return new StatusParam(true, "Microservice Updated Successfully");
@@ -136,11 +140,4 @@ public class MstMicroserviceImpl implements MstMicroserviceService {
     }
 
 
-    private String getClientIp() {
-        String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
-        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
-            clientIp = httpServletRequest.getRemoteAddr();
-        }
-        return clientIp;
-    }
 }

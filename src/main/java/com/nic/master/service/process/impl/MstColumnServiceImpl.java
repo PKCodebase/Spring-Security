@@ -9,6 +9,7 @@ import com.nic.master.request.process.mstcolumntype.AddMstColumnTypeRequest;
 import com.nic.master.request.process.mstcolumntype.UpdateMstColumnTypeRequest;
 import com.nic.master.service.process.MstCodeService;
 import com.nic.master.service.process.MstColumnService;
+import com.nic.master.util.IdAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -26,11 +27,13 @@ public class MstColumnServiceImpl implements MstColumnService {
     private final MstColumnTypeRepository mstColumnTypeRepository;
     private  final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
+    private final IdAddressGenerator idAddressGenerator;
 
-    public MstColumnServiceImpl(MstColumnTypeRepository mstColumnTypeRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest) {
+    public MstColumnServiceImpl(MstColumnTypeRepository mstColumnTypeRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
         this.mstColumnTypeRepository = mstColumnTypeRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
+        this.idAddressGenerator = idAddressGenerator;
     }
 
     @Override
@@ -43,10 +46,10 @@ public class MstColumnServiceImpl implements MstColumnService {
             }
             MstColumnType mstColumnType = modelMapper.map(addMstColumnTypeRequest,MstColumnType.class);
             mstColumnType.setColumnTypeGuid(UUID.randomUUID().toString());
-            mstColumnType.setCreatedIpAddr(getClientIp());
+            mstColumnType.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
             mstColumnType.setCreatedDate(LocalDateTime.now());
             mstColumnType.setCreatedBy("SYSTEM");
-            mstColumnType.setCreatedMacAddr(getClientIp());
+            mstColumnType.setCreatedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
             mstColumnTypeRepository.save(mstColumnType);
             logger.info("MstColumn added successfully");
             return new StatusParam(true,"MstColumn added successfully.");
@@ -103,15 +106,16 @@ public class MstColumnServiceImpl implements MstColumnService {
                     });
 
             if(updateMstColumnTypeRequest.getColumnTypeCode() != null
-                && !updateMstColumnTypeRequest.getColumnTypeCode().equalsIgnoreCase(mstColumnType.getColumnTypeCode())
-                    && mstColumnTypeRepository.existsByColumnTypeCodeIgnoreCase(updateMstColumnTypeRequest.getColumnTypeCode())){
+                && !updateMstColumnTypeRequest.getColumnTypeCode().equalsIgnoreCase(mstColumnType.getColumnTypeCode().trim())
+                    && mstColumnTypeRepository.existsByColumnTypeCodeIgnoreCase(updateMstColumnTypeRequest.getColumnTypeCode().trim())){
                 logger.warn("MstColumn Code already exist.{}",updateMstColumnTypeRequest.getColumnTypeCode());
                 return new StatusParam(false,"MstColumn Code already exists : "+updateMstColumnTypeRequest.getColumnTypeCode());
             }
             modelMapper.map(updateMstColumnTypeRequest,mstColumnType);
             mstColumnType.setModifiedDate(LocalDateTime.now());
-            mstColumnType.setModifiedIpAddr(getClientIp());
+            mstColumnType.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
             mstColumnType.setModifiedBy("SYSTEM");
+            mstColumnType.setModifiedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
             mstColumnTypeRepository.save(mstColumnType);
             logger.info("Mst Column Updated successfully");
             return new StatusParam(true,"Mst Column Updated successfully");
@@ -124,12 +128,5 @@ public class MstColumnServiceImpl implements MstColumnService {
         }
     }
 
-    private String getClientIp(){
-        String clientIp = httpServletRequest.getHeader("X-Forwarded-For");
-        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)){
-            clientIp = httpServletRequest.getRemoteAddr();
-        }
-        return clientIp;
 
-    }
 }

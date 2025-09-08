@@ -17,4 +17,6 @@ public class MstColumnRequestMapper {
 
     @Valid
     private UpdateMstColumnTypeRequest updateMstColumnTypeRequest;
+
+
 }

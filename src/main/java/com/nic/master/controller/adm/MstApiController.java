@@ -176,7 +176,7 @@ public ResponseEntity<Object> handleMstApiAction(
             StatusParam updateResponse = null;
             if (requestWrapper != null) {
                 updateResponse = mstApiService.updateMstApiByGuid(
-                        requestWrapper.getApiGuid() != null ? requestWrapper.getApiGuid() : apiGuid,
+                        apiGuid,
                         requestWrapper.getUpdateMstApiRequest()
                 );
             }

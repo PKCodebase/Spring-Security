@@ -111,7 +111,7 @@ public ResponseEntity<Object> handleUrlActions(
             StatusParam updateResponse = null;
             if (requestWrapper != null) {
                 updateResponse = mstUrlService.updateMstUrlByGuid(
-                        requestWrapper.getUrlTypeGuid(),
+                        urlTypeGuid,
                         requestWrapper.getUpdateMstUrlRequest()
                 );
             }

@@ -1,0 +1,126 @@
+package com.nic.master.service.process.impl;
+
+import com.nic.master.entity.process.MstProcessType;
+import com.nic.master.exception.ResourceNotFoundException;
+import com.nic.master.param.SelectOptionParam;
+import com.nic.master.param.StatusParam;
+import com.nic.master.repository.process.MstProcessTypeRepository;
+import com.nic.master.request.process.mstprocesstype.AddMstProcessTypeRequest;
+import com.nic.master.request.process.mstprocesstype.UpdateMstProcessTypeRequest;
+import com.nic.master.service.process.MstProcessTypeService;
+import com.nic.master.util.IdAddressGenerator;
+import jakarta.servlet.http.HttpServletRequest;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class MstProcessTypeServiceImpl implements MstProcessTypeService {
+
+    private static  final Logger logger = LoggerFactory.getLogger(MstProcessTypeServiceImpl.class);
+    private final MstProcessTypeRepository mstProcessTypeRepository;
+    private final ModelMapper modelMapper;
+    private  final HttpServletRequest httpServletRequest;
+    private final IdAddressGenerator idAddressGenerator;
+
+    public MstProcessTypeServiceImpl(MstProcessTypeRepository mstProcessTypeRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
+        this.mstProcessTypeRepository = mstProcessTypeRepository;
+        this.modelMapper = modelMapper;
+        this.httpServletRequest = httpServletRequest;
+        this.idAddressGenerator = idAddressGenerator;
+
+    }
+
+    @Override
+    public StatusParam addMstProcess(AddMstProcessTypeRequest addMstProcessTypeRequest) {
+        logger.info("Adding ProcessType..");
+        try{
+            if(mstProcessTypeRepository.existsByProcessTypeCodeIgnoreCase(addMstProcessTypeRequest.getProcessTypeCode().trim())){
+                logger.warn("Duplicate ProcessType Code.Request{}",addMstProcessTypeRequest.getProcessTypeCode());
+                return new StatusParam(false,"ProcessType Code already exists"+addMstProcessTypeRequest.getProcessTypeCode());
+            }
+            MstProcessType mstProcessType = modelMapper.map(addMstProcessTypeRequest,MstProcessType.class);
+            mstProcessType.setProcessTypeGuid(UUID.randomUUID().toString());
+            mstProcessType.setCreatedDate(LocalDateTime.now());
+            mstProcessType.setCreatedBy("SYSTEM");
+            mstProcessType.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstProcessType.setCreatedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstProcessTypeRepository.save(mstProcessType);
+            return new StatusParam(true,"MstProcess added successfully.");
+        }catch (IllegalArgumentException ex){
+            logger.error("Validation failed error. Request{}",addMstProcessTypeRequest,ex);
+            throw new RuntimeException("Error while adding MstProcess."+ex.getMessage(),ex);
+        }catch (Exception ex){
+            logger.error("Error while adding MstProcess. Request{}",addMstProcessTypeRequest,ex);
+            throw new RuntimeException("Error while adding MstProcess"+ex.getMessage(),ex);
+        }
+    }
+
+    @Override
+    public List<MstProcessType> getAllMstProcess() {
+        logger.info("Fetching All Process");
+        return mstProcessTypeRepository.findAll();
+    }
+
+    @Override
+    public MstProcessType getByProcessTypeGuid(String processTypeGuid) {
+        logger.info("Fetching Process By Guid");
+        return mstProcessTypeRepository.findByProcessTypeGuid(processTypeGuid.trim())
+                .orElseThrow(()->{
+                    logger.error("MstProcess not found with Guid:{}",processTypeGuid);
+                    return  new ResourceNotFoundException("MstProcess not found with Guid : "+ processTypeGuid);
+                });
+    }
+
+    @Override
+    public SelectOptionParam getByProcessTypeCode(String processTypeCode) {
+        logger.info("Fetching Document with code..");
+        return mstProcessTypeRepository.findByProcessTypeCodeIgnoreCase(processTypeCode.trim())
+                .map(mstProcessType -> {
+                    return  new SelectOptionParam(
+                            mstProcessType.getProcessTypeGuid(),
+                            mstProcessType.getProcessTypeCode(),
+                            mstProcessType.getProcessTypeNameEn()
+                    );
+                })
+                .orElseThrow(()->{
+                    logger.error("MstProcess Not found with code.Request{}",processTypeCode);
+                    return new ResourceNotFoundException("MstProcess Not found with code : "+processTypeCode);
+                });
+    }
+
+    @Override
+    public StatusParam updateMstProcess(String processTypeGuid, UpdateMstProcessTypeRequest updateMstProcessTypeRequest) {
+        logger.info("Updating Process..");
+        try{
+            MstProcessType mstProcessType = mstProcessTypeRepository.findByProcessTypeGuid(processTypeGuid)
+                    .orElseThrow(()->{
+                        logger.error("MstProcess not found with Guid. Request{}",processTypeGuid);
+                        return new ResourceNotFoundException("MstProcess not found with Guid : "+processTypeGuid);
+                    });
+            if(updateMstProcessTypeRequest.getProcessTypeCode() != null
+              && !updateMstProcessTypeRequest.getProcessTypeCode().equalsIgnoreCase(mstProcessType.getProcessTypeCode().trim())
+            && mstProcessTypeRepository.existsByProcessTypeCodeIgnoreCase(updateMstProcessTypeRequest.getProcessTypeCode().trim())){
+                return new StatusParam(false,"ProcessTypeCode already exists");
+            }
+            modelMapper.map(updateMstProcessTypeRequest,mstProcessType);
+            mstProcessType.setModifiedDate(LocalDateTime.now());
+            mstProcessType.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstProcessType.setModifiedBy("SYSTEM");
+            mstProcessTypeRepository.save(mstProcessType);
+            return new StatusParam(true,"MstProcess updated successfully.");
+
+        }catch (IllegalArgumentException ex){
+            logger.error("Validation failed while updating error.Request{}",updateMstProcessTypeRequest,ex);
+            throw new RuntimeException("Error while updating MstProcess :"+ex.getMessage(),ex);
+        }catch (Exception ex){
+            logger.error("Error while updating MstProcess. Request{} Guid{}",updateMstProcessTypeRequest,processTypeGuid);
+            throw new RuntimeException("Error while updating MstProcess : "+ex.getMessage(),ex);
+        }
+    }
+}

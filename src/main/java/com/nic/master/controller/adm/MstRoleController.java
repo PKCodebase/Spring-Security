@@ -150,8 +150,8 @@ public ResponseEntity<Object> handleRoleActions(
         case "UPDATE" -> {
             StatusParam updateResponse = null;
             if (requestWrapper != null) {
-                updateResponse = mstRoleService.updateRoleByGuid(
-                        requestWrapper.getRoleGuid(),
+                updateResponse = mstRoleService.updateRole(
+                        roleGuid.trim(),
                         requestWrapper.getRoleUpdateRequest()
                 );
             }

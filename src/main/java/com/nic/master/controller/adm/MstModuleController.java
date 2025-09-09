@@ -117,7 +117,7 @@ public class MstModuleController {
                 StatusParam updateResponse = null;
                 if (moduleRequestMapper != null) {
                     updateResponse = mstModuleService.updateModuleByGuid(
-                            moduleRequestMapper.getModuleGuid(),
+                            moduleGuid,
                             moduleRequestMapper.getModuleUpdateRequest()
                     );
                 }

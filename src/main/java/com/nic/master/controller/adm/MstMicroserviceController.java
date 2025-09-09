@@ -111,7 +111,7 @@ public ResponseEntity<Object> handleMicroserviceAction(
             StatusParam updateResponse = null;
             if(microserviceRequestMapper != null) {
                 updateResponse = mstMicroserviceService.updateMicroServiceByGuid(
-                        microserviceRequestMapper.getMicroserviceGuid(),
+                       microserviceGuid,
                         microserviceRequestMapper.getMicroserviceUpdateRequest()
                 );
             }

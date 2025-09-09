@@ -114,7 +114,7 @@ public class MstApiServiceController {
                 StatusParam updateResponse = null;
                 if (apiServiceRequestMapper != null) {
                     updateResponse = mstApiServices.updateApiService(
-                            apiServiceRequestMapper.getApiServiceGuid(),
+                           apiServiceGuid,
                             apiServiceRequestMapper.getUpdateApiServiceRequest()
                     );
                 }

@@ -18,5 +18,5 @@ public interface MstRoleService {
 
     MstRole getRoleByGuid(String roleGuid);
 
-    StatusParam updateRoleByGuid(String roleGuid , RoleUpdateRequest roleUpdateRequest);
+    StatusParam updateRole(String roleGuid , RoleUpdateRequest roleUpdateRequest);
 }

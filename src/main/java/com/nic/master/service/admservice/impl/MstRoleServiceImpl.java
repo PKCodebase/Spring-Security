@@ -98,7 +98,7 @@ public class MstRoleServiceImpl implements MstRoleService {
     }
 
     @Override
-    public StatusParam updateRoleByGuid(String roleGuid, RoleUpdateRequest roleUpdateRequest) {
+    public StatusParam updateRole(String roleGuid, RoleUpdateRequest roleUpdateRequest) {
         logger.info("Updating role with GUID: {}. Request: {}", roleGuid, roleUpdateRequest);
         try {
             MstRole mstRole = mstRoleRepository.findByRoleGuid(roleGuid.trim())
@@ -109,7 +109,7 @@ public class MstRoleServiceImpl implements MstRoleService {
 
             if (roleUpdateRequest.getRoleCode() != null &&
                     !roleUpdateRequest.getRoleCode().equalsIgnoreCase(mstRole.getRoleCode().trim()) &&
-                    mstRoleRepository.existsByRoleCodeIgnoreCase(roleUpdateRequest.getRoleCode())) {
+                    mstRoleRepository.existsByRoleCodeIgnoreCase(roleUpdateRequest.getRoleCode().trim())) {
                 logger.warn("Duplicate role code detected during update: {}", roleUpdateRequest.getRoleCode());
                 return new StatusParam(false, "Role Code already exists: " + roleUpdateRequest.getRoleCode());
             }

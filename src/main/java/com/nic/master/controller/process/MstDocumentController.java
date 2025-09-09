@@ -64,7 +64,7 @@ public class MstDocumentController {
                 StatusParam updateResponse = null;
                 if(mstDocumentTypeRequestMapper != null){
                     updateResponse = mstDocumentTypeService.updateDocument(
-                            mstDocumentTypeRequestMapper.getDocumentTypeGuid(),
+                            documentTypeGuid,
                             mstDocumentTypeRequestMapper.getUpdateMstDocumentTypeRequest()
                     );
                 }

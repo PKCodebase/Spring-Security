@@ -112,6 +112,7 @@ public class MstProcessTypeServiceImpl implements MstProcessTypeService {
             mstProcessType.setModifiedDate(LocalDateTime.now());
             mstProcessType.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
             mstProcessType.setModifiedBy("SYSTEM");
+            mstProcessType.setModifiedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
             mstProcessTypeRepository.save(mstProcessType);
             return new StatusParam(true,"MstProcess updated successfully.");
 

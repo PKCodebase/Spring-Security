@@ -28,7 +28,7 @@ public class MstProcessType {
     @Column(name = "process_type_guid", length = 36, nullable = false, updatable = false)
     private String processTypeGuid;
 
-    @Column(name = "process_type_id", nullable = false, unique = true,insertable = false,updatable = true)
+    @Column(name = "process_type_id", nullable = false, unique = true,insertable = false,updatable = false)
     private Long processTypeId;
 
     @Column(name = "process_type_code", length = 100, nullable = false, unique = true)

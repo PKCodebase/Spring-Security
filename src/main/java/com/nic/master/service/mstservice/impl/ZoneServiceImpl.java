@@ -9,7 +9,7 @@ import com.nic.master.repository.mst.ZoneRepository;
 import com.nic.master.request.mst.zonerequest.ZoneAddRequest;
 import com.nic.master.request.mst.zonerequest.ZoneUpdateRequest;
 import com.nic.master.service.mstservice.ZoneService;
-import com.nic.master.util.IdAddressGenerator;
+import com.nic.master.util.IpAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -28,14 +28,14 @@ public class ZoneServiceImpl implements ZoneService {
     private final ZoneRepository zoneRepository;
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
-    private final IdAddressGenerator idAddressGenerator;
+    private final IpAddressGenerator ipAddressGenerator;
 
 
-    public ZoneServiceImpl(ZoneRepository zoneRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
+    public ZoneServiceImpl(ZoneRepository zoneRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
         this.zoneRepository = zoneRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
-        this.idAddressGenerator = idAddressGenerator;
+        this.ipAddressGenerator = ipAddressGenerator;
     }
 
     @Override
@@ -78,8 +78,8 @@ public class ZoneServiceImpl implements ZoneService {
             Zone zone = modelMapper.map(zoneAddRequest, Zone.class);
             zone.setZoneGuid(UUID.randomUUID().toString());
             zone.setCreatedDate(LocalDateTime.now());
-            zone.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
-            zone.setCreatedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            zone.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            zone.setCreatedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             zone.setCreatedBy("SYSTEM");
 
             zoneRepository.save(zone);
@@ -138,8 +138,8 @@ public class ZoneServiceImpl implements ZoneService {
 
             modelMapper.map(zoneUpdateRequest, zone);
             zone.setModifiedDate(LocalDateTime.now());
-            zone.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
-            zone.setModifiedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            zone.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            zone.setModifiedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             zone.setModifiedBy("SYSTEM");
 
             zoneRepository.save(zone);

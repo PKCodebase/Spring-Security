@@ -8,7 +8,8 @@ import com.nic.master.repository.process.MstSectionRepository;
 import com.nic.master.request.process.mstsectiontype.AddMstSectionTypeRequest;
 import com.nic.master.request.process.mstsectiontype.UpdateMstSectionTypeRequest;
 import com.nic.master.service.process.MstSectionTypeService;
-import com.nic.master.util.IdAddressGenerator;
+import com.nic.master.util.IpAddressGenerator;
+import com.nic.master.util.IpAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -26,13 +27,13 @@ public class MstSectionTypeServiceImpl implements MstSectionTypeService {
     private final MstSectionRepository mstSectionRepository;
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
-    private final IdAddressGenerator idAddressGenerator;
+    private final IpAddressGenerator ipAddressGenerator;
 
-    public MstSectionTypeServiceImpl(MstSectionRepository mstSectionRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
+    public MstSectionTypeServiceImpl(MstSectionRepository mstSectionRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
         this.mstSectionRepository = mstSectionRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
-        this.idAddressGenerator = idAddressGenerator;
+        this.ipAddressGenerator = ipAddressGenerator;
     }
 
     @Override
@@ -46,9 +47,9 @@ public class MstSectionTypeServiceImpl implements MstSectionTypeService {
             MstSectionType mstSectionType = modelMapper.map(addMstSectionTypeRequest,MstSectionType.class);
             mstSectionType.setSectionTypeGuid(UUID.randomUUID().toString());
             mstSectionType.setCreatedDate(LocalDateTime.now());
-            mstSectionType.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstSectionType.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstSectionType.setCreatedBy("SYSTEM");
-            mstSectionType.setCreatedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstSectionType.setCreatedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstSectionRepository.save(mstSectionType);
             logger.info("Adding MstSection successfully");
             return new StatusParam(true,"MstSection added successfully");
@@ -110,10 +111,10 @@ public class MstSectionTypeServiceImpl implements MstSectionTypeService {
                 return new StatusParam(false,"SectionType Code already exists.");
             }
             modelMapper.map(updateMstSectionTypeRequest,mstSectionType);
-            mstSectionType.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstSectionType.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstSectionType.setModifiedDate(LocalDateTime.now());
             mstSectionType.setModifiedBy("SYSTEM");
-            mstSectionType.setModifiedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstSectionType.setModifiedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstSectionRepository.save(mstSectionType);
             logger.info("MstSection updated successfully.");
             return new StatusParam(true,"MstSection updated successfully.");

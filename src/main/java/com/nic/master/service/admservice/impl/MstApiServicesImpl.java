@@ -8,7 +8,7 @@ import com.nic.master.repository.adm.MstApiServiceRepository;
 import com.nic.master.request.adm.apiservicerequest.AddApiServiceRequest;
 import com.nic.master.request.adm.apiservicerequest.UpdateApiServiceRequest;
 import com.nic.master.service.admservice.MstApiServices;
-import com.nic.master.util.IdAddressGenerator;
+import com.nic.master.util.IpAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -26,17 +26,15 @@ public class MstApiServicesImpl implements MstApiServices {
     private final MstApiServiceRepository mstApiServiceRepository;
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
-    private final IdAddressGenerator idAddressGenerator;
+    private final IpAddressGenerator ipAddressGenerator;
 
-
-    public MstApiServicesImpl(MstApiServiceRepository mstApiServiceRepository,
-                              ModelMapper modelMapper,
-                              HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
+    public MstApiServicesImpl(MstApiServiceRepository mstApiServiceRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
         this.mstApiServiceRepository = mstApiServiceRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
-        this.idAddressGenerator = idAddressGenerator;
+        this.ipAddressGenerator = ipAddressGenerator;
     }
+
 
     @Override
     public StatusParam addApiService(AddApiServiceRequest addApiServiceRequest) {
@@ -51,7 +49,7 @@ public class MstApiServicesImpl implements MstApiServices {
             MstApiService mstApiService = modelMapper.map(addApiServiceRequest, MstApiService.class);
             mstApiService.setApiServiceGuid(UUID.randomUUID().toString());
             mstApiService.setCreatedDate(LocalDateTime.now());
-            mstApiService.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstApiService.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstApiService.setCreatedBy("SYSTEM");
             mstApiService.setIsActive(true);
 
@@ -126,7 +124,7 @@ public class MstApiServicesImpl implements MstApiServices {
 
             modelMapper.map(updateApiServiceRequest, mstApiService);
             mstApiService.setModifiedDate(LocalDateTime.now());
-            mstApiService.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstApiService.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstApiService.setModifiedBy("SYSTEM");
 
             mstApiServiceRepository.save(mstApiService);

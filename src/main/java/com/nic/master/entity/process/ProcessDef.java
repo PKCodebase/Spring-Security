@@ -4,6 +4,8 @@ package com.nic.master.entity.process;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 
 import java.time.LocalDateTime;
 
@@ -43,6 +45,11 @@ public class ProcessDef {
 
     @Column(name = "process_def_name", nullable = false)
     private String processDefName;
+
+    @OneToOne(mappedBy = "processDef", cascade = CascadeType.ALL, optional = true)
+//    @LazyToOne(LazyToOneOption.NO_PROXY)
+    private ProcessDefConfig processDefConfig;
+
 
     @Column(name = "is_primary_org_applicable")
     private Boolean isPrimaryOrgApplicable;

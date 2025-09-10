@@ -9,7 +9,7 @@ import com.nic.master.repository.adm.MstModuleRepository;
 import com.nic.master.request.adm.modulerequest.MstModuleAddRequest;
 import com.nic.master.request.adm.modulerequest.MstModuleUpdateRequest;
 import com.nic.master.service.admservice.MstModuleService;
-import com.nic.master.util.IdAddressGenerator;
+import com.nic.master.util.IpAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -27,14 +27,14 @@ public class MstModuleServiceImpl implements MstModuleService {
     private final MstModuleRepository mstModuleRepository;
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
-    private final IdAddressGenerator idAddressGenerator;
+    private final IpAddressGenerator ipAddressGenerator;
 
 
-    public MstModuleServiceImpl(MstModuleRepository mstModuleRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
+    public MstModuleServiceImpl(MstModuleRepository mstModuleRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
         this.mstModuleRepository = mstModuleRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
-        this.idAddressGenerator = idAddressGenerator;
+        this.ipAddressGenerator = ipAddressGenerator;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class MstModuleServiceImpl implements MstModuleService {
             MstModule mstModule = modelMapper.map(modelAddRequest, MstModule.class);
             mstModule.setModuleGuid(UUID.randomUUID().toString());
             mstModule.setCreatedDate(LocalDateTime.now());
-            mstModule.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstModule.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
 //            mstModule.setIsActive(true);
             mstModule.setCreatedBy("SYSTEM");
 
@@ -121,7 +121,7 @@ public class MstModuleServiceImpl implements MstModuleService {
 
             modelMapper.map(mstModuleUpdateRequest, mstModule);
             mstModule.setModifiedDate(LocalDateTime.now());
-            mstModule.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstModule.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstModule.setModifiedBy("SYSTEM");
 
             mstModuleRepository.save(mstModule);

@@ -13,7 +13,7 @@ import com.nic.master.request.adm.apiRequest.AddMstApiRequest;
 import com.nic.master.request.adm.apiRequest.UpdateMstApiRequest;
 import com.nic.master.response.mstapiresponse.MstApiResponse;
 import com.nic.master.service.admservice.MstApiService;
-import com.nic.master.util.IdAddressGenerator;
+import com.nic.master.util.IpAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -34,17 +34,17 @@ public class MstApiImpl implements MstApiService {
     private final MstMicroserviceRepository mstMicroserviceRepository;
     private final MstUrlRepository mstUrlRepository;
     private final HttpServletRequest httpServletRequest;
-    private final IdAddressGenerator idAddressGenerator;
+    private final IpAddressGenerator ipAddressGenerator;
 
-
-    public MstApiImpl(MstApiRepository mstApiRepository, ModelMapper modelMapper, MstMicroserviceRepository mstMicroserviceRepository, MstUrlRepository mstUrlRepository, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
+    public MstApiImpl(MstApiRepository mstApiRepository, ModelMapper modelMapper, MstMicroserviceRepository mstMicroserviceRepository, MstUrlRepository mstUrlRepository, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
         this.mstApiRepository = mstApiRepository;
         this.modelMapper = modelMapper;
         this.mstMicroserviceRepository = mstMicroserviceRepository;
         this.mstUrlRepository = mstUrlRepository;
         this.httpServletRequest = httpServletRequest;
-        this.idAddressGenerator = idAddressGenerator;
+        this.ipAddressGenerator = ipAddressGenerator;
     }
+
 
     @Override
     public StatusParam addMstApi(String microserviceGuid,String urlTypeGuid,AddMstApiRequest addMstApiRequest) {
@@ -95,7 +95,7 @@ public class MstApiImpl implements MstApiService {
             mstApi.setApiGuid(UUID.randomUUID().toString());
             mstApi.setCreatedDate(LocalDateTime.now());
             mstApi.setUrl(addMstApiRequest.getUrl());
-            mstApi.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstApi.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstApi.setCreatedBy("SYSTEM");
             mstApi.setMicroservice(mstMicroservice);
             mstApi.setUrlType(mstUrlType);
@@ -178,7 +178,7 @@ public class MstApiImpl implements MstApiService {
 
             modelMapper.map(updateMstApiRequest, mstApi);
             mstApi.setModifiedDate(LocalDateTime.now());
-            mstApi.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstApi.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstApi.setModifiedBy("SYSTEM");
 
             mstApiRepository.save(mstApi);

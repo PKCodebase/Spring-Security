@@ -9,7 +9,7 @@ import com.nic.master.request.adm.msturlrequest.AddMstUrlRequest;
 import com.nic.master.request.adm.msturlrequest.UpdateMstUrlRequest;
 import com.nic.master.response.msturlresponse.MstUrlResponse;
 import com.nic.master.service.admservice.MstUrlService;
-import com.nic.master.util.IdAddressGenerator;
+import com.nic.master.util.IpAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -28,14 +28,14 @@ public class MstUrlServiceImpl implements MstUrlService {
     private  final MstUrlRepository mstUrlRepository;
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
-    private final IdAddressGenerator idAddressGenerator;
+    private final IpAddressGenerator ipAddressGenerator;
 
 
-    public MstUrlServiceImpl(MstUrlRepository mstUrlRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
+    public MstUrlServiceImpl(MstUrlRepository mstUrlRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
         this.mstUrlRepository = mstUrlRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
-        this.idAddressGenerator = idAddressGenerator;
+        this.ipAddressGenerator = ipAddressGenerator;
     }
 
     @Override
@@ -46,9 +46,9 @@ public class MstUrlServiceImpl implements MstUrlService {
             }
             MstUrlType mstUrlType = modelMapper.map(addMstUrlRequest,MstUrlType.class);
             mstUrlType.setUrlTypeGuid(UUID.randomUUID().toString());
-            mstUrlType.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstUrlType.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstUrlType.setCreatedDate(LocalDateTime.now());
-            mstUrlType.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstUrlType.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstUrlType.setCreatedBy("SYSTEM");
             mstUrlRepository.save(mstUrlType);
             return new StatusParam(true,"UrlType Added Successfully");
@@ -108,7 +108,7 @@ public class MstUrlServiceImpl implements MstUrlService {
             modelMapper.map(updateMstUrlRequest, mstUrlType);
             mstUrlType.setModifiedBy("SYSTEM");
             mstUrlType.setModifiedDate(LocalDateTime.now());
-            mstUrlType.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstUrlType.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
 
             mstUrlRepository.save(mstUrlType);
 

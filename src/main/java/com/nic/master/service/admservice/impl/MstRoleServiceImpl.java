@@ -8,7 +8,7 @@ import com.nic.master.repository.adm.MstRoleRepository;
 import com.nic.master.request.adm.rolerequest.RoleAddRequest;
 import com.nic.master.request.adm.rolerequest.RoleUpdateRequest;
 import com.nic.master.service.admservice.MstRoleService;
-import com.nic.master.util.IdAddressGenerator;
+import com.nic.master.util.IpAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -23,14 +23,14 @@ public class MstRoleServiceImpl implements MstRoleService {
     private final MstRoleRepository mstRoleRepository;
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
-    private final IdAddressGenerator idAddressGenerator;
+    private final IpAddressGenerator ipAddressGenerator;
 
 
-    public MstRoleServiceImpl(MstRoleRepository mstRoleRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
+    public MstRoleServiceImpl(MstRoleRepository mstRoleRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
         this.mstRoleRepository = mstRoleRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
-        this.idAddressGenerator = idAddressGenerator;
+        this.ipAddressGenerator = ipAddressGenerator;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class MstRoleServiceImpl implements MstRoleService {
             MstRole mstRole = modelMapper.map(roleAddRequest, MstRole.class);
             mstRole.setRoleGuid(java.util.UUID.randomUUID().toString());
             mstRole.setCreatedDate(LocalDateTime.now());
-            mstRole.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstRole.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstRole.setIsActive(true);
             mstRole.setCreatedBy("SYSTEM");
 
@@ -116,7 +116,7 @@ public class MstRoleServiceImpl implements MstRoleService {
 
             modelMapper.map(roleUpdateRequest, mstRole);
             mstRole.setModifiedDate(LocalDateTime.now());
-            mstRole.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstRole.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstRole.setModifiedBy("SYSTEM");
 
             mstRoleRepository.save(mstRole);

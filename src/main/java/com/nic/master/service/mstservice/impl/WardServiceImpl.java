@@ -12,7 +12,7 @@ import com.nic.master.request.mst.wardrequest.WardAddRequest;
 import com.nic.master.request.mst.wardrequest.WardUpdateRequest;
 import com.nic.master.response.wardresponse.WardResponse;
 import com.nic.master.service.mstservice.WardService;
-import com.nic.master.util.IdAddressGenerator;
+import com.nic.master.util.IpAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -35,16 +35,16 @@ public class WardServiceImpl implements WardService {
     private final ZoneRepository zoneRepository;
     private final HttpServletRequest httpServletRequest;
     private final ModelMapper modelMapper;
-    private final IdAddressGenerator idAddressGenerator;
+    private final IpAddressGenerator ipAddressGenerator;
 
-
-    public WardServiceImpl(WardRepository wardRepository, ZoneRepository zoneRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
+    public WardServiceImpl(WardRepository wardRepository, ZoneRepository zoneRepository, HttpServletRequest httpServletRequest, ModelMapper modelMapper, IpAddressGenerator ipAddressGenerator) {
         this.wardRepository = wardRepository;
         this.zoneRepository = zoneRepository;
-        this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
-        this.idAddressGenerator = idAddressGenerator;
+        this.modelMapper = modelMapper;
+        this.ipAddressGenerator = ipAddressGenerator;
     }
+
 
     @Override
     public List<SelectOptionParam> fetchWardMaster() {
@@ -92,8 +92,8 @@ public class WardServiceImpl implements WardService {
             Ward ward = modelMapper.map(wardAddRequest, Ward.class);
             ward.setWardGuid(UUID.randomUUID().toString());
             ward.setCreatedDate(LocalDateTime.now());
-            ward.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
-            ward.setCreatedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            ward.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            ward.setCreatedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             ward.setZone(zone);
             ward.setCreatedBy("SYSTEM");
 
@@ -162,8 +162,8 @@ public class WardServiceImpl implements WardService {
             }
 
             modelMapper.map(wardUpdateRequest, ward);
-            ward.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
-            ward.setModifiedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            ward.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            ward.setModifiedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             ward.setModifiedDate(LocalDateTime.now());
             ward.setZone(zone);
             ward.setModifiedBy("SYSTEM");

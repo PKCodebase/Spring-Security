@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import com.nic.master.util.IdAddressGenerator;
+import com.nic.master.util.IpAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -27,14 +27,14 @@ public class MstMicroserviceImpl implements MstMicroserviceService {
     private final MstMicroserviceRepository mstMicroserviceRepository;
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
-    private final IdAddressGenerator idAddressGenerator;
+    private final IpAddressGenerator ipAddressGenerator;
 
 
-    public MstMicroserviceImpl(MstMicroserviceRepository mstMicroserviceRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
+    public MstMicroserviceImpl(MstMicroserviceRepository mstMicroserviceRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
         this.mstMicroserviceRepository = mstMicroserviceRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
-        this.idAddressGenerator = idAddressGenerator;
+        this.ipAddressGenerator = ipAddressGenerator;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class MstMicroserviceImpl implements MstMicroserviceService {
             MstMicroservice mstMicroservice = modelMapper.map(microserviceAddRequest, MstMicroservice.class);
             mstMicroservice.setMicroserviceGuid(UUID.randomUUID().toString());
             mstMicroservice.setCreatedDate(LocalDateTime.now());
-            mstMicroservice.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstMicroservice.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstMicroservice.setCreatedBy("SYSTEM");
             mstMicroservice.setIsActive(true);
             mstMicroserviceRepository.save(mstMicroservice);
@@ -124,7 +124,7 @@ public class MstMicroserviceImpl implements MstMicroserviceService {
 
             modelMapper.map(microserviceUpdateRequest, mstMicroservice);
             mstMicroservice.setModifiedDate(LocalDateTime.now());
-            mstMicroservice.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstMicroservice.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstMicroservice.setModifiedBy("SYSTEM");
             mstMicroserviceRepository.save(mstMicroservice);
             return new StatusParam(true, "Microservice Updated Successfully");

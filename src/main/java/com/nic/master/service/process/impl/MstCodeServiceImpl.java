@@ -8,7 +8,7 @@ import com.nic.master.repository.process.MstCodeImplRepository;
 import com.nic.master.request.process.mstcodeimpl.AddMstCodeImplRequest;
 import com.nic.master.request.process.mstcodeimpl.UpdateMstCodeImplRequest;
 import com.nic.master.service.process.MstCodeService;
-import com.nic.master.util.IdAddressGenerator;
+import com.nic.master.util.IpAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -26,13 +26,13 @@ public class MstCodeServiceImpl implements MstCodeService {
     private final MstCodeImplRepository mstCodeImplRepository;
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
-    private final IdAddressGenerator idAddressGenerator;
+    private final IpAddressGenerator ipAddressGenerator;
 
-    public MstCodeServiceImpl(MstCodeImplRepository mstCodeImplRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IdAddressGenerator idAddressGenerator) {
+    public MstCodeServiceImpl(MstCodeImplRepository mstCodeImplRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
         this.mstCodeImplRepository = mstCodeImplRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
-        this.idAddressGenerator = idAddressGenerator;
+        this.ipAddressGenerator = ipAddressGenerator;
     }
 
     @Override
@@ -58,10 +58,10 @@ public class MstCodeServiceImpl implements MstCodeService {
 
             MstCodeImpl mstCodeImpl = modelMapper.map(addMstCodeImplRequest,MstCodeImpl.class);
             mstCodeImpl.setCodeImplGuid(UUID.randomUUID().toString());
-            mstCodeImpl.setCreatedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstCodeImpl.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstCodeImpl.setCreatedDate(LocalDateTime.now());
             mstCodeImpl.setCreatedBy("SYSTEM");
-            mstCodeImpl.setCreatedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
+            mstCodeImpl.setCreatedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstCodeImplRepository.save(mstCodeImpl);
             logger.info("MstCodeImpl added successfully.");
             return new StatusParam(true,"MstCodeImpl added successfully.");
@@ -103,10 +103,10 @@ public class MstCodeServiceImpl implements MstCodeService {
                     });
 
                 modelMapper.map(updateMstCodeImplRequest,mstCodeImpl);
-                mstCodeImpl.setModifiedIpAddr(idAddressGenerator.getClientIp(httpServletRequest));
+                mstCodeImpl.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
                 mstCodeImpl.setModifiedDate(LocalDateTime.now());
                 mstCodeImpl.setModifiedBy("SYSTEM");
-                mstCodeImpl.setModifiedMacAddr(idAddressGenerator.getClientIp(httpServletRequest));
+                mstCodeImpl.setModifiedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
                 mstCodeImplRepository.save(mstCodeImpl);
                 logger.info("MstCodeImpl updated successfully");
                 return new StatusParam(true,"MstCodeImpl updated successfully");

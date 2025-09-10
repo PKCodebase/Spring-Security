@@ -16,4 +16,44 @@ public class UpdateMstSectionTypeRequest {
 
     // enum type for sectionCategory (FORM / TEMPLATE / QUERY)
     private String sectionCategory;
+
+    public String getSectionTypeCode() {
+        return sectionTypeCode;
+    }
+
+    public void setSectionTypeCode(String sectionTypeCode) {
+        this.sectionTypeCode = sectionTypeCode;
+    }
+
+    public String getSectionTypeName() {
+        return sectionTypeName;
+    }
+
+    public void setSectionTypeName(String sectionTypeName) {
+        this.sectionTypeName = sectionTypeName;
+    }
+
+    public String getModifiedRemarks() {
+        return modifiedRemarks;
+    }
+
+    public void setModifiedRemarks(String modifiedRemarks) {
+        this.modifiedRemarks = modifiedRemarks;
+    }
+
+    public String getModifiedUri() {
+        return modifiedUri;
+    }
+
+    public void setModifiedUri(String modifiedUri) {
+        this.modifiedUri = modifiedUri;
+    }
+
+    public String getSectionCategory() {
+        return sectionCategory;
+    }
+
+    public void setSectionCategory(String sectionCategory) {
+        this.sectionCategory = sectionCategory;
+    }
 }

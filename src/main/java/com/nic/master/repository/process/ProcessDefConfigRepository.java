@@ -1,5 +1,6 @@
 package com.nic.master.repository.process;
 
+import com.nic.master.entity.process.ProcessDef;
 import com.nic.master.entity.process.ProcessDefConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,4 +14,5 @@ public interface ProcessDefConfigRepository extends JpaRepository<ProcessDefConf
 //
 //    Optional<ProcessDefConfig> findByProcessDefConfigCodeIgnoreCase(String processDefConfigCode);
 
+    Optional<ProcessDefConfig> findByProcessDef(ProcessDef processDef);
 }

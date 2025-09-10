@@ -3,12 +3,14 @@ package com.nic.master.request.process.processdefconfigrequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.util.Map;
+
 @Data
 public class UpdateProcessDefConfigRequest {
-    @NotBlank(message = "ProcessDefConfigGuid is required")
-    private String processDefConfigGuid; // primary key
+//    @NotBlank(message = "ProcessDefConfigGuid is required")
+//    private String processDefConfigGuid; // primary key
 
-    private String config; // allow updating JSON
+    private Map<String,Object> config; // allow updating JSON
 
     private String modifiedBy;
     private String modifiedIpAddr;

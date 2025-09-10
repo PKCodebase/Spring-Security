@@ -64,7 +64,7 @@ public class MstColumnTypeController {
                 StatusParam updateResponse = null;
                 if(mstColumnRequestMapper != null){
                     updateResponse = mstColumnService.updateMstColumn(
-                            mstColumnRequestMapper.getColumnTypeGuid(),
+                            columnTypeGuid,
                             mstColumnRequestMapper.getUpdateMstColumnTypeRequest()
                     );
 

@@ -62,7 +62,7 @@ public class MstCodeImplController {
                 StatusParam updateResponse = null;
                 if(mstCodeImplRequestMapper != null){
                     updateResponse = mstCodeService.updateMstCodeImpl(
-                            mstCodeImplRequestMapper.getCodeImplGuid(),
+                            codeImplGuid,
                     mstCodeImplRequestMapper.getUpdateMstCodeImplRequest()
                             );
                 }

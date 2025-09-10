@@ -13,7 +13,7 @@ public interface ProcessDefConfigService {
 
     StatusParam addProcessDefConfig(String processDefGuid, AddProcessDefConfigRequest addProcessDefConfigRequest);
 
-    List<ProcessDefConfig> getAllProcessDefConfig();
+    List<ProcessDefConfigResponse> getAllProcessDefConfig();
 
 //    SelectOptionParam getProcessDefConfigByCode(String processDefConfigCode);
 

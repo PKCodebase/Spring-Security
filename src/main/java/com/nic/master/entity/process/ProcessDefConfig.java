@@ -1,11 +1,14 @@
 package com.nic.master.entity.process;
 
 
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Data
 @Entity
@@ -40,9 +43,9 @@ public class ProcessDefConfig {
     )
     private ProcessDef processDef;
 
-    // ✅ JSONB field
+    @Type(JsonType.class)
     @Column(name = "config", nullable = false, columnDefinition = "jsonb")
-    private String config;
+    private Map<String,Object> config;
 
     // ✅ Audit fields
     @Column(name = "created_by", nullable = false)

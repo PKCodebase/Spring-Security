@@ -64,7 +64,7 @@ public class MstActionTypeController {
                 StatusParam updateResponse = null;
                 if(mstActionRequestMapper != null){
                     updateResponse = mstActionService.updateMstAction(
-                            mstActionRequestMapper.getActionTypeGuid(),
+                           actionTypeGuid,
                             mstActionRequestMapper.getUpdateMstActionRequest()
                     );
                 }

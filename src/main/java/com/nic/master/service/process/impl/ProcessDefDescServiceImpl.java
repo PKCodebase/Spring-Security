@@ -62,6 +62,10 @@ public class ProcessDefDescServiceImpl implements ProcessDefDescService {
                     .orElseThrow(()->{
                         return new ResourceNotFoundException("MstSectionType not found with Guid : " + sectionTypeGuid);
                     });
+//            if(processDefDescRepository.existsByProcessDefAndMstSectionType(processDef,mstSectionType)){
+//                return new StatusParam(false,"ProcessDefDesc already exists for ProcessDefGuid: " + processDefGuid +
+//                        " and SectionTypeGuid: " + sectionTypeGuid);
+//            }
             ProcessDefDesc processDefDesc = modelMapper.map(addProcessDefDescRequest, ProcessDefDesc.class);
             processDefDesc.setProcessDefDescGuid(UUID.randomUUID().toString());
             processDefDesc.setCreatedBy("SYSTEM");

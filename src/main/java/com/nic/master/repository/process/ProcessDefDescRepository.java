@@ -1,5 +1,6 @@
 package com.nic.master.repository.process;
 
+import com.nic.master.entity.process.MstSectionType;
 import com.nic.master.entity.process.ProcessDef;
 import com.nic.master.entity.process.ProcessDefDesc;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,5 @@ public interface ProcessDefDescRepository extends JpaRepository<ProcessDefDesc,L
 
     boolean existsByProcessDefAndLevelNum(ProcessDef processDef, Integer levelNum);
 
+//    boolean existsByProcessDefAndMstSectionType(ProcessDef processDef, MstSectionType mstSectionType);
 }

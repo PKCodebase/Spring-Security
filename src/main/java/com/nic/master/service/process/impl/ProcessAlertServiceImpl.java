@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 public class ProcessAlertServiceImpl implements ProcessAlertService {
 
-    private static  final Logger logger = LoggerFactory.getLogger(ProcessDefDescServiceImpl.class);
+    private static  final Logger logger = LoggerFactory.getLogger(ProcessAlertServiceImpl.class);
     private final ProcessDefRepository processDefRepository;
     private final MstActionTypeRepository mstActionTypeRepository;
     private final ProcessAlertRepository processAlertRepository;

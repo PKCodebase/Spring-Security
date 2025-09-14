@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ProcessDefDescRepository extends JpaRepository<ProcessDefDesc,Long> {
     boolean existsByRoleCodeIgnoreCase(String roleCode);
 
-//    Optional<ProcessDefDesc> findByRoleCodeIgnoreCase(String roleCode);
+    Optional<ProcessDefDesc> findByRoleCodeIgnoreCase(String roleCode);
 
     Optional<ProcessDefDesc> findByProcessDefDescGuid(String processDefDescGuid);
 

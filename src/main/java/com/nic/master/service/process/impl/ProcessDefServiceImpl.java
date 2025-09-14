@@ -130,11 +130,11 @@ public class ProcessDefServiceImpl implements ProcessDefService {
                     .orElseThrow(()->{
                         return new ResourceNotFoundException("ProcessDef not found with Guid : "+processDefGuid);
                     });
-            if(updateProcessDefRequest.getProcessDefCode() != null
-            && !updateProcessDefRequest.getProcessDefCode().equalsIgnoreCase(processDef.getProcessDefCode())
-            && processDefRepository.existsByProcessDefCodeIgnoreCase(updateProcessDefRequest.getProcessDefCode())){
-                return new StatusParam(false,"ProcessDef already exists with code : "+updateProcessDefRequest.getProcessDefCode());
-            }
+//            if(updateProcessDefRequest.getProcessDefCode() != null
+//            && !updateProcessDefRequest.getProcessDefCode().equalsIgnoreCase(processDef.getProcessDefCode())
+//            && processDefRepository.existsByProcessDefCodeIgnoreCase(updateProcessDefRequest.getProcessDefCode())){
+//                return new StatusParam(false,"ProcessDef already exists with code : "+updateProcessDefRequest.getProcessDefCode());
+//            }
             modelMapper.map(updateProcessDefRequest,processDef);
             processDef.setModifiedDate(LocalDateTime.now());
             processDef.setModifiedBy("SYSTEM");

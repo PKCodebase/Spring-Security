@@ -113,4 +113,217 @@ public class ProcessDef {
 
     @Column(name = "can_draft", nullable = false)
     private Boolean canDraft = false;
+
+    public String getProcessDefGuid() {
+        return processDefGuid;
+    }
+
+    public void setProcessDefGuid(String processDefGuid) {
+        this.processDefGuid = processDefGuid;
+    }
+
+    public Long getProcessDefId() {
+        return processDefId;
+    }
+
+    public void setProcessDefId(Long processDefId) {
+        this.processDefId = processDefId;
+    }
+
+    public MstProcessType getProcessType() {
+        return processType;
+    }
+
+    public void setProcessType(MstProcessType processType) {
+        this.processType = processType;
+    }
+
+    public String getProcessDefCode() {
+        return processDefCode;
+    }
+
+    public void setProcessDefCode(String processDefCode) {
+        this.processDefCode = processDefCode;
+    }
+
+    public String getProcessDefName() {
+        return processDefName;
+    }
+
+    public void setProcessDefName(String processDefName) {
+        this.processDefName = processDefName;
+    }
+
+    public ProcessDefConfig getProcessDefConfig() {
+        return processDefConfig;
+    }
+
+    public void setProcessDefConfig(ProcessDefConfig processDefConfig) {
+        this.processDefConfig = processDefConfig;
+    }
+
+    public Boolean getPrimaryOrgApplicable() {
+        return isPrimaryOrgApplicable;
+    }
+
+    public void setPrimaryOrgApplicable(Boolean primaryOrgApplicable) {
+        isPrimaryOrgApplicable = primaryOrgApplicable;
+    }
+
+    public Boolean getWrapperOrgApplicable() {
+        return isWrapperOrgApplicable;
+    }
+
+    public void setWrapperOrgApplicable(Boolean wrapperOrgApplicable) {
+        isWrapperOrgApplicable = wrapperOrgApplicable;
+    }
+
+    public Boolean getOrgUnitApplicable() {
+        return isOrgUnitApplicable;
+    }
+
+    public void setOrgUnitApplicable(Boolean orgUnitApplicable) {
+        isOrgUnitApplicable = orgUnitApplicable;
+    }
+
+    public Boolean getServiceApplicable() {
+        return isServiceApplicable;
+    }
+
+    public void setServiceApplicable(Boolean serviceApplicable) {
+        isServiceApplicable = serviceApplicable;
+    }
+
+    public Boolean getCadreApplicable() {
+        return isCadreApplicable;
+    }
+
+    public void setCadreApplicable(Boolean cadreApplicable) {
+        isCadreApplicable = cadreApplicable;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getCreatedIpAddr() {
+        return createdIpAddr;
+    }
+
+    public void setCreatedIpAddr(String createdIpAddr) {
+        this.createdIpAddr = createdIpAddr;
+    }
+
+    public String getCreatedMacAddr() {
+        return createdMacAddr;
+    }
+
+    public void setCreatedMacAddr(String createdMacAddr) {
+        this.createdMacAddr = createdMacAddr;
+    }
+
+    public String getCreatedRemarks() {
+        return createdRemarks;
+    }
+
+    public void setCreatedRemarks(String createdRemarks) {
+        this.createdRemarks = createdRemarks;
+    }
+
+    public String getCreatedUri() {
+        return createdUri;
+    }
+
+    public void setCreatedUri(String createdUri) {
+        this.createdUri = createdUri;
+    }
+
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    public LocalDateTime getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(LocalDateTime modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
+
+    public String getModifiedIpAddr() {
+        return modifiedIpAddr;
+    }
+
+    public void setModifiedIpAddr(String modifiedIpAddr) {
+        this.modifiedIpAddr = modifiedIpAddr;
+    }
+
+    public String getModifiedMacAddr() {
+        return modifiedMacAddr;
+    }
+
+    public void setModifiedMacAddr(String modifiedMacAddr) {
+        this.modifiedMacAddr = modifiedMacAddr;
+    }
+
+    public String getModifiedRemarks() {
+        return modifiedRemarks;
+    }
+
+    public void setModifiedRemarks(String modifiedRemarks) {
+        this.modifiedRemarks = modifiedRemarks;
+    }
+
+    public String getModifiedUri() {
+        return modifiedUri;
+    }
+
+    public void setModifiedUri(String modifiedUri) {
+        this.modifiedUri = modifiedUri;
+    }
+    public Boolean getIsActive() {
+        return isActive;
+    }
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+    public Boolean getCanShowParent() {
+        return canShowParent;
+    }
+
+    public void setCanShowParent(Boolean canShowParent) {
+        this.canShowParent = canShowParent;
+    }
+
+    public Boolean getCanShowChild() {
+        return canShowChild;
+    }
+
+    public void setCanShowChild(Boolean canShowChild) {
+        this.canShowChild = canShowChild;
+    }
+
+    public Boolean getCanDraft() {
+        return canDraft;
+    }
+
+    public void setCanDraft(Boolean canDraft) {
+        this.canDraft = canDraft;
+    }
 }

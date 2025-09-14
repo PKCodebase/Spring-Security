@@ -1,37 +1,59 @@
 package com.nic.master.entity.process;
 
-import com.nic.master.enums.SectionCategory;
+
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "mst_section_type", schema = "process",
+@Table(name = "processed_request_role", schema = "process",
         uniqueConstraints = {
-                @UniqueConstraint(name = "mst_section_type_section_type_code_uk", columnNames = "section_type_code"),
-                @UniqueConstraint(name = "mst_section_type_section_type_id_uk", columnNames = "section_type_id")
+                @UniqueConstraint(name = "processed_request_role_process_def_guid_uk", columnNames = "process_def_guid"),
+                @UniqueConstraint(name = "processed_request_role_processed_request_role_id_uk", columnNames = "processed_request_role_id")
         })
-@Data
-public class MstSectionType {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ProcessedRequestRole {
+
 
     @Id
-    @Column(name = "section_type_guid", nullable = false, length = 36, unique = true)
-    private String sectionTypeGuid;
+    @Column(name = "processed_request_role_guid", nullable = false, length = 36, updatable = false)
+    private String processedRequestRoleGuid;
 
-    @Column(name = "section_type_id", nullable = false, unique = true, updatable = false, insertable = false)
-    private Long sectionTypeId;
+    @Column(name = "processed_request_role_id", nullable = false, updatable = false,insertable = false,unique = true)
+    private Long processedRequestRoleId;
 
-    @Column(name = "section_type_code", nullable = false, length = 100)
-    private String sectionTypeCode;
 
-    @Column(name = "section_type_name", nullable = false)
-    private String sectionTypeName;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "process_def_guid",
+            referencedColumnName = "process_def_guid",
+            foreignKey = @ForeignKey(name = "processed_request_role_process_def_guid_fk"),
+            nullable = false)
+    private ProcessDef processDef;
 
+    @Column(name = "approve_processed_role_code")
+    private String approveProcessedRoleCode;
+
+    @Column(name = "reject_processed_role_code")
+    private String rejectProcessedRoleCode;
+
+    @Column(name = "close_processed_role_code")
+    private String closeProcessedRoleCode;
+
+    @Column(name = "process_user_role_code")
+    private String processUserRoleCode;
+
+    // Audit Fields
     @Column(name = "created_by", nullable = false)
     private String createdBy;
 
-    @Column(name = "created_date", nullable = false)
-    private LocalDateTime createdDate;
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(name = "created_ip_addr", nullable = false)
     private String createdIpAddr;
@@ -66,41 +88,60 @@ public class MstSectionType {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "section_category", nullable = false)
-    private SectionCategory sectionCategory = SectionCategory.FORM;
-
-    public String getSectionTypeGuid() {
-        return sectionTypeGuid;
+    public String getProcessedRequestRoleGuid() {
+        return processedRequestRoleGuid;
     }
 
-    public void setSectionTypeGuid(String sectionTypeGuid) {
-        this.sectionTypeGuid = sectionTypeGuid;
+    public void setProcessedRequestRoleGuid(String processedRequestRoleGuid) {
+        this.processedRequestRoleGuid = processedRequestRoleGuid;
     }
 
-    public Long getSectionTypeId() {
-        return sectionTypeId;
+    public Long getProcessedRequestRoleId() {
+        return processedRequestRoleId;
     }
 
-    public void setSectionTypeId(Long sectionTypeId) {
-        this.sectionTypeId = sectionTypeId;
+    public void setProcessedRequestRoleId(Long processedRequestRoleId) {
+        this.processedRequestRoleId = processedRequestRoleId;
     }
 
-    public String getSectionTypeCode() {
-        return sectionTypeCode;
+    public ProcessDef getProcessDef() {
+        return processDef;
     }
 
-    public void setSectionTypeCode(String sectionTypeCode) {
-        this.sectionTypeCode = sectionTypeCode;
+    public void setProcessDef(ProcessDef processDef) {
+        this.processDef = processDef;
     }
 
-    public String getSectionTypeName() {
-        return sectionTypeName;
+    public String getApproveProcessedRoleCode() {
+        return approveProcessedRoleCode;
     }
 
-    public void setSectionTypeName(String sectionTypeName) {
-        this.sectionTypeName = sectionTypeName;
+    public void setApproveProcessedRoleCode(String approveProcessedRoleCode) {
+        this.approveProcessedRoleCode = approveProcessedRoleCode;
+    }
+
+    public String getRejectProcessedRoleCode() {
+        return rejectProcessedRoleCode;
+    }
+
+    public void setRejectProcessedRoleCode(String rejectProcessedRoleCode) {
+        this.rejectProcessedRoleCode = rejectProcessedRoleCode;
+    }
+
+    public String getCloseProcessedRoleCode() {
+        return closeProcessedRoleCode;
+    }
+
+    public void setCloseProcessedRoleCode(String closeProcessedRoleCode) {
+        this.closeProcessedRoleCode = closeProcessedRoleCode;
+    }
+
+    public String getProcessUserRoleCode() {
+        return processUserRoleCode;
+    }
+
+    public void setProcessUserRoleCode(String processUserRoleCode) {
+        this.processUserRoleCode = processUserRoleCode;
     }
 
     public String getCreatedBy() {
@@ -205,13 +246,5 @@ public class MstSectionType {
 
     public void setIsActive(Boolean active) {
         isActive = active;
-    }
-
-    public SectionCategory getSectionCategory() {
-        return sectionCategory;
-    }
-
-    public void setSectionCategory(SectionCategory sectionCategory) {
-        this.sectionCategory = sectionCategory;
     }
 }

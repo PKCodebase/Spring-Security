@@ -7,9 +7,9 @@ import lombok.Data;
 
 @Data
 public class UpdateProcessedRoleRequest {
-    @NotBlank(message = "processedRequestRoleGuid is required")
-    @Size(min = 36, max = 36, message = "processedRequestRoleGuid must be 36 characters UUID")
-    private String processedRequestRoleGuid;
+//    @NotBlank(message = "processedRequestRoleGuid is required")
+//    @Size(min = 36, max = 36, message = "processedRequestRoleGuid must be 36 characters UUID")
+//    private String processedRequestRoleGuid;
 
     private String approveProcessedRoleCode;
 
@@ -19,10 +19,9 @@ public class UpdateProcessedRoleRequest {
 
     private String processUserRoleCode;
 
-    @NotBlank(message = "modifiedBy is required")
     private String modifiedBy;
 
-    @NotBlank(message = "modifiedIpAddr is required")
+
     private String modifiedIpAddr;
 
     private String modifiedMacAddr;
@@ -31,6 +30,4 @@ public class UpdateProcessedRoleRequest {
 
     private String modifiedUri;
 
-    @NotNull(message = "isActive flag must be provided")
-    private Boolean isActive;
 }

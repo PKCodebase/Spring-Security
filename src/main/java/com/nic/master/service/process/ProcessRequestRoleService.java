@@ -30,24 +30,6 @@ public interface ProcessRequestRoleService {
      */
     StatusParam updateProcessRequestRole(String processDefGuid, String processedRequestRoleGuid, UpdateProcessedRoleRequest updateProcessedRoleRequest);
 
-    /**
-     * Get Process Request Roles by Approve Role Code
-     */
-    List<ProcessRoleResponse> getProcessRequestRolesByApproveProcessedRoleCode(String approveProcessedRoleCode);
 
-    /**
-     * Get Process Request Roles by Reject Role Code
-     */
-    List<ProcessRoleResponse> getProcessRequestRolesByRejectProcessedRoleCode(String rejectProcessedRoleCode);
-
-    /**
-     * Get Process Request Roles by Close Role Code
-     */
-    List<ProcessRoleResponse> getProcessRequestRolesByCloseProcessedRoleCode(String closeProcessedRoleCode);
-
-    /**
-     * Get Process Request Roles by Process User Role Code
-     */
-    List<ProcessRoleResponse> getProcessRequestRolesByProcessUserRoleCode(String processUserRoleCode);
 
 }

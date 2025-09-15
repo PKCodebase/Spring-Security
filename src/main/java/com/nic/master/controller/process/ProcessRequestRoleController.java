@@ -29,10 +29,6 @@ public class ProcessRequestRoleController {
             @RequestParam(value = "operation",required = false) String operation,
             @RequestParam(value = "processDefGuid",required = false) String processDefGuid,
             @RequestParam(value = "processedRequestRoleGuid",required = false) String processedRequestRoleGuid,
-            @RequestParam(value = "approveProcessedRoleCode",required = false) String approveProcessedRoleCode,
-            @RequestParam(value = "rejectProcessedRoleCode",required = false) String rejectProcessedRoleCode,
-            @RequestParam(value = "closeProcessedRoleCode",required = false) String closeProcessedRoleCode,
-            @RequestParam(value = "processUserRoleCode",required = false) String processUserRoleCode,
             HttpServletRequest httpServletRequest
             ) {
         String processRequestRoleOperation = null;
@@ -62,7 +58,17 @@ public class ProcessRequestRoleController {
             }
             case "GETALL" -> ResponseEntity.ok(processRequestRoleService.getAllProcessRequestRoles());
             case "GETBYGUID"-> ResponseEntity.ok(processRequestRoleService.getProcessedRequestRoleByGuid(processedRequestRoleGuid));
-
+            case "UPDATE" -> {
+                StatusParam updateResponse = null;
+                if (processRequestRoleMapper != null) {
+                    updateResponse = processRequestRoleService.updateProcessRequestRole(
+                            processDefGuid,
+                            processedRequestRoleGuid,
+                            processRequestRoleMapper.getUpdateProcessedRoleRequest()
+                    );
+                }
+                yield ResponseBuilder.buildOk(updateResponse, updateResponse, httpServletRequest);
+            }
             default -> ResponseBuilder.buildError(
                     HttpStatus.BAD_REQUEST,
                     httpServletRequest.getRequestURI(),

@@ -22,10 +22,8 @@ public class AddProcessDefRequest {
     private Boolean isServiceApplicable;
     private Boolean isCadreApplicable;
 
-    @NotBlank(message = "Created By is required")
     private String createdBy;
 
-    @NotBlank(message = "Created IP Address is required")
     private String createdIpAddr;
 
     private String createdMacAddr;

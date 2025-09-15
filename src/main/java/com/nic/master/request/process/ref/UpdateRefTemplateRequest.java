@@ -1,15 +1,11 @@
-package com.nic.master.response.refresponse;
+package com.nic.master.request.process.ref;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
-public class RefTemplateResponse {
+public class UpdateRefTemplateRequest {
 
     private String refTemplateGuid;
-
-    private Long refTemplateId;
 
     private String processDefGuid;
 
@@ -21,21 +17,7 @@ public class RefTemplateResponse {
 
     private String prefillDataResultQuery;
 
-    private String createdBy;
-
-    private LocalDateTime createdDate;
-
-    private String createdIpAddr;
-
-    private String createdMacAddr;
-
-    private String createdRemarks;
-
-    private String createdUri;
-
     private String modifiedBy;
-
-    private LocalDateTime modifiedDate;
 
     private String modifiedIpAddr;
 
@@ -54,9 +36,4 @@ public class RefTemplateResponse {
     private Boolean isQueryRaiseCheck;
 
     private String queryCheckMessage;
-
-    // Optional FK info
-    private String actionTypeName;
-    private String processDefCode;
-    private String sectionTypeName;
 }

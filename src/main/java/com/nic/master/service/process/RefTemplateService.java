@@ -3,8 +3,8 @@ package com.nic.master.service.process;
 
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.ref.AddRefTemplateRequest;
-import com.nic.master.request.process.ref.UpdateRefTemplateRequest;
+import com.nic.master.request.process.reftemplate.AddRefTemplateRequest;
+import com.nic.master.request.process.reftemplate.UpdateRefTemplateRequest;
 import com.nic.master.response.refresponse.RefTemplateResponse;
 
 import java.util.List;

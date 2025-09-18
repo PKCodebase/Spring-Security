@@ -16,6 +16,7 @@ import com.nic.master.response.Processdefdescresponse.ProcessDefDescResponse;
 import com.nic.master.service.process.ProcessDefDescService;
 import com.nic.master.service.process.ProcessDefService;
 import com.nic.master.util.IpAddressGenerator;
+import com.nic.master.util.MacAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -38,14 +39,16 @@ public class ProcessDefDescServiceImpl implements ProcessDefDescService {
     private final MstSectionRepository mstSectionRepository;
     private final ModelMapper modelMapper;
     private final IpAddressGenerator ipAddressGenerator;
+    private final MacAddressGenerator macAddressGenerator;
     private final HttpServletRequest httpServletRequest;
 
-    public ProcessDefDescServiceImpl(ProcessDefDescRepository processDefDescRepository, ProcessDefRepository processDefRepository, MstSectionRepository mstSectionRepository, ModelMapper modelMapper, IpAddressGenerator ipAddressGenerator, HttpServletRequest httpServletRequest) {
+    public ProcessDefDescServiceImpl(ProcessDefDescRepository processDefDescRepository, ProcessDefRepository processDefRepository, MstSectionRepository mstSectionRepository, ModelMapper modelMapper, IpAddressGenerator ipAddressGenerator, MacAddressGenerator macAddressGenerator, HttpServletRequest httpServletRequest) {
         this.processDefDescRepository = processDefDescRepository;
         this.processDefRepository = processDefRepository;
         this.mstSectionRepository = mstSectionRepository;
         this.modelMapper = modelMapper;
         this.ipAddressGenerator = ipAddressGenerator;
+        this.macAddressGenerator = macAddressGenerator;
         this.httpServletRequest = httpServletRequest;
     }
 
@@ -71,7 +74,7 @@ public class ProcessDefDescServiceImpl implements ProcessDefDescService {
             processDefDesc.setCreatedBy("SYSTEM");
             processDefDesc.setCreatedDate(LocalDateTime.now());
             processDefDesc.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
-            processDefDesc.setCreatedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            processDefDesc.setCreatedMacAddr(macAddressGenerator.generateMacAddress());
             // Handle actionDueDate (ISO string → LocalDateTime)
             if (addProcessDefDescRequest.getActionDueDate() != null) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -167,7 +170,7 @@ public class ProcessDefDescServiceImpl implements ProcessDefDescService {
               processDefDesc.setModifiedBy("SYSTEM");
               processDefDesc.setModifiedDate(LocalDateTime.now());
               processDefDesc.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
-              processDefDesc.setModifiedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+              processDefDesc.setModifiedMacAddr(macAddressGenerator.generateMacAddress());
            if (updateProcessDefDescRequest.getActionDueDate() != null) {
                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                LocalDate date = LocalDate.parse(updateProcessDefDescRequest.getActionDueDate(), formatter);

@@ -45,4 +45,65 @@ public class AddProcessDefDescRequest {
     private String createdMacAddr;
     private String createdRemarks;
     private String createdUri;
+	public Integer getLevelNum() {
+		return levelNum;
+	}
+	public void setLevelNum(Integer levelNum) {
+		this.levelNum = levelNum;
+	}
+	public String getLevelDesc() {
+		return levelDesc;
+	}
+	public void setLevelDesc(String levelDesc) {
+		this.levelDesc = levelDesc;
+	}
+	public String getRoleCode() {
+		return roleCode;
+	}
+	public void setRoleCode(String roleCode) {
+		this.roleCode = roleCode;
+	}
+	public String getActionDueDate() {
+		return actionDueDate;
+	}
+	public void setActionDueDate(String actionDueDate) {
+		this.actionDueDate = actionDueDate;
+	}
+	public Integer getActionDays() {
+		return actionDays;
+	}
+	public void setActionDays(Integer actionDays) {
+		this.actionDays = actionDays;
+	}
+	public String getCreatedBy() {
+		return createdBy;
+	}
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+	public String getCreatedIpAddr() {
+		return createdIpAddr;
+	}
+	public void setCreatedIpAddr(String createdIpAddr) {
+		this.createdIpAddr = createdIpAddr;
+	}
+	public String getCreatedMacAddr() {
+		return createdMacAddr;
+	}
+	public void setCreatedMacAddr(String createdMacAddr) {
+		this.createdMacAddr = createdMacAddr;
+	}
+	public String getCreatedRemarks() {
+		return createdRemarks;
+	}
+	public void setCreatedRemarks(String createdRemarks) {
+		this.createdRemarks = createdRemarks;
+	}
+	public String getCreatedUri() {
+		return createdUri;
+	}
+	public void setCreatedUri(String createdUri) {
+		this.createdUri = createdUri;
+	}
+	
 }

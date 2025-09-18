@@ -1,10 +1,7 @@
 package com.nic.master.controller.process;
 
-import com.nic.master.exception.ResourceNotFoundException;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.ref.AddRefTemplateRequest;
-import com.nic.master.request.process.ref.RefTemplateMapper;
-import com.nic.master.response.refresponse.RefTemplateResponse;
+import com.nic.master.request.process.reftemplate.RefTemplateMapper;
 import com.nic.master.service.process.RefTemplateService;
 import com.nic.master.util.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,8 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/refTemplate")

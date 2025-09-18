@@ -1,4 +1,4 @@
-package com.nic.master.request.process.ref;
+package com.nic.master.request.process.reftemplate;
 
 import lombok.Data;
 

@@ -107,4 +107,220 @@ public class RefTemplate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "section_type_guid", referencedColumnName = "section_type_guid", insertable = false, updatable = false)
     private MstSectionType sectionType;
+
+    public String getRefTemplateGuid() {
+        return refTemplateGuid;
+    }
+
+    public void setRefTemplateGuid(String refTemplateGuid) {
+        this.refTemplateGuid = refTemplateGuid;
+    }
+
+    public Long getRefTemplateId() {
+        return refTemplateId;
+    }
+
+    public void setRefTemplateId(Long refTemplateId) {
+        this.refTemplateId = refTemplateId;
+    }
+
+    public String getProcessDefGuid() {
+        return processDefGuid;
+    }
+
+    public void setProcessDefGuid(String processDefGuid) {
+        this.processDefGuid = processDefGuid;
+    }
+
+    public String getSectionTypeGuid() {
+        return sectionTypeGuid;
+    }
+
+    public void setSectionTypeGuid(String sectionTypeGuid) {
+        this.sectionTypeGuid = sectionTypeGuid;
+    }
+
+    public String getActionTypeGuid() {
+        return actionTypeGuid;
+    }
+
+    public void setActionTypeGuid(String actionTypeGuid) {
+        this.actionTypeGuid = actionTypeGuid;
+    }
+
+    public Boolean getHavePrefillData() {
+        return havePrefillData;
+    }
+
+    public void setHavePrefillData(Boolean havePrefillData) {
+        this.havePrefillData = havePrefillData;
+    }
+
+    public String getPrefillDataResultQuery() {
+        return prefillDataResultQuery;
+    }
+
+    public void setPrefillDataResultQuery(String prefillDataResultQuery) {
+        this.prefillDataResultQuery = prefillDataResultQuery;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getCreatedIpAddr() {
+        return createdIpAddr;
+    }
+
+    public void setCreatedIpAddr(String createdIpAddr) {
+        this.createdIpAddr = createdIpAddr;
+    }
+
+    public String getCreatedMacAddr() {
+        return createdMacAddr;
+    }
+
+    public void setCreatedMacAddr(String createdMacAddr) {
+        this.createdMacAddr = createdMacAddr;
+    }
+
+    public String getCreatedRemarks() {
+        return createdRemarks;
+    }
+
+    public void setCreatedRemarks(String createdRemarks) {
+        this.createdRemarks = createdRemarks;
+    }
+
+    public String getCreatedUri() {
+        return createdUri;
+    }
+
+    public void setCreatedUri(String createdUri) {
+        this.createdUri = createdUri;
+    }
+
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    public LocalDateTime getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(LocalDateTime modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
+
+    public String getModifiedIpAddr() {
+        return modifiedIpAddr;
+    }
+
+    public void setModifiedIpAddr(String modifiedIpAddr) {
+        this.modifiedIpAddr = modifiedIpAddr;
+    }
+
+    public String getModifiedMacAddr() {
+        return modifiedMacAddr;
+    }
+
+    public void setModifiedMacAddr(String modifiedMacAddr) {
+        this.modifiedMacAddr = modifiedMacAddr;
+    }
+
+    public String getModifiedRemarks() {
+        return modifiedRemarks;
+    }
+
+    public void setModifiedRemarks(String modifiedRemarks) {
+        this.modifiedRemarks = modifiedRemarks;
+    }
+
+    public String getModifiedUri() {
+        return modifiedUri;
+    }
+
+    public void setModifiedUri(String modifiedUri) {
+        this.modifiedUri = modifiedUri;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean active) {
+        isActive = active;
+    }
+
+    public String getRefTemplateName() {
+        return refTemplateName;
+    }
+
+    public void setRefTemplateName(String refTemplateName) {
+        this.refTemplateName = refTemplateName;
+    }
+
+    public String getRefTemplateCode() {
+        return refTemplateCode;
+    }
+
+    public void setRefTemplateCode(String refTemplateCode) {
+        this.refTemplateCode = refTemplateCode;
+    }
+
+    public Boolean getQueryRaiseCheck() {
+        return isQueryRaiseCheck;
+    }
+
+    public void setQueryRaiseCheck(Boolean queryRaiseCheck) {
+        isQueryRaiseCheck = queryRaiseCheck;
+    }
+
+    public String getQueryCheckMessage() {
+        return queryCheckMessage;
+    }
+
+    public void setQueryCheckMessage(String queryCheckMessage) {
+        this.queryCheckMessage = queryCheckMessage;
+    }
+
+    public MstActionType getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(MstActionType actionType) {
+        this.actionType = actionType;
+    }
+
+    public ProcessDef getProcessDef() {
+        return processDef;
+    }
+
+    public void setProcessDef(ProcessDef processDef) {
+        this.processDef = processDef;
+    }
+
+    public MstSectionType getSectionType() {
+        return sectionType;
+    }
+
+    public void setSectionType(MstSectionType sectionType) {
+        this.sectionType = sectionType;
+    }
 }

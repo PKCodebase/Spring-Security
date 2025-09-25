@@ -10,12 +10,14 @@ import com.nic.master.request.process.mstdocumenttype.MstDocumentTypeRequestMapp
 import com.nic.master.request.process.mstdocumenttype.UpdateMstDocumentTypeRequest;
 import com.nic.master.service.process.MstDocumentTypeService;
 import com.nic.master.util.IpAddressGenerator;
+import com.nic.master.util.MacAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.Mac;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -27,12 +29,14 @@ public class MstDocumentTypeServiceImpl implements MstDocumentTypeService {
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
     private final IpAddressGenerator ipAddressGenerator;
+    private final MacAddressGenerator macAddressGenerator;
 
-    public MstDocumentTypeServiceImpl(MstDocumentTypeRepository mstDocumentTypeRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
+    public MstDocumentTypeServiceImpl(MstDocumentTypeRepository mstDocumentTypeRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator, MacAddressGenerator macAddressGenerator) {
         this.mstDocumentTypeRepository = mstDocumentTypeRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
         this.ipAddressGenerator = ipAddressGenerator;
+        this.macAddressGenerator = macAddressGenerator;
     }
 
 
@@ -49,7 +53,8 @@ public class MstDocumentTypeServiceImpl implements MstDocumentTypeService {
             mstDocumentType.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstDocumentType.setCreatedDate(LocalDateTime.now());
             mstDocumentType.setCreatedBy("SYSTEM");
-            mstDocumentType.setCreatedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            mstDocumentType.setCreatedUri(httpServletRequest.getRequestURI());
+            mstDocumentType.setCreatedMacAddr(macAddressGenerator.generateMacAddress());
             mstDocumentTypeRepository.save(mstDocumentType);
             logger.info("MstDocument added successfully.  ");
             return new StatusParam(true,"MstDocument added successfully.");
@@ -114,8 +119,9 @@ public class MstDocumentTypeServiceImpl implements MstDocumentTypeService {
             modelMapper.map(updateMstDocumentTypeRequest,mstDocumentType);
             mstDocumentType.setModifiedDate(LocalDateTime.now());
             mstDocumentType.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
-            mstDocumentType.setModifiedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            mstDocumentType.setModifiedMacAddr(macAddressGenerator.generateMacAddress());
             mstDocumentType.setModifiedBy("SYSTEM");
+            mstDocumentType.setModifiedUri(httpServletRequest.getRequestURI());
             mstDocumentTypeRepository.save(mstDocumentType);
             return new StatusParam(true,"MstDocumentType updated Successfully");
         }catch (IllegalArgumentException ex){

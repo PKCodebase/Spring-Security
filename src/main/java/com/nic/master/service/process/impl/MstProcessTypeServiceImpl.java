@@ -9,6 +9,7 @@ import com.nic.master.request.process.mstprocesstype.AddMstProcessTypeRequest;
 import com.nic.master.request.process.mstprocesstype.UpdateMstProcessTypeRequest;
 import com.nic.master.service.process.MstProcessTypeService;
 import com.nic.master.util.IpAddressGenerator;
+import com.nic.master.util.MacAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -27,13 +28,14 @@ public class MstProcessTypeServiceImpl implements MstProcessTypeService {
     private final ModelMapper modelMapper;
     private  final HttpServletRequest httpServletRequest;
     private final IpAddressGenerator ipAddressGenerator;
+    private final MacAddressGenerator macAddressGenerator;
 
-    public MstProcessTypeServiceImpl(MstProcessTypeRepository mstProcessTypeRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
+    public MstProcessTypeServiceImpl(MstProcessTypeRepository mstProcessTypeRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator, MacAddressGenerator macAddressGenerator) {
         this.mstProcessTypeRepository = mstProcessTypeRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
         this.ipAddressGenerator = ipAddressGenerator;
-
+        this.macAddressGenerator = macAddressGenerator;
     }
 
     @Override
@@ -48,8 +50,9 @@ public class MstProcessTypeServiceImpl implements MstProcessTypeService {
             mstProcessType.setProcessTypeGuid(UUID.randomUUID().toString());
             mstProcessType.setCreatedDate(LocalDateTime.now());
             mstProcessType.setCreatedBy("SYSTEM");
+            mstProcessType.setCreatedUri(httpServletRequest.getRequestURI());
             mstProcessType.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
-            mstProcessType.setCreatedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            mstProcessType.setCreatedMacAddr(macAddressGenerator.generateMacAddress());
             mstProcessTypeRepository.save(mstProcessType);
             return new StatusParam(true,"MstProcess added successfully.");
         }catch (IllegalArgumentException ex){
@@ -112,10 +115,10 @@ public class MstProcessTypeServiceImpl implements MstProcessTypeService {
             mstProcessType.setModifiedDate(LocalDateTime.now());
             mstProcessType.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstProcessType.setModifiedBy("SYSTEM");
-            mstProcessType.setModifiedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            mstProcessType.setModifiedUri(httpServletRequest.getRequestURI());
+            mstProcessType.setModifiedMacAddr(macAddressGenerator.generateMacAddress());
             mstProcessTypeRepository.save(mstProcessType);
             return new StatusParam(true,"MstProcess updated successfully.");
-
         }catch (IllegalArgumentException ex){
             logger.error("Validation failed while updating error.Request{}",updateMstProcessTypeRequest,ex);
             throw new RuntimeException("Error while updating MstProcess :"+ex.getMessage(),ex);

@@ -9,6 +9,7 @@ import com.nic.master.request.process.mstcodeimpl.AddMstCodeImplRequest;
 import com.nic.master.request.process.mstcodeimpl.UpdateMstCodeImplRequest;
 import com.nic.master.service.process.MstCodeService;
 import com.nic.master.util.IpAddressGenerator;
+import com.nic.master.util.MacAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -27,12 +28,14 @@ public class MstCodeServiceImpl implements MstCodeService {
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
     private final IpAddressGenerator ipAddressGenerator;
+    private final MacAddressGenerator macAddressGenerator;
 
-    public MstCodeServiceImpl(MstCodeImplRepository mstCodeImplRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
+    public MstCodeServiceImpl(MstCodeImplRepository mstCodeImplRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator, MacAddressGenerator macAddressGenerator) {
         this.mstCodeImplRepository = mstCodeImplRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
         this.ipAddressGenerator = ipAddressGenerator;
+        this.macAddressGenerator = macAddressGenerator;
     }
 
     @Override
@@ -61,7 +64,8 @@ public class MstCodeServiceImpl implements MstCodeService {
             mstCodeImpl.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstCodeImpl.setCreatedDate(LocalDateTime.now());
             mstCodeImpl.setCreatedBy("SYSTEM");
-            mstCodeImpl.setCreatedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            mstCodeImpl.setCreatedUri(httpServletRequest.getRequestURI());
+            mstCodeImpl.setCreatedMacAddr(macAddressGenerator.generateMacAddress());
             mstCodeImplRepository.save(mstCodeImpl);
             logger.info("MstCodeImpl added successfully.");
             return new StatusParam(true,"MstCodeImpl added successfully.");
@@ -106,7 +110,8 @@ public class MstCodeServiceImpl implements MstCodeService {
                 mstCodeImpl.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
                 mstCodeImpl.setModifiedDate(LocalDateTime.now());
                 mstCodeImpl.setModifiedBy("SYSTEM");
-                mstCodeImpl.setModifiedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+                mstCodeImpl.setModifiedUri(httpServletRequest.getRequestURI());
+                mstCodeImpl.setModifiedMacAddr(macAddressGenerator.generateMacAddress());
                 mstCodeImplRepository.save(mstCodeImpl);
                 logger.info("MstCodeImpl updated successfully");
                 return new StatusParam(true,"MstCodeImpl updated successfully");

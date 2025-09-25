@@ -9,6 +9,7 @@ import com.nic.master.request.process.mstactiontype.AddMstActionRequest;
 import com.nic.master.request.process.mstactiontype.UpdateMstActionRequest;
 import com.nic.master.service.process.MstActionService;
 import com.nic.master.util.IpAddressGenerator;
+import com.nic.master.util.MacAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -27,12 +28,14 @@ public class MstActionServiceImpl implements MstActionService {
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
     private final IpAddressGenerator ipAddressGenerator;
+    private final MacAddressGenerator macAddressGenerator;
 
-    public MstActionServiceImpl(MstActionTypeRepository mstActionTypeRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
+    public MstActionServiceImpl(MstActionTypeRepository mstActionTypeRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator, MacAddressGenerator macAddressGenerator) {
         this.mstActionTypeRepository = mstActionTypeRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
         this.ipAddressGenerator = ipAddressGenerator;
+        this.macAddressGenerator = macAddressGenerator;
     }
 
     @Override
@@ -47,8 +50,9 @@ public class MstActionServiceImpl implements MstActionService {
             mstActionType.setActionTypeGuid(UUID.randomUUID().toString());
             mstActionType.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstActionType.setCreatedDate(LocalDateTime.now());
-            mstActionType.setCreatedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            mstActionType.setCreatedMacAddr(macAddressGenerator.generateMacAddress());
             mstActionType.setCreatedBy("SYSTEM");
+            mstActionType.setCreatedUri(httpServletRequest.getRequestURI());
             mstActionTypeRepository.save(mstActionType);
             logger.info("MstAction Added Successfully! ");
             return new StatusParam(true,"MstAction Added Successfully! ");
@@ -114,8 +118,9 @@ public class MstActionServiceImpl implements MstActionService {
             modelMapper.map(updateMstActionRequest,mstActionType);
             mstActionType.setModifiedDate(LocalDateTime.now());
             mstActionType.setModifiedBy("SYSTEM");
+            mstActionType.setModifiedUri(httpServletRequest.getRequestURI());
             mstActionType.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
-            mstActionType.setModifiedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            mstActionType.setModifiedMacAddr(macAddressGenerator.generateMacAddress());
             mstActionTypeRepository.save(mstActionType);
             logger.info("MstActionType Updated successfully.");
             return new StatusParam(true,"MstActionType Updated successfully.");

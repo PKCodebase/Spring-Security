@@ -12,6 +12,7 @@ import com.nic.master.request.process.processdefconfigrequest.UpdateProcessDefCo
 import com.nic.master.response.processdefconfigresponse.ProcessDefConfigResponse;
 import com.nic.master.service.process.ProcessDefConfigService;
 import com.nic.master.util.IpAddressGenerator;
+import com.nic.master.util.MacAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -32,13 +33,15 @@ public class ProcessDefConfigServiceImpl implements ProcessDefConfigService {
     private final ModelMapper modelMapper;
     private final IpAddressGenerator ipAddressGenerator;
     private final HttpServletRequest httpServletRequest;
+    private final MacAddressGenerator macAddressGenerator;
 
-    public ProcessDefConfigServiceImpl(ProcessDefConfigRepository processDefConfigRepository, ProcessDefRepository processDefRepository, ModelMapper modelMapper, IpAddressGenerator ipAddressGenerator, HttpServletRequest httpServletRequest) {
+    public ProcessDefConfigServiceImpl(ProcessDefConfigRepository processDefConfigRepository, ProcessDefRepository processDefRepository, ModelMapper modelMapper, IpAddressGenerator ipAddressGenerator, HttpServletRequest httpServletRequest, MacAddressGenerator macAddressGenerator) {
         this.processDefConfigRepository = processDefConfigRepository;
         this.processDefRepository = processDefRepository;
         this.modelMapper = modelMapper;
         this.ipAddressGenerator = ipAddressGenerator;
         this.httpServletRequest = httpServletRequest;
+        this.macAddressGenerator = macAddressGenerator;
     }
 
 
@@ -58,8 +61,9 @@ public class ProcessDefConfigServiceImpl implements ProcessDefConfigService {
             processDefConfig.setProcessDefConfigGuid(UUID.randomUUID().toString());
             processDefConfig.setCreatedDate(LocalDateTime.now());
             processDefConfig.setCreatedBy("SYSTEM");
+            processDefConfig.setCreatedUri(httpServletRequest.getRequestURI());
             processDefConfig.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
-            processDefConfig.setCreatedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            processDefConfig.setCreatedMacAddr(macAddressGenerator.generateMacAddress());
             processDefConfig.setProcessDef(processDef);
             processDefConfigRepository.save(processDefConfig);
             return new StatusParam(true, "ProcessDefConfig Added Successfully");
@@ -122,7 +126,8 @@ public class ProcessDefConfigServiceImpl implements ProcessDefConfigService {
             }
             processDefConfig.setModifiedDate(LocalDateTime.now());
             processDefConfig.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
-            processDefConfig.setModifiedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            processDefConfig.setModifiedMacAddr(macAddressGenerator.generateMacAddress());
+            processDefConfig.setModifiedUri(httpServletRequest.getRequestURI());
             processDefConfig.setProcessDef(processDef);
             processDefConfigRepository.save(processDefConfig);
             logger.info("ProcessDefConfig updated successfully with GUID: {}", processDefConfig.getProcessDefConfigGuid());

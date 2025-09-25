@@ -75,8 +75,7 @@ public class ProcessAlertServiceImpl implements ProcessAlertService {
         }catch (IllegalArgumentException ex){
             logger.error("Validation error while adding ProcessAlert. Request: {}", addProcessAlertRequest, ex);
             throw new RuntimeException("Error while adding ProcessAlert: " + ex.getMessage(), ex);
-        }
-        catch (Exception ex){
+        } catch (Exception ex){
             logger.error("Error while adding ProcessAlert. Request: {}", addProcessAlertRequest, ex);
             throw new RuntimeException("Error while adding ProcessAlert: " + ex.getMessage(), ex);
         }

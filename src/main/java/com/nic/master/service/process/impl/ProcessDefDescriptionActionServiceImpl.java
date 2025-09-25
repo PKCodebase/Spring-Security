@@ -158,7 +158,6 @@ public class ProcessDefDescriptionActionServiceImpl implements ProcessDefDescAct
                 .map(processDefDescAction -> {
                     ProcessDefDescActionResponse response =
                             modelMapper.map(processDefDescAction, ProcessDefDescActionResponse.class);
-
                     if (processDefDescAction.getProcessDefDesc() != null) {
                         response.setProcessDefDescGuid(processDefDescAction.getProcessDefDesc().getProcessDefDescGuid());
                     }

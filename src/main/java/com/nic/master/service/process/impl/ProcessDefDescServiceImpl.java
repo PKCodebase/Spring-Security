@@ -73,6 +73,7 @@ public class ProcessDefDescServiceImpl implements ProcessDefDescService {
             processDefDesc.setProcessDefDescGuid(UUID.randomUUID().toString());
             processDefDesc.setCreatedBy("SYSTEM");
             processDefDesc.setCreatedDate(LocalDateTime.now());
+            processDefDesc.setCreatedUri(httpServletRequest.getRequestURI());
             processDefDesc.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             processDefDesc.setCreatedMacAddr(macAddressGenerator.generateMacAddress());
             // Handle actionDueDate (ISO string → LocalDateTime)
@@ -169,6 +170,7 @@ public class ProcessDefDescServiceImpl implements ProcessDefDescService {
               modelMapper.map(updateProcessDefDescRequest,processDefDesc);
               processDefDesc.setModifiedBy("SYSTEM");
               processDefDesc.setModifiedDate(LocalDateTime.now());
+              processDefDesc.setModifiedUri(httpServletRequest.getRequestURI());
               processDefDesc.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
               processDefDesc.setModifiedMacAddr(macAddressGenerator.generateMacAddress());
            if (updateProcessDefDescRequest.getActionDueDate() != null) {

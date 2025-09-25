@@ -10,6 +10,7 @@ import com.nic.master.request.process.mstcolumntype.UpdateMstColumnTypeRequest;
 import com.nic.master.service.process.MstCodeService;
 import com.nic.master.service.process.MstColumnService;
 import com.nic.master.util.IpAddressGenerator;
+import com.nic.master.util.MacAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -28,12 +29,14 @@ public class MstColumnServiceImpl implements MstColumnService {
     private  final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
     private final IpAddressGenerator ipAddressGenerator;
+    private  final MacAddressGenerator macAddressGenerator;
 
-    public MstColumnServiceImpl(MstColumnTypeRepository mstColumnTypeRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
+    public MstColumnServiceImpl(MstColumnTypeRepository mstColumnTypeRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator, MacAddressGenerator macAddressGenerator) {
         this.mstColumnTypeRepository = mstColumnTypeRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
         this.ipAddressGenerator = ipAddressGenerator;
+        this.macAddressGenerator = macAddressGenerator;
     }
 
 
@@ -50,7 +53,8 @@ public class MstColumnServiceImpl implements MstColumnService {
             mstColumnType.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstColumnType.setCreatedDate(LocalDateTime.now());
             mstColumnType.setCreatedBy("SYSTEM");
-            mstColumnType.setCreatedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            mstColumnType.setCreatedUri(httpServletRequest.getRequestURI());
+            mstColumnType.setCreatedMacAddr(macAddressGenerator.generateMacAddress());
             mstColumnTypeRepository.save(mstColumnType);
             logger.info("MstColumn added successfully");
             return new StatusParam(true,"MstColumn added successfully.");
@@ -100,7 +104,7 @@ public class MstColumnServiceImpl implements MstColumnService {
     public StatusParam updateMstColumn(String columnTypeGuid, UpdateMstColumnTypeRequest updateMstColumnTypeRequest) {
         logger.info("Updating MstColumn with Guid : Request{})",columnTypeGuid);
         try{
-            MstColumnType mstColumnType = mstColumnTypeRepository.findByColumnTypeGuid(columnTypeGuid.trim())
+            MstColumnType mstColumnType = mstColumnTypeRepository.findByColumnTypeGuid(columnTypeGuid)
                     .orElseThrow(()->{
                         logger.error("MstColumn not found with Guid : Request{}",columnTypeGuid);
                         return new ResourceNotFoundException("MstColumn not found with Guid : "+columnTypeGuid);
@@ -116,7 +120,8 @@ public class MstColumnServiceImpl implements MstColumnService {
             mstColumnType.setModifiedDate(LocalDateTime.now());
             mstColumnType.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             mstColumnType.setModifiedBy("SYSTEM");
-            mstColumnType.setModifiedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            mstColumnType.setModifiedUri(httpServletRequest.getRequestURI());
+            mstColumnType.setModifiedMacAddr(macAddressGenerator.generateMacAddress());
             mstColumnTypeRepository.save(mstColumnType);
             logger.info("Mst Column Updated successfully");
             return new StatusParam(true,"Mst Column Updated successfully");

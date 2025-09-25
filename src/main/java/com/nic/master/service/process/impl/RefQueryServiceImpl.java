@@ -49,8 +49,7 @@ public class RefQueryServiceImpl implements RefQueryService {
         logger.info("Adding Ref Query...");
 
         try {
-
-            // Fetch ProcessDef with individual exception
+            // Fetch ProcessDef
             ProcessDef processDef = Optional.ofNullable(
                             entityManager.createQuery(
                                             "SELECT p FROM ProcessDef p WHERE p.processDefGuid = :guid", ProcessDef.class)
@@ -61,7 +60,7 @@ public class RefQueryServiceImpl implements RefQueryService {
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Process Def not found with Guid : " + processDefGuid));
 
-            // Fetch ProcessDefDesc with individual exception
+            // Fetch ProcessDefDesc
             ProcessDefDesc processDefDesc = Optional.ofNullable(
                             entityManager.createQuery(
                                             "SELECT d FROM ProcessDefDesc d WHERE d.processDefDescGuid = :guid AND d.processDef = :processDef", ProcessDefDesc.class)
@@ -73,34 +72,39 @@ public class RefQueryServiceImpl implements RefQueryService {
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Process Def Desc not found with Guid : " + processDefDescGuid + " for Process Def Guid : " + processDefGuid));
 
-            // Fetch MstSectionType with individual exception
+            // Fetch MstSectionType
             MstSectionType mstSectionType = Optional.ofNullable(
-                    entityManager.createQuery(
-                                    "SELECT s FROM MstSectionType s WHERE s.sectionTypeGuid = :guid", MstSectionType.class)
-                            .setParameter("guid", sectionTypeGuid)
-                            .getResultStream()
-                            .findFirst()
-                            .orElse(null))
+                            entityManager.createQuery(
+                                            "SELECT s FROM MstSectionType s WHERE s.sectionTypeGuid = :guid", MstSectionType.class)
+                                    .setParameter("guid", sectionTypeGuid)
+                                    .getResultStream()
+                                    .findFirst()
+                                    .orElse(null))
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Section Type not found with Guid : " + sectionTypeGuid));
 
-            if (refQuery.getRefQueryCode() != null) {
-                boolean duplicateExists = !entityManager.createQuery(
-                                "SELECT r FROM RefQuery r WHERE LOWER(r.refQueryCode) = :code", RefQuery.class)
-                        .setParameter("code", refQuery.getRefQueryCode().toLowerCase())
-                        .getResultList()
-                        .isEmpty();
+            // ---------- CHECK DUPLICATE ----------
+            boolean exists = !entityManager.createQuery(
+                            "SELECT r FROM RefQuery r WHERE r.processDefDesc.processDefDescGuid = :descGuid " +
+                                    "AND r.processDefDesc.processDef.processDefGuid = :defGuid " +
+                                    "AND r.sectionType.sectionTypeGuid = :sectionGuid " +
+                                    "AND LOWER(r.refQueryCode) = :code", RefQuery.class)
+                    .setParameter("descGuid", processDefDescGuid)
+                    .setParameter("defGuid", processDefGuid)
+                    .setParameter("sectionGuid", sectionTypeGuid)
+                    .setParameter("code", refQuery.getRefQueryCode().toLowerCase())
+                    .getResultList()
+                    .isEmpty();
 
-                if (duplicateExists) {
-                    return new StatusParam(false,
-                            "Ref Query already exists with code : " + refQuery.getRefQueryCode());
-                }
+            if (exists) {
+                return new StatusParam(false,
+                        "Ref Query already exists for this ProcessDef, ProcessDefDesc, SectionType, and Code combination");
             }
 
+            // ---------- PROCEED TO ADD ----------
             String clientIp = ipAddressGenerator.getClientIp(httpServletRequest);
             String clientMac = macAddressGenerator.generateMacAddress();
 
-                // Call the DB function (auto-handles createdBy, createdDate, IP, MAC)
             String result = refQueryRepository.addRefQueryNative(
                     processDefGuid,
                     processDefDescGuid,
@@ -116,16 +120,15 @@ public class RefQueryServiceImpl implements RefQueryService {
             );
 
             logger.info("Ref Query created with GUID: {}", result);
-
             return new StatusParam(true, "Ref Query created successfully");
 
         } catch (ResourceNotFoundException ex) {
-            // Let specific not-found errors propagate
             logger.error("Not found error while creating Ref Query", ex);
-            throw ex; // or return StatusParam(false, ex.getMessage(), null) if you prefer
+            throw ex;
         } catch (Exception ex) {
             logger.error("Error while creating Ref Query", ex);
             return new StatusParam(false, "Error while creating Ref Query: " + ex.getMessage(), null);
         }
     }
+
 }

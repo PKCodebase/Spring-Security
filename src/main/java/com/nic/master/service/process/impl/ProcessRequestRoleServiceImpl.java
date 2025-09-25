@@ -60,6 +60,7 @@ public class ProcessRequestRoleServiceImpl implements ProcessRequestRoleService 
             ProcessedRequestRole processedRequestRole = modelMapper.map(addProcessedRoleRequest,ProcessedRequestRole.class);
             processedRequestRole.setProcessedRequestRoleGuid(UUID.randomUUID().toString());
             processedRequestRole.setCreatedBy("SYSTEM");
+            processedRequestRole.setCreatedUri(httpServletRequest.getRequestURI());
             processedRequestRole.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             processedRequestRole.setCreatedMacAddr(macAddressGenerator.generateMacAddress());
             processedRequestRole.setProcessDef(processDef);
@@ -113,6 +114,7 @@ public class ProcessRequestRoleServiceImpl implements ProcessRequestRoleService 
             processedRequestRole.setProcessDef(processDef);
             processedRequestRole.setModifiedBy("SYSTEM");
             processedRequestRole.setModifiedDate(LocalDateTime.now());
+            processedRequestRole.setModifiedUri(httpServletRequest.getRequestURI());
             processedRequestRole.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
             processedRequestRole.setModifiedMacAddr(macAddressGenerator.generateMacAddress());
             processRequestRoleRepository.save(processedRequestRole);

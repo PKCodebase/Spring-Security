@@ -1,9 +1,9 @@
 package com.nic.master.service.process;
 
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.processdefdescriptionaction.AddProcessDefDescActionRequest;
-import com.nic.master.request.process.processdefdescriptionaction.UpdateProcessDefDescActionRequest;
-import com.nic.master.response.processdefdescactionresponse.ProcessDefDescActionResponse;
+import com.nic.master.requestDTO.process.processdefdescriptionaction.AddProcessDefDescActionRequest;
+import com.nic.master.requestDTO.process.processdefdescriptionaction.UpdateProcessDefDescActionRequest;
+import com.nic.master.responseDTO.processdefdescactionresponse.ProcessDefDescActionResponse;
 
 import java.util.List;
 

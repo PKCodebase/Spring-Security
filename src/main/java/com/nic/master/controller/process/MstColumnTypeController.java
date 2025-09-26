@@ -1,8 +1,7 @@
 package com.nic.master.controller.process;
 
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.mstcodeimpl.MstCodeImplRequestMapper;
-import com.nic.master.request.process.mstcolumntype.MstColumnRequestMapper;
+import com.nic.master.requestDTO.process.mstcolumntype.MstColumnRequestMapper;
 import com.nic.master.service.process.MstColumnService;
 import com.nic.master.util.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;

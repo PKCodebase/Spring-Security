@@ -3,9 +3,8 @@ package com.nic.master.service.process;
 import com.nic.master.entity.process.MstColumnType;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.mstcolumntype.AddMstColumnTypeRequest;
-import com.nic.master.request.process.mstcolumntype.UpdateMstColumnTypeRequest;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.nic.master.requestDTO.process.mstcolumntype.AddMstColumnTypeRequest;
+import com.nic.master.requestDTO.process.mstcolumntype.UpdateMstColumnTypeRequest;
 
 import java.util.List;
 

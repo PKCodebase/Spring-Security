@@ -1,11 +1,9 @@
 package com.nic.master.controller.adm;
 
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.adm.apiRequest.AddMstApiRequest;
-import com.nic.master.request.adm.apiRequest.UpdateMstApiRequest;
 import com.nic.master.service.admservice.MstApiService;
 import com.nic.master.util.ResponseBuilder;
-import com.nic.master.request.adm.apiRequest.ApiRequestMapper;
+import com.nic.master.requestDTO.adm.apiRequest.ApiRequestMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -91,7 +89,7 @@ public class MstApiController {
 //                StatusParam addResponse = mstApiService.addMstApi(
 //                        apiRequestMapper.getMicroserviceGuid(),   // ✅ microserviceGuid
 //                        apiRequestMapper.getUrlTypeGuid(),        // ✅ urlTypeGuid
-//                        apiRequestMapper.getAddMstApiRequest()    // ✅ request
+//                        apiRequestMapper.getAddMstApiRequest()    // ✅ requestDTO
 //                );
 //                return ResponseBuilder.buildOk(addResponse, addResponse, httpServletRequest);
 //
@@ -134,7 +132,7 @@ public ResponseEntity<Object> handleMstApiAction(
 
     String apiOperation = null;
 
-    // Priority: request body > query param
+    // Priority: requestDTO body > query param
     if (requestWrapper != null && requestWrapper.getOperation() != null) {
         apiOperation = requestWrapper.getOperation();
     } else if (operation != null) {

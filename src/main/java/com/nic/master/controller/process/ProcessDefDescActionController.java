@@ -1,8 +1,7 @@
 package com.nic.master.controller.process;
 
-import com.nic.master.entity.process.ProcessDefDescAction;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.processdefdescriptionaction.ProcessDefDescActionRequestMapper;
+import com.nic.master.requestDTO.process.processdefdescriptionaction.ProcessDefDescActionRequestMapper;
 import com.nic.master.service.process.ProcessDefDescActionService;
 import com.nic.master.util.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;

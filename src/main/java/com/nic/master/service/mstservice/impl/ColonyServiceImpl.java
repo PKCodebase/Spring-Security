@@ -6,11 +6,12 @@ import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
 import com.nic.master.repository.mst.ColonyRepository;
 import com.nic.master.repository.mst.WardRepository;
-import com.nic.master.request.mst.colonyrequest.ColonyAddRequest;
-import com.nic.master.request.mst.colonyrequest.ColonyUpdateRequest;
-import com.nic.master.response.colonyresponse.ColonyResponse;
+import com.nic.master.requestDTO.mst.colonyrequest.ColonyAddRequest;
+import com.nic.master.requestDTO.mst.colonyrequest.ColonyUpdateRequest;
+import com.nic.master.responseDTO.colonyresponse.ColonyResponse;
 import com.nic.master.service.mstservice.ColonyService;
 import com.nic.master.util.IpAddressGenerator;
+import com.nic.master.util.MacAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -32,14 +33,16 @@ public class ColonyServiceImpl implements ColonyService {
     private final HttpServletRequest httpServletRequest;
     private final ModelMapper modelMapper;
     private final IpAddressGenerator ipAddressGenerator;
+    private final MacAddressGenerator macAddressGenerator;
 
     public ColonyServiceImpl(ColonyRepository colonyRepository, WardRepository wardRepository,
-                             HttpServletRequest httpServletRequest, ModelMapper modelMapper, IpAddressGenerator ipAddressGenerator) {
+                             HttpServletRequest httpServletRequest, ModelMapper modelMapper, IpAddressGenerator ipAddressGenerator, MacAddressGenerator macAddressGenerator) {
         this.colonyRepository = colonyRepository;
         this.wardRepository = wardRepository;
         this.httpServletRequest = httpServletRequest;
         this.modelMapper = modelMapper;
         this.ipAddressGenerator = ipAddressGenerator;
+        this.macAddressGenerator = macAddressGenerator;
     }
 
     @Override
@@ -86,8 +89,9 @@ public class ColonyServiceImpl implements ColonyService {
             Colony colony = modelMapper.map(colonyAddRequest, Colony.class);
             colony.setColonyGuid(UUID.randomUUID().toString());
             colony.setCreatedDate(LocalDate.now());
+            colony.setCreatedUri(httpServletRequest.getRequestURI());
             colony.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
-            colony.setCreatedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            colony.setCreatedMacAddr(macAddressGenerator.generateMacAddress());
             colony.setWard(ward);
             colony.setCreatedBy("SYSTEM");
 
@@ -150,7 +154,8 @@ public class ColonyServiceImpl implements ColonyService {
 
             modelMapper.map(colonyUpdateRequest, colony);
             colony.setModifiedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
-            colony.setModifiedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            colony.setModifiedMacAddr(macAddressGenerator.generateMacAddress());
+            colony.setModifiedUri(httpServletRequest.getRequestURI());
             colony.setModifiedDate(LocalDate.now());
             colony.setWard(ward);
             colony.setModifiedBy("SYSTEM");

@@ -9,11 +9,12 @@ import com.nic.master.param.StatusParam;
 import com.nic.master.repository.adm.MstApiRepository;
 import com.nic.master.repository.adm.MstMicroserviceRepository;
 import com.nic.master.repository.adm.MstUrlRepository;
-import com.nic.master.request.adm.apiRequest.AddMstApiRequest;
-import com.nic.master.request.adm.apiRequest.UpdateMstApiRequest;
-import com.nic.master.response.mstapiresponse.MstApiResponse;
+import com.nic.master.requestDTO.adm.apiRequest.AddMstApiRequest;
+import com.nic.master.requestDTO.adm.apiRequest.UpdateMstApiRequest;
+import com.nic.master.responseDTO.mstapiresponse.MstApiResponse;
 import com.nic.master.service.admservice.MstApiService;
 import com.nic.master.util.IpAddressGenerator;
+import com.nic.master.util.MacAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -35,14 +36,16 @@ public class MstApiImpl implements MstApiService {
     private final MstUrlRepository mstUrlRepository;
     private final HttpServletRequest httpServletRequest;
     private final IpAddressGenerator ipAddressGenerator;
+    private final MacAddressGenerator macAddressGenerator;
 
-    public MstApiImpl(MstApiRepository mstApiRepository, ModelMapper modelMapper, MstMicroserviceRepository mstMicroserviceRepository, MstUrlRepository mstUrlRepository, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
+    public MstApiImpl(MstApiRepository mstApiRepository, ModelMapper modelMapper, MstMicroserviceRepository mstMicroserviceRepository, MstUrlRepository mstUrlRepository, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator, MacAddressGenerator macAddressGenerator) {
         this.mstApiRepository = mstApiRepository;
         this.modelMapper = modelMapper;
         this.mstMicroserviceRepository = mstMicroserviceRepository;
         this.mstUrlRepository = mstUrlRepository;
         this.httpServletRequest = httpServletRequest;
         this.ipAddressGenerator = ipAddressGenerator;
+        this.macAddressGenerator = macAddressGenerator;
     }
 
 
@@ -103,7 +106,7 @@ public class MstApiImpl implements MstApiService {
             logger.info("API created successfully. apiGuid={}", mstApi.getApiGuid());
             return new StatusParam(true,"MstApi added successfully ");
         }catch (Exception ex){
-            logger.error("Unexpected error while adding API. request={}, error={}", addMstApiRequest, ex.getMessage(), ex);
+            logger.error("Unexpected error while adding API. requestDTO={}, error={}", addMstApiRequest, ex.getMessage(), ex);
             throw new RuntimeException("Unexpected error while adding ward : " + addMstApiRequest,ex);
         }
     }

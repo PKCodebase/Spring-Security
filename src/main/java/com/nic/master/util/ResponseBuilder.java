@@ -13,11 +13,11 @@ public class ResponseBuilder {
         //Private constructor to hide public constructor
     }
 
-//    public static ResponseEntity<Object> buildCreated(StatusParam status, Object successBody, HttpServletRequest request) {
+//    public static ResponseEntity<Object> buildCreated(StatusParam status, Object successBody, HttpServletRequest requestDTO) {
 //        if (status == null || status.getStatus()) {
 //            return ResponseEntity.status(HttpStatus.CREATED).body(successBody);
 //        } else {
-//            return handleStatus(status, request.getRequestURI());
+//            return handleStatus(status, requestDTO.getRequestURI());
 //        }
 //    }
 

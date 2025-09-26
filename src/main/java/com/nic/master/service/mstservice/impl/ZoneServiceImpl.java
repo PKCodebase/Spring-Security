@@ -6,17 +6,17 @@ import com.nic.master.exception.ResourceNotFoundException;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
 import com.nic.master.repository.mst.ZoneRepository;
-import com.nic.master.request.mst.zonerequest.ZoneAddRequest;
-import com.nic.master.request.mst.zonerequest.ZoneUpdateRequest;
+import com.nic.master.requestDTO.mst.zonerequest.ZoneAddRequest;
+import com.nic.master.requestDTO.mst.zonerequest.ZoneUpdateRequest;
 import com.nic.master.service.mstservice.ZoneService;
 import com.nic.master.util.IpAddressGenerator;
+import com.nic.master.util.MacAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -29,13 +29,15 @@ public class ZoneServiceImpl implements ZoneService {
     private final ModelMapper modelMapper;
     private final HttpServletRequest httpServletRequest;
     private final IpAddressGenerator ipAddressGenerator;
+    private final MacAddressGenerator macAddressGenerator;
 
 
-    public ZoneServiceImpl(ZoneRepository zoneRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator) {
+    public ZoneServiceImpl(ZoneRepository zoneRepository, ModelMapper modelMapper, HttpServletRequest httpServletRequest, IpAddressGenerator ipAddressGenerator, MacAddressGenerator macAddressGenerator) {
         this.zoneRepository = zoneRepository;
         this.modelMapper = modelMapper;
         this.httpServletRequest = httpServletRequest;
         this.ipAddressGenerator = ipAddressGenerator;
+        this.macAddressGenerator = macAddressGenerator;
     }
 
     @Override
@@ -78,8 +80,9 @@ public class ZoneServiceImpl implements ZoneService {
             Zone zone = modelMapper.map(zoneAddRequest, Zone.class);
             zone.setZoneGuid(UUID.randomUUID().toString());
             zone.setCreatedDate(LocalDateTime.now());
+            zone.setCreatedUri(httpServletRequest.getRequestURI());
             zone.setCreatedIpAddr(ipAddressGenerator.getClientIp(httpServletRequest));
-            zone.setCreatedMacAddr(ipAddressGenerator.getClientIp(httpServletRequest));
+            zone.setCreatedMacAddr(macAddressGenerator.generateMacAddress());
             zone.setCreatedBy("SYSTEM");
 
             zoneRepository.save(zone);

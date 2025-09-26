@@ -3,8 +3,8 @@ package com.nic.master.service.mstservice;
 import com.nic.master.entity.mst.Zone;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.mst.zonerequest.ZoneAddRequest;
-import com.nic.master.request.mst.zonerequest.ZoneUpdateRequest;
+import com.nic.master.requestDTO.mst.zonerequest.ZoneAddRequest;
+import com.nic.master.requestDTO.mst.zonerequest.ZoneUpdateRequest;
 
 import java.util.List;
 

@@ -1,9 +1,7 @@
 package com.nic.master.controller.adm;
 
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.adm.msturlrequest.AddMstUrlRequest;
-import com.nic.master.request.adm.msturlrequest.MstUrlRequestMapper;
-import com.nic.master.request.adm.msturlrequest.UpdateMstUrlRequest;
+import com.nic.master.requestDTO.adm.msturlrequest.MstUrlRequestMapper;
 import com.nic.master.service.admservice.MstUrlService;
 import com.nic.master.util.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;
@@ -81,7 +79,7 @@ public ResponseEntity<Object> handleUrlActions(
 
     String urlOperation = null;
 
-    // Priority: request body > request param
+    // Priority: requestDTO body > requestDTO param
     if (requestWrapper != null && requestWrapper.getOperation() != null) {
         urlOperation = requestWrapper.getOperation();
     } else if (operation != null) {

@@ -5,8 +5,8 @@ import com.nic.master.exception.ResourceNotFoundException;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
 import com.nic.master.repository.adm.MstMicroserviceRepository;
-import com.nic.master.request.adm.mstmicroservicerequest.MicroserviceAddRequest;
-import com.nic.master.request.adm.mstmicroservicerequest.MicroserviceUpdateRequest;
+import com.nic.master.requestDTO.adm.mstmicroservicerequest.MicroserviceAddRequest;
+import com.nic.master.requestDTO.adm.mstmicroservicerequest.MicroserviceUpdateRequest;
 import com.nic.master.service.admservice.MstMicroserviceService;
 
 import java.time.LocalDateTime;
@@ -39,6 +39,7 @@ public class MstMicroserviceImpl implements MstMicroserviceService {
 
     @Override
     public StatusParam addMicroservice(MicroserviceAddRequest microserviceAddRequest) {
+        logger.info("Adding Microservices..");
         try {
             if(mstMicroserviceRepository.existsByMicroserviceCodeIgnoreCase(microserviceAddRequest.getMicroserviceCode().trim())){
                 logger.warn("Duplicate Microservice Code detected: " + microserviceAddRequest.getMicroserviceCode());
@@ -97,7 +98,7 @@ public class MstMicroserviceImpl implements MstMicroserviceService {
 
     @Override
     public StatusParam updateMicroServiceByGuid(String microserviceGuid, MicroserviceUpdateRequest microserviceUpdateRequest) {
-
+  logger.info("Updating microservices..");
         try {
             MstMicroservice mstMicroservice = mstMicroserviceRepository.findByMicroserviceGuid(microserviceGuid.trim())
                     .orElseThrow(() -> {

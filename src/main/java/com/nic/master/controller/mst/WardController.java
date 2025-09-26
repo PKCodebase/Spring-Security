@@ -2,9 +2,9 @@ package com.nic.master.controller.mst;
 
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.mst.wardrequest.WardAddRequest;
-import com.nic.master.request.mst.wardrequest.WardUpdateRequest;
-import com.nic.master.response.wardresponse.WardResponse;
+import com.nic.master.requestDTO.mst.wardrequest.WardAddRequest;
+import com.nic.master.requestDTO.mst.wardrequest.WardUpdateRequest;
+import com.nic.master.responseDTO.wardresponse.WardResponse;
 import com.nic.master.service.mstservice.WardService;
 import com.nic.master.util.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;

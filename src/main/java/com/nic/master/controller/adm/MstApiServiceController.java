@@ -1,7 +1,7 @@
 package com.nic.master.controller.adm;
 
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.adm.apiservicerequest.ApiServiceRequestMapper;
+import com.nic.master.requestDTO.adm.apiservicerequest.ApiServiceRequestMapper;
 import com.nic.master.service.admservice.MstApiServices;
 import com.nic.master.util.ResponseBuilder;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +23,8 @@ public class MstApiServiceController {
 //    @PostMapping("/add")
 //    public ResponseEntity<Object> addApiService(@Valid @RequestBody AddApiServiceRequest addApiServiceRequest, HttpServletRequest httpServletRequest){
 //        try {
-//            StatusParam response = mstApiServices.addApiService(addApiServiceRequest);
-//            return ResponseBuilder.buildOk(response,response,httpServletRequest);
+//            StatusParam responseDTO = mstApiServices.addApiService(addApiServiceRequest);
+//            return ResponseBuilder.buildOk(responseDTO,responseDTO,httpServletRequest);
 //        } catch (Exception e) {
 //            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(),e.getMessage());
 //        }
@@ -62,8 +62,8 @@ public class MstApiServiceController {
 //    @PutMapping("update/{apiServiceGuid}")
 //    public ResponseEntity<Object> updateApiServiceByGuid(@PathVariable String apiServiceGuid , @RequestBody UpdateApiServiceRequest updateApiServiceRequest,HttpServletRequest httpServletRequest){
 //        try{
-//          StatusParam response = mstApiServices.updateApiService(apiServiceGuid,updateApiServiceRequest);
-//          return ResponseBuilder.buildOk(response,response,httpServletRequest);
+//          StatusParam responseDTO = mstApiServices.updateApiService(apiServiceGuid,updateApiServiceRequest);
+//          return ResponseBuilder.buildOk(responseDTO,responseDTO,httpServletRequest);
 //        }catch (Exception ex){
 //            return ResponseBuilder.buildError(HttpStatus.NOT_FOUND,httpServletRequest.getRequestURI(), ex.getMessage());
 //        }

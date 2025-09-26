@@ -7,8 +7,8 @@ import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
 import com.nic.master.repository.mst.DocumentRepository;
 import com.nic.master.service.mstservice.DocumentService;
-import com.nic.master.request.mst.documentrequest.DocumentAddRequest;
-import com.nic.master.request.mst.documentrequest.DocumentUpdateRequest;
+import com.nic.master.requestDTO.mst.documentrequest.DocumentAddRequest;
+import com.nic.master.requestDTO.mst.documentrequest.DocumentUpdateRequest;
 import com.nic.master.util.IpAddressGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;

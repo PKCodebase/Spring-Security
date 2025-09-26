@@ -3,13 +3,12 @@ package com.nic.master.service.process.impl;
 import com.nic.master.entity.process.ProcessDef;
 import com.nic.master.entity.process.ProcessDefConfig;
 import com.nic.master.exception.ResourceNotFoundException;
-import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
 import com.nic.master.repository.process.ProcessDefConfigRepository;
 import com.nic.master.repository.process.ProcessDefRepository;
-import com.nic.master.request.process.processdefconfigrequest.AddProcessDefConfigRequest;
-import com.nic.master.request.process.processdefconfigrequest.UpdateProcessDefConfigRequest;
-import com.nic.master.response.processdefconfigresponse.ProcessDefConfigResponse;
+import com.nic.master.requestDTO.process.processdefconfigrequest.AddProcessDefConfigRequest;
+import com.nic.master.requestDTO.process.processdefconfigrequest.UpdateProcessDefConfigRequest;
+import com.nic.master.responseDTO.processdefconfigresponse.ProcessDefConfigResponse;
 import com.nic.master.service.process.ProcessDefConfigService;
 import com.nic.master.util.IpAddressGenerator;
 import com.nic.master.util.MacAddressGenerator;
@@ -89,10 +88,6 @@ public class ProcessDefConfigServiceImpl implements ProcessDefConfigService {
         .collect(Collectors.toList());
     }
 
-//    @Override
-//    public SelectOptionParam getProcessDefConfigByCode(String processDefConfigCode) {
-//        return null;
-//    }
 
     @Override
     public ProcessDefConfigResponse getProcessDefConfigByGuid(String processDefConfigGuid) {

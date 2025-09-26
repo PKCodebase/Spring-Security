@@ -1,7 +1,7 @@
 package com.nic.master.controller.process;
 
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.reftemplate.RefTemplateMapper;
+import com.nic.master.requestDTO.process.reftemplate.RefTemplateMapper;
 import com.nic.master.service.process.RefTemplateService;
 import com.nic.master.util.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;

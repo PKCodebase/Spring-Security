@@ -1,8 +1,7 @@
 package com.nic.master.controller.process;
 
-import com.nic.master.entity.process.MstProcessType;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.mstprocesstype.ProcessTypeRequestMapper;
+import com.nic.master.requestDTO.process.mstprocesstype.ProcessTypeRequestMapper;
 import com.nic.master.service.process.MstProcessTypeService;
 import com.nic.master.util.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;

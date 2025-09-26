@@ -1,11 +1,10 @@
 package com.nic.master.service.admservice;
 
-import com.nic.master.entity.adm.MstApi;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.adm.apiRequest.AddMstApiRequest;
-import com.nic.master.request.adm.apiRequest.UpdateMstApiRequest;
-import com.nic.master.response.mstapiresponse.MstApiResponse;
+import com.nic.master.requestDTO.adm.apiRequest.AddMstApiRequest;
+import com.nic.master.requestDTO.adm.apiRequest.UpdateMstApiRequest;
+import com.nic.master.responseDTO.mstapiresponse.MstApiResponse;
 
 import java.util.List;
 

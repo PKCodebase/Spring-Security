@@ -1,9 +1,7 @@
 package com.nic.master.controller.adm;
 
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.adm.mstmicroservicerequest.MicroserviceAddRequest;
-import com.nic.master.request.adm.mstmicroservicerequest.MicroserviceRequestMapper;
-import com.nic.master.request.adm.mstmicroservicerequest.MicroserviceUpdateRequest;
+import com.nic.master.requestDTO.adm.mstmicroservicerequest.MicroserviceRequestMapper;
 import com.nic.master.service.admservice.MstMicroserviceService;
 import com.nic.master.util.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +24,8 @@ public class MstMicroserviceController {
 //    @PostMapping("/add")
 //    public ResponseEntity<Object> addMicroservice(@Valid @RequestBody MicroserviceAddRequest microserviceAddRequest, HttpServletRequest httpServletRequest){
 //        try{
-//            StatusParam response = mstMicroserviceService.addMicroservice(microserviceAddRequest);
-//            return ResponseBuilder.buildOk(response,response,httpServletRequest);
+//            StatusParam responseDTO = mstMicroserviceService.addMicroservice(microserviceAddRequest);
+//            return ResponseBuilder.buildOk(responseDTO,responseDTO,httpServletRequest);
 //        }catch (Exception ex){
 //            return  ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(),ex.getMessage());
 //        }
@@ -63,8 +61,8 @@ public class MstMicroserviceController {
 //    @PutMapping("/update/{microserviceGuid}")
 //    public ResponseEntity<Object> updateMicroservice(@Valid @PathVariable String microserviceGuid, @RequestBody MicroserviceUpdateRequest microserviceUpdateRequest,HttpServletRequest httpServletRequest){
 //        try {
-//            StatusParam response = mstMicroserviceService.updateMicroServiceByGuid(microserviceGuid,microserviceUpdateRequest);
-//            return ResponseBuilder.buildOk(response,response,httpServletRequest);
+//            StatusParam responseDTO = mstMicroserviceService.updateMicroServiceByGuid(microserviceGuid,microserviceUpdateRequest);
+//            return ResponseBuilder.buildOk(responseDTO,responseDTO,httpServletRequest);
 //        }catch (Exception ex){
 //            return  ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(),ex.getMessage());
 //        }

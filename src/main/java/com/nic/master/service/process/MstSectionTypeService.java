@@ -3,8 +3,8 @@ package com.nic.master.service.process;
 import com.nic.master.entity.process.MstSectionType;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.mstsectiontype.AddMstSectionTypeRequest;
-import com.nic.master.request.process.mstsectiontype.UpdateMstSectionTypeRequest;
+import com.nic.master.requestDTO.process.mstsectiontype.AddMstSectionTypeRequest;
+import com.nic.master.requestDTO.process.mstsectiontype.UpdateMstSectionTypeRequest;
 
 import java.util.List;
 

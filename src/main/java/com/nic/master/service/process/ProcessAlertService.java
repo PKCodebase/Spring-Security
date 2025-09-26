@@ -1,13 +1,9 @@
 package com.nic.master.service.process;
 
-import com.nic.master.entity.process.ProcessAlert;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.processalertrequest.AddProcessAlertRequest;
-import com.nic.master.request.process.processalertrequest.UpdateProcessAlertRequest;
-import com.nic.master.request.process.processdefdescrequest.AddProcessDefDescRequest;
-import com.nic.master.request.process.processdefdescrequest.UpdateProcessDefDescRequest;
-import com.nic.master.response.Processdefdescresponse.ProcessDefDescResponse;
-import com.nic.master.response.processalertresponse.ProcessAlertResponse;
+import com.nic.master.requestDTO.process.processalertrequest.AddProcessAlertRequest;
+import com.nic.master.requestDTO.process.processalertrequest.UpdateProcessAlertRequest;
+import com.nic.master.responseDTO.processalertresponse.ProcessAlertResponse;
 
 import java.util.List;
 

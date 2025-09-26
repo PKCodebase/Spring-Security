@@ -2,9 +2,9 @@ package com.nic.master.service.mstservice;
 
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.mst.colonyrequest.ColonyAddRequest;
-import com.nic.master.request.mst.colonyrequest.ColonyUpdateRequest;
-import com.nic.master.response.colonyresponse.ColonyResponse;
+import com.nic.master.requestDTO.mst.colonyrequest.ColonyAddRequest;
+import com.nic.master.requestDTO.mst.colonyrequest.ColonyUpdateRequest;
+import com.nic.master.responseDTO.colonyresponse.ColonyResponse;
 import java.util.List;
 
 public interface ColonyService {

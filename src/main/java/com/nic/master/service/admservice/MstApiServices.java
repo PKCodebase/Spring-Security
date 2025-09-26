@@ -3,8 +3,8 @@ package com.nic.master.service.admservice;
 import com.nic.master.entity.adm.MstApiService;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.adm.apiservicerequest.AddApiServiceRequest;
-import com.nic.master.request.adm.apiservicerequest.UpdateApiServiceRequest;
+import com.nic.master.requestDTO.adm.apiservicerequest.AddApiServiceRequest;
+import com.nic.master.requestDTO.adm.apiservicerequest.UpdateApiServiceRequest;
 
 import java.util.List;
 

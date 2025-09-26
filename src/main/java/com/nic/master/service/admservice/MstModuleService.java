@@ -3,8 +3,8 @@ package com.nic.master.service.admservice;
 import com.nic.master.entity.adm.MstModule;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.adm.modulerequest.MstModuleAddRequest;
-import com.nic.master.request.adm.modulerequest.MstModuleUpdateRequest;
+import com.nic.master.requestDTO.adm.modulerequest.MstModuleAddRequest;
+import com.nic.master.requestDTO.adm.modulerequest.MstModuleUpdateRequest;
 
 import java.util.List;
 

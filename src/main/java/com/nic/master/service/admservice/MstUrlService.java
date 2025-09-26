@@ -1,11 +1,10 @@
 package com.nic.master.service.admservice;
 
-import com.nic.master.entity.adm.MstUrlType;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.adm.msturlrequest.AddMstUrlRequest;
-import com.nic.master.request.adm.msturlrequest.UpdateMstUrlRequest;
-import com.nic.master.response.msturlresponse.MstUrlResponse;
+import com.nic.master.requestDTO.adm.msturlrequest.AddMstUrlRequest;
+import com.nic.master.requestDTO.adm.msturlrequest.UpdateMstUrlRequest;
+import com.nic.master.responseDTO.msturlresponse.MstUrlResponse;
 
 import java.util.List;
 

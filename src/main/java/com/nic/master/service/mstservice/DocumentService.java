@@ -3,8 +3,8 @@ package com.nic.master.service.mstservice;
 import com.nic.master.entity.mst.DocumentType;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.mst.documentrequest.DocumentAddRequest;
-import com.nic.master.request.mst.documentrequest.DocumentUpdateRequest;
+import com.nic.master.requestDTO.mst.documentrequest.DocumentAddRequest;
+import com.nic.master.requestDTO.mst.documentrequest.DocumentUpdateRequest;
 
 import java.util.List;
 

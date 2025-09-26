@@ -1,9 +1,7 @@
 package com.nic.master.controller.adm;
 
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.adm.modulerequest.ModuleRequestMapper;
-import com.nic.master.request.adm.modulerequest.MstModuleAddRequest;
-import com.nic.master.request.adm.modulerequest.MstModuleUpdateRequest;
+import com.nic.master.requestDTO.adm.modulerequest.ModuleRequestMapper;
 import com.nic.master.service.admservice.MstModuleService;
 import com.nic.master.util.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,8 +23,8 @@ public class MstModuleController {
 //    @PostMapping("/add")
 //    public ResponseEntity<Object> createModule(@Valid @RequestBody MstModuleAddRequest mstModuleAddRequest, HttpServletRequest httpServletRequest) {
 //        try{
-//            StatusParam response = mstModuleService.addModule(mstModuleAddRequest);
-//            return ResponseBuilder.buildOk(response,response,httpServletRequest);
+//            StatusParam responseDTO = mstModuleService.addModule(mstModuleAddRequest);
+//            return ResponseBuilder.buildOk(responseDTO,responseDTO,httpServletRequest);
 //        }catch (Exception e){
 //            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(),e.getMessage());
 //        }
@@ -61,8 +59,8 @@ public class MstModuleController {
 //    @PutMapping("/update/{moduleGuid}")
 //    public ResponseEntity<Object> updateModule(@PathVariable String moduleGuid, @Valid @RequestBody MstModuleUpdateRequest mstModuleUpdateRequest, HttpServletRequest httpServletRequest) {
 //        try {
-//            StatusParam response = mstModuleService.updateModuleByGuid(moduleGuid, mstModuleUpdateRequest);
-//            return ResponseBuilder.buildOk(response, response, httpServletRequest);
+//            StatusParam responseDTO = mstModuleService.updateModuleByGuid(moduleGuid, mstModuleUpdateRequest);
+//            return ResponseBuilder.buildOk(responseDTO, responseDTO, httpServletRequest);
 //        } catch (Exception ex) {
 //            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST, httpServletRequest.getRequestURI(), ex.getMessage());
 //        }

@@ -1,9 +1,9 @@
 package com.nic.master.service.process;
 
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.processservice.AddProcessServiceRequest;
-import com.nic.master.request.process.processservice.UpdateProcessServiceRequest;
-import com.nic.master.response.processServiceResponse.ProcessServiceResponse;
+import com.nic.master.requestDTO.process.processservice.AddProcessServiceRequest;
+import com.nic.master.requestDTO.process.processservice.UpdateProcessServiceRequest;
+import com.nic.master.responseDTO.processServiceResponse.ProcessServiceResponse;
 
 import java.util.List;
 

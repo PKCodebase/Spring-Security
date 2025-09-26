@@ -1,13 +1,11 @@
 package com.nic.master.controller.process;
 
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.mstdocumenttype.MstDocumentTypeRequestMapper;
-import com.nic.master.service.mstservice.DocumentService;
+import com.nic.master.requestDTO.process.mstdocumenttype.MstDocumentTypeRequestMapper;
 import com.nic.master.service.process.MstDocumentTypeService;
 import com.nic.master.util.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

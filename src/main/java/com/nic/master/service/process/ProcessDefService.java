@@ -1,11 +1,10 @@
 package com.nic.master.service.process;
 
-import com.nic.master.entity.process.ProcessDef;
 import com.nic.master.param.SelectOptionParam;
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.processdefrequest.AddProcessDefRequest;
-import com.nic.master.request.process.processdefrequest.UpdateProcessDefRequest;
-import com.nic.master.response.processdefresponse.ProcessDefResponse;
+import com.nic.master.requestDTO.process.processdefrequest.AddProcessDefRequest;
+import com.nic.master.requestDTO.process.processdefrequest.UpdateProcessDefRequest;
+import com.nic.master.responseDTO.processdefresponse.ProcessDefResponse;
 
 import java.util.List;
 

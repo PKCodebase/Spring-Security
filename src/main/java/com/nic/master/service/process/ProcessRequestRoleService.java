@@ -2,9 +2,9 @@ package com.nic.master.service.process;
 
 
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.process.processedrequestrole.AddProcessedRoleRequest;
-import com.nic.master.request.process.processedrequestrole.UpdateProcessedRoleRequest;
-import com.nic.master.response.processroleresponse.ProcessRoleResponse;
+import com.nic.master.requestDTO.process.processedrequestrole.AddProcessedRoleRequest;
+import com.nic.master.requestDTO.process.processedrequestrole.UpdateProcessedRoleRequest;
+import com.nic.master.responseDTO.processroleresponse.ProcessRoleResponse;
 
 import java.util.List;
 

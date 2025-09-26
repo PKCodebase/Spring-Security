@@ -1,18 +1,15 @@
 package com.nic.master.controller.adm;
 
 import com.nic.master.param.StatusParam;
-import com.nic.master.request.adm.rolerequest.RoleAddRequest;
-import com.nic.master.request.adm.rolerequest.RoleRequestWrapper;
-import com.nic.master.request.adm.rolerequest.RoleUpdateRequest;
+import com.nic.master.requestDTO.adm.rolerequest.RoleRequestWrapper;
 import com.nic.master.service.admservice.MstRoleService;
 import com.nic.master.util.ResponseBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.websocket.OnClose;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-//import com.nic.master.request.adm.rolerequest.RoleRequestWrapper;
+//import com.nic.master.requestDTO.adm.rolerequest.RoleRequestWrapper;
 
 
 @RestController
@@ -28,8 +25,8 @@ public class MstRoleController {
 //    @PostMapping("/add")
 //    public ResponseEntity<Object> addRole(@Valid @RequestBody RoleAddRequest roleAddRequest, HttpServletRequest httpServletRequest){
 //        try {
-//            StatusParam response = mstRoleService.addRole(roleAddRequest);
-//            return ResponseBuilder.buildOk(response,response,httpServletRequest);
+//            StatusParam responseDTO = mstRoleService.addRole(roleAddRequest);
+//            return ResponseBuilder.buildOk(responseDTO,responseDTO,httpServletRequest);
 //        }catch (Exception ex){
 //            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(),ex.getMessage());
 //        }
@@ -65,8 +62,8 @@ public class MstRoleController {
 //    @PutMapping("/update/{roleGuid}")
 //    public ResponseEntity<Object> updateRoleByGuid(@PathVariable String roleGuid, @Valid @RequestBody RoleUpdateRequest roleUpdateRequest, HttpServletRequest httpServletRequest){
 //        try{
-//            StatusParam response = mstRoleService.updateRoleByGuid(roleGuid,roleUpdateRequest);
-//            return ResponseBuilder.buildOk(response,response,httpServletRequest);
+//            StatusParam responseDTO = mstRoleService.updateRoleByGuid(roleGuid,roleUpdateRequest);
+//            return ResponseBuilder.buildOk(responseDTO,responseDTO,httpServletRequest);
 //
 //        }catch (Exception ex){
 //            return ResponseBuilder.buildError(HttpStatus.BAD_REQUEST,httpServletRequest.getRequestURI(), ex.getMessage());

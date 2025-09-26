@@ -1,12 +1,11 @@
 package com.nic.master.service.process.impl;
 
 import com.nic.master.entity.process.MstCodeImpl;
-import com.nic.master.enums.ImplType;
 import com.nic.master.exception.ResourceNotFoundException;
 import com.nic.master.param.StatusParam;
 import com.nic.master.repository.process.MstCodeImplRepository;
-import com.nic.master.request.process.mstcodeimpl.AddMstCodeImplRequest;
-import com.nic.master.request.process.mstcodeimpl.UpdateMstCodeImplRequest;
+import com.nic.master.requestDTO.process.mstcodeimpl.AddMstCodeImplRequest;
+import com.nic.master.requestDTO.process.mstcodeimpl.UpdateMstCodeImplRequest;
 import com.nic.master.service.process.MstCodeService;
 import com.nic.master.util.IpAddressGenerator;
 import com.nic.master.util.MacAddressGenerator;
